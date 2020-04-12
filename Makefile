@@ -40,7 +40,7 @@ binaries: $(ALLTARGETS)
 
 binaries-das: $(DASLTARGET) $(DASMSGTARGETS)
 
-all: binaries docs
+all: binaries # docs
 
 include makedefs.src
 
