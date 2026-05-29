@@ -2503,6 +2503,7 @@ tRegEvalResult EvalStrRegExpressionAsOperand(const tStrComp *pArg, struct sRegDe
         if (PassNo <= MaxSymPass)
         {
           pResult->Reg = 0;
+          pEvalResult->DataSize = ReqSize;
           pResult->Dissect = NULL;
           pResult->compare = NULL;
           Repass = True;

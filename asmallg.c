@@ -887,7 +887,15 @@ static void CodeMESSAGE(Word level)
           WrLstLine(mess.p_str);
       }
       else if ((level != e_level_error) || !FindAndTakeExpectError(ErrNum_UserError))
-        WrErrorString(mess.p_str, "", level == e_level_warning, level == e_level_fatal, NULL, NULL);
+      {
+        char add[11];
+
+        if (NumericErrors)
+          as_snprintf(add, sizeof(add), " #%d", ErrNum_UserError);
+        else
+          *add = '\0';
+        WrErrorString(mess.p_str, add, level == e_level_warning, level == e_level_fatal, NULL, NULL);
+      }
     }
     as_nonz_dynstr_free(&mess);
   }

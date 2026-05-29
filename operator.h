@@ -35,4 +35,6 @@ typedef struct as_operator
 
 extern const as_operator_t operators[], *target_operators, no_operators[];
 
+extern int reg_cmp(const TempResult *p_val1, const TempResult *p_val2);
+
 #endif /* _OPERATOR_H */

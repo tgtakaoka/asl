@@ -20,6 +20,7 @@
 #include "asmsub.h"
 #include "asmpars.h"
 #include "asmitree.h"
+#include "operator.h"
 #include "codevars.h"
 
 #include "asmif.h"
@@ -378,6 +379,9 @@ static void CodeCASE(Word code)
                break;
              case TempString:
                eq = (as_nonz_dynstr_cmp(&t.Contents.str, &FirstIfSave->SaveExpr.Contents.str) == 0);
+               break;
+             case TempReg:
+               eq = !reg_cmp(&t, &FirstIfSave->SaveExpr);
                break;
              default:
                eq = False;

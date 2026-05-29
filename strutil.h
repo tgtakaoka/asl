@@ -120,4 +120,7 @@ extern void strutil_init(void);
 #define as_isalnum(c) (!!isalnum(__chartouint(c)))
 #define as_isalnum_ubar(c) (isalnum(__chartouint(c))||((c)=='_'))
 
+#define as_isspace_or_nul(c) \
+        (as_isspace(c) || ((c) == '\0'))
+
 #endif /* _STRUTIL_H */
