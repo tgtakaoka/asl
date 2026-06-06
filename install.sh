@@ -116,7 +116,7 @@ if [ "${DOCPATH}" != "" ]; then
  ${MKDIRHIER} ${DOCPATH}
  chmod 755 ${DOCPATH}
  for i in DE EN; do
-  for ext in doc html dvi ps pdf; do
+  for ext in tex doc html pdf; do
    if [ -f doc_$i/as.${ext} ]; then
     #echo copy doc_$i/as.${ext} to ${DOCPATH}/as-$i.${ext} ...
     cp doc_$i/as.${ext} ${DOCPATH}/as_$i.${ext}
@@ -124,14 +124,12 @@ if [ "${DOCPATH}" != "" ]; then
   done
   chmod 644 ${DOCPATH}/as_$i.*
  done
- cp doc_COM/taborg*.tex ${DOCPATH}
- chmod 644 ${DOCPATH}/taborg*.tex
- cp doc_COM/ps*.tex ${DOCPATH}
- chmod 644 ${DOCPATH}/ps*.tex
- cp doc_COM/biblio.tex ${DOCPATH}
- chmod 644 ${DOCPATH}/biblio.tex
- cp doc_COM/cp3finst.tex ${DOCPATH}
- chmod 644 ${DOCPATH}/cp3finst.tex
- cp COPYING ${DOCPATH}
- chmod 644 ${DOCPATH}/COPYING
+ for i in biblio.tex taborg.tex tabids.tex pscpu.tex pscomm.tex cp3finst.tex 78z80inst.tex recstruct.tex; do
+   cp doc_COM/$i ${DOCPATH}
+   chmod 644 ${DOCPATH}/$i
+ done
+ for i in COPYING README README.LANGS; do
+   cp $i ${DOCPATH}/$i
+   chmod 644 ${DOCPATH}/$i
+ done
 fi

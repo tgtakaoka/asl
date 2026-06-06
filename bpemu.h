@@ -12,13 +12,16 @@
 /*                                                                           */
 /*****************************************************************************/
 
+#include <stddef.h>
+#include "datatypes.h"
+
 typedef void (*charcallback)(
 #ifdef __PROTOS__
 char *Name
 #endif
 );
 
-extern char *FExpand(char *Src);
+extern void FExpand(char *p_dest, size_t dest_size, const char *p_src);
 
 extern int FSearch(char *pDest, size_t DestSize, const char *FileToSearch, const char *pCurrFileName, const char *SearchPath);
 

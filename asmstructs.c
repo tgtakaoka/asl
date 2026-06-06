@@ -633,7 +633,7 @@ void ExpandStruct(PStructRec StructRec, const char *p_struct_name)
     {
       dimensions[Dim].Index = 0;
       dimensions[Dim].CompVarNameLen = strlen(CompVarName);
-      as_snprcatf(CompVarName, sizeof(CompVarName), "_%llu", (LargeWord)dimensions[Dim].Index);
+      as_snprcatf(CompVarName, sizeof(CompVarName), "_%lllu", (LargeWord)dimensions[Dim].Index);
     }
     while (dimensions[0].Index < dimensions[0].Dimension)
     {
@@ -660,7 +660,7 @@ void ExpandStruct(PStructRec StructRec, const char *p_struct_name)
       CompVarName[dimensions[Dim].CompVarNameLen] = '\0';
       for (; Dim < DimensionCnt; Dim++)
       {
-        as_snprcatf(CompVarName, sizeof(CompVarName), "_%llu", (LargeWord)dimensions[Dim].Index);
+        as_snprcatf(CompVarName, sizeof(CompVarName), "_%lllu", (LargeWord)dimensions[Dim].Index);
         if (Dim + 1 < DimensionCnt)
           dimensions[Dim + 1].CompVarNameLen = strlen(CompVarName);
       }

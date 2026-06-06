@@ -1640,7 +1640,7 @@ void INCLUDE_SearchCore(tStrComp *pDest, const tStrComp *pArg, Boolean SearchPat
           StrCompCopySub(pDest, pArg, offs, l);
       }
       else
-        strmaxcpy(pDest->str.p_str, FExpand(FoundFileName), STRINGSIZE - 1);
+        FExpand(pDest->str.p_str, STRINGSIZE, FoundFileName);
     }
     else
       return;

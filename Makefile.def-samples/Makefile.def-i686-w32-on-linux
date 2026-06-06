@@ -21,6 +21,7 @@ TARG_EXEXTENSION = .exe
 TARG_RUNCMD = wine
 TEX2DOC_FLAGS=-codepage 1252
 RC_CC = i686-w64-mingw32-windres
+TARG_ROBJ=-o$(BLANK)
 MAKEDEFS_RC = makedefs.rc
 
 # -------------------------------------------------------------------------

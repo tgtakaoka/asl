@@ -37,6 +37,7 @@ HOST_EXEXTENSION =
 TARG_OBJDIR ?= i686-linux/
 #TARG_OBJDIR ?= ppc-linux/
 #TARG_OBJDIR ?= m68k-linux/
+#TARG_OBJDIR ?= hppa-linux/
 #TARG_OBJDIR ?= i686-w32/
 
 # ...for the actual build targets.  This is the simple case for no cross-build:
@@ -103,6 +104,18 @@ ifeq ($(TARG_OBJDIR),m68k-linux/)
  TARG_RUNCMD = qemu-m68k-static
 endif
 
+# Similar for HPPA
+
+ifeq ($(TARG_OBJDIR),hppa-linux/)
+ TARG_CC = hppa-linux-gnu-gcc
+ TARG_CFLAGS = $(CFLAGS_GCC)
+ TARG_OBJEXTENSION = .o
+ TARG_LD = $(TARG_CC)
+ TARG_LDFLAGS = $(LDFLAGS) -static
+ TARG_EXEXTENSION =
+ TARG_RUNCMD = qemu-hppa-static
+endif
+
 # cross Build with MinGW32
 
 ifeq ($(TARG_OBJDIR),i686-w32/)
@@ -115,6 +128,7 @@ ifeq ($(TARG_OBJDIR),i686-w32/)
  TARG_RUNCMD = wine
  TEX2DOC_FLAGS=-codepage 1252
  RC_CC = i686-w64-mingw32-windres
+ TARG_ROBJ=-o$(BLANK)
  MAKEDEFS_RC = makedefs.rc
 endif
 

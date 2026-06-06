@@ -38,8 +38,9 @@
  */
 
 #ifdef _MSC_VER
-# define __PROTOS__
-# define UNUSED(x) (void)x
+
+#define __PROTOS__
+#define AS_UNUSED_TO_VOID
 
 /*
  * Windows systems using Microsoft Visual Studio.
@@ -162,6 +163,12 @@ typedef unsigned int as_uint32_t;
 # endif
 #endif
 
+#ifdef __powerpc64__
+# ifndef _POWER64
+#  define _POWER64
+# endif
+#endif
+
 /*---------------------------------------------------------------------------*/
 /* ditto for ARM platforms */
 
@@ -176,9 +183,7 @@ typedef unsigned int as_uint32_t;
 
 #ifdef __STDC__
 # define __PROTOS__
-# define UNUSED(x) (void)x
-#else
-# define UNUSED(x) {}
+# define AS_UNUSED_TO_VOID
 #endif
 
 /*---------------------------------------------------------------------------*/
@@ -226,7 +231,7 @@ typedef unsigned int as_uint32_t;
 #endif
 
 /*===========================================================================*/
-/* 68K platforms */
+/* 68K Platform(s): */
 
 #ifdef __m68k
 
@@ -346,7 +351,7 @@ typedef unsigned int as_uint32_t;
 #endif /* __m68k */
 
 /*===========================================================================*/
-/* SPARC platforms */
+/* SPARC Platform(s) */
 
 #ifdef __sparc
 
@@ -469,7 +474,7 @@ typedef unsigned int as_uint32_t;
 #endif /* __sparc */
 
 /*===========================================================================*/
-/* Mips platforms */
+/* Mips Platform(s) */
 
 #ifdef __mips
 
@@ -582,7 +587,7 @@ typedef unsigned int as_uint32_t;
 #endif /* __mips */
 
 /*===========================================================================*/
-/* HP-PA platforms */
+/* HP-PA Platform(s) */
 
 #ifdef __hppa
 
@@ -610,10 +615,32 @@ typedef unsigned int as_uint32_t;
 #define LOCALE_NLS
 #endif
 
+/*---------------------------------------------------------------------------*/
+/* HP-PA 1.x with Linux: */
+
+#ifdef __linux__
+#define ARCHSYSNAME "unknown-linux"
+#define DEFSMADE
+#define OPENRDMODE "r"
+#define OPENWRMODE "w"
+#define OPENUPMODE "r+"
+#define IEEEFLOAT_8_DOUBLE
+typedef signed char as_int8_t;
+typedef unsigned char as_uint8_t;
+typedef signed short as_int16_t;
+typedef unsigned short as_uint16_t;
+#define HAS16
+typedef signed int as_int32_t;
+#define PRIas_int32_t "d"
+typedef unsigned int as_uint32_t;
+#define AS_64_IS_LONGLONG
+#define LOCALE_NLS
+#endif
+
 #endif /* __hppa */
 
 /*===========================================================================*/
-/* POWER 64 bit platforms */
+/* POWER 64 Bit Platform(s): */
 
 #ifdef _POWER64
 
@@ -643,7 +670,7 @@ typedef unsigned int as_uint32_t;
 #endif
 
 /*===========================================================================*/
-/* POWER(32) platforms */
+/* POWER(32) Platform(s): */
 
 #elif defined _POWER
 
@@ -668,8 +695,7 @@ typedef signed int as_int32_t;
 #define PRIas_int32_t "d"
 typedef unsigned int as_uint32_t;
 #undef AS_HAS_LONGLONG
-#define AS_HAS_LONGLONG
-#define AS_64_IS_LONGLONG
+#define AS_HAS_LONGLONG 0
 #define LOCALE_NLS
 #endif
 
@@ -715,7 +741,7 @@ typedef signed int as_int32_t;
 #define PRIas_int32_t "d"
 typedef unsigned int as_uint32_t;
 #undef AS_HAS_LONGLONG
-#define AS_HAS_LONGLONG
+#define AS_HAS_LONGLONG 1
 #define AS_64_IS_LONGLONG
 #define NO_NLS
 #endif
@@ -723,7 +749,109 @@ typedef unsigned int as_uint32_t;
 #endif /* _POWER */
 
 /*===========================================================================*/
-/* VAX platforms */
+/* POWER64 Platform(s): */
+
+#ifdef _POWER64
+
+#define ARCHPRNAME "ppc64"
+
+/*---------------------------------------------------------------------------*/
+/* POWER64 with Linux */
+
+#ifdef __linux__
+#define ARCHSYSNAME "unknown-linux"
+#define DEFSMADE
+#define OPENRDMODE "r"
+#define OPENWRMODE "w"
+#define OPENUPMODE "r+"
+#define IEEEFLOAT_8_DOUBLE
+typedef signed char as_int8_t;
+typedef unsigned char as_uint8_t;
+typedef signed short as_int16_t;
+typedef unsigned short as_uint16_t;
+#define HAS16
+typedef signed int as_int32_t;
+#define PRIas_int32_t "d"
+typedef unsigned int as_uint32_t;
+#undef AS_HAS_LONGLONG
+#define AS_HAS_LONGLONG 1
+#define AS_64_IS_LONGLONG
+#define LOCALE_NLS
+#endif
+
+#endif /* _POWER64 */
+
+/*===========================================================================*/
+/* S390 Platform(s): */
+
+#if defined(__s390__) && !defined(__s390x__)
+
+#define ARCHPRNAME "s390"
+
+/*---------------------------------------------------------------------------*/
+/* IBM S/390 with Linux and GCC:                                             */
+
+
+#ifdef __linux__
+#define ARCHSYSNAME "unknown-linux"
+#define DEFSMADE
+#define OPENRDMODE "r"
+#define OPENWRMODE "w"
+#define OPENUPMODE "r+"
+#define IEEEFLOAT
+typedef signed char as_int8_t;
+typedef unsigned char as_uint8_t;
+typedef signed short as_int16_t;
+typedef unsigned short as_uint16_t;
+#define HAS16
+typedef signed int as_int32_t;
+typedef unsigned int as_uint32_t;
+#undef AS_HAS_LONGLONG
+#define AS_HAS_LONGLONG 1
+#define AS_64_IS_LONGLONG
+#define LOCALE_NLS
+#endif
+
+#endif /* __s390__ */
+
+/*===========================================================================*/
+/* S390X Platform(s): */
+
+#ifdef __s390x__
+
+#define ARCHPRNAME "s390x"
+
+#ifdef __linux__
+
+#define ARCHSYSNAME "unknown-linux"
+#define DEFSMADE
+#define OPENRDMODE "r"
+#define OPENWRMODE "w"
+#define OPENUPMODE "r+"
+#define IEEEFLOAT_8_DOUBLE
+typedef signed char as_int8_t;
+typedef unsigned char as_uint8_t;
+typedef signed short as_int16_t;
+typedef unsigned short as_uint16_t;
+#define HAS16
+typedef signed int as_int32_t;
+#define PRIas_int32_t "d"
+typedef unsigned int as_uint32_t;
+#define AS_64_IS_LONG
+#define LOCALE_NLS
+
+#ifdef __SIZEOF_INT128__
+typedef __uint128_t as_uint128_t;
+typedef __int128_t as_int128_t;
+# define HAS128
+#endif
+
+#endif /* __linux__ */
+
+#endif /* __s390x__ */
+
+/*===========================================================================*/
+/* VAX Platform(s): */
 
 #ifdef __vax__
 
@@ -784,58 +912,8 @@ typedef unsigned int as_uint32_t;
 
 #endif /* vax */
 
-#ifdef __aarch64__
-
-#define ARCHPRNAME "aarch64"
-
-/*---------------------------------------------------------------------------*/
-/* AArch64 with Linux and GCC: */
-
-#ifdef __linux__
-#define ARCHSYSNAME "unknown-linux"
-#define DEFSMADE
-#define OPENRDMODE "r"
-#define OPENWRMODE "w"
-#define OPENUPMODE "r+"
-#define IEEEFLOAT_8_DOUBLE
-typedef signed char as_int8_t;
-typedef unsigned char as_uint8_t;
-typedef signed short as_int16_t;
-typedef unsigned short as_uint16_t;
-#define HAS16
-typedef signed int as_int32_t;
-#define PRIas_int32_t "d"
-typedef unsigned int as_uint32_t;
-#define AS_64_IS_LONG
-#define LOCALE_NLS
-#endif
-
-/*---------------------------------------------------------------------------*/
-/* AArch64 with macOS (Apple M-series CPU) */
-
-#ifdef __APPLE__
-#define ARCHSYSNAME "apple-darwin"
-#define DEFSMADE
-#define OPENRDMODE "r"
-#define OPENWRMODE "w"
-#define OPENUPMODE "r+"
-#define IEEEFLOAT_8_DOUBLE
-typedef signed char as_int8_t;
-typedef unsigned char as_uint8_t;
-typedef signed short as_int16_t;
-typedef unsigned short as_uint16_t;
-#define HAS16
-typedef signed int as_int32_t;
-#define PRIas_int32_t "d"
-typedef unsigned int as_uint32_t;
-#define AS_64_IS_LONG
-#define LOCALE_NLS
-#endif
-
-#endif /* __aarch64__ */
-
 /*===========================================================================*/
-/* DEC Alpha platforms */
+/* DEC Alpha Platform(s): */
 
 #ifdef __alpha
 
@@ -936,7 +1014,7 @@ typedef unsigned int as_uint32_t;
 #endif /* __alpha */
 
 /*===========================================================================*/
-/* Intel i386 platforms */
+/* Intel i386 Platform(s): */
 
 #ifdef __i386
 
@@ -1195,8 +1273,7 @@ typedef unsigned long as_uint32_t;
 #define AS_HAS_LONGLONG 0
 #define DOS_NLS
 #define __PROTOS__
-#undef UNUSED
-#define UNUSED(x) (void)x
+#define AS_UNUSED_TO_VOID
 #endif
 #endif
 
@@ -1204,7 +1281,7 @@ typedef unsigned long as_uint32_t;
 
 
 /*===========================================================================*/
-/* Intel x86_64 platforms */
+/* Intel x86_64 Platform(s): */
 
 #if  (defined __k8__) || (defined __x86_64) || (defined __x86_64__)
 
@@ -1298,7 +1375,42 @@ typedef unsigned int as_uint32_t;
 #endif /* __k8__ || __x86_64 || __x86_64__ */
 
 /*===========================================================================*/
-/* ARM platform */
+/* IA64/Itamium Platform(s): */
+
+#ifdef __ia64__
+
+#define ARCHPRNAME "ia64"
+
+/*---------------------------------------------------------------------------*/
+/* Intel ia64 with Linux and GCC:                                            */
+
+#ifdef __linux__
+
+#define ARCHSYSNAME "unknown-linux"
+#define DEFSMADE
+#define OPENRDMODE "r"
+#define OPENWRMODE "w"
+#define OPENUPMODE "r+"
+#define IEEEFLOAT
+typedef signed char as_int8_t;
+typedef unsigned char as_uint8_t;
+typedef signed short as_int16_t;
+typedef unsigned short as_uint16_t;
+#define HAS16
+typedef signed int as_int32_t;
+#define PRIas_int32_t "d"
+typedef unsigned int as_uint32_t;
+typedef signed long long Integ64;
+typedef unsigned long long Card64;
+#define AS_64_IS_LONGLONG
+#define LOCALE_NLS
+
+#endif /* __linux__ */
+
+#endif /* __ia64__ */
+
+/*===========================================================================*/
+/* ARM Platform(s) */
 
 #ifdef __arm
 
@@ -1358,9 +1470,62 @@ typedef unsigned int as_uint32_t;
 #endif /* __arm */
 
 /*===========================================================================*/
-/* RISC-V platform */
+/* AARCH Platform(s): */
 
-#ifdef __riscv
+#ifdef __aarch64__
+
+#define ARCHPRNAME "aarch64"
+
+/*---------------------------------------------------------------------------*/
+/* AArch64 with Linux and GCC: */
+
+#ifdef __linux__
+#define ARCHSYSNAME "unknown-linux"
+#define DEFSMADE
+#define OPENRDMODE "r"
+#define OPENWRMODE "w"
+#define OPENUPMODE "r+"
+#define IEEEFLOAT_8_DOUBLE
+typedef signed char as_int8_t;
+typedef unsigned char as_uint8_t;
+typedef signed short as_int16_t;
+typedef unsigned short as_uint16_t;
+#define HAS16
+typedef signed int as_int32_t;
+#define PRIas_int32_t "d"
+typedef unsigned int as_uint32_t;
+#define AS_64_IS_LONG
+#define LOCALE_NLS
+#endif
+
+/*---------------------------------------------------------------------------*/
+/* AArch64 with macOS (Apple M-series CPU) */
+
+#ifdef __APPLE__
+#define ARCHSYSNAME "apple-darwin"
+#define DEFSMADE
+#define OPENRDMODE "r"
+#define OPENWRMODE "w"
+#define OPENUPMODE "r+"
+#define IEEEFLOAT_8_DOUBLE
+typedef signed char as_int8_t;
+typedef unsigned char as_uint8_t;
+typedef signed short as_int16_t;
+typedef unsigned short as_uint16_t;
+#define HAS16
+typedef signed int as_int32_t;
+#define PRIas_int32_t "d"
+typedef unsigned int as_uint32_t;
+#define AS_64_IS_LONG
+#define LOCALE_NLS
+#endif
+
+#endif /* __aarch64__ */
+
+/*===========================================================================*/
+/* RISC-V Platform(s): */
+
+#if defined __riscv && __riscv_xlen == 32
 
 #define ARCHPRNAME "riscv"
 
@@ -1368,7 +1533,7 @@ typedef unsigned int as_uint32_t;
 /* RISC-V linux with GCC */
 
 #ifdef __linux__
-#define ARCHSYSNAME "unknown-linux-riscv"
+#define ARCHSYSNAME "unknown-linux"
 #define DEFSMADE
 #define OPENRDMODE "r"
 #define OPENWRMODE "w"
@@ -1386,7 +1551,38 @@ typedef unsigned int as_uint32_t;
 #define LOCALE_NLS
 #endif /* __linux__ */
 
-#endif /* __riscv */
+#endif /* __riscv __riscv_xlen == 32 */
+
+/*===========================================================================*/
+/* RISC-V 64 Bit Platform(s): */
+
+#if defined __riscv && __riscv_xlen == 64
+
+#define ARCHPRNAME "riscv64"
+
+/*---------------------------------------------------------------------------*/
+/* RISC-V 64-bit linux with GCC */
+
+#if defined __linux__
+#define ARCHSYSNAME "unknown-linux"
+#define DEFSMADE
+#define OPENRDMODE "r"
+#define OPENWRMODE "w"
+#define OPENUPMODE "r+"
+#define IEEEFLOAT
+typedef signed char as_int8_t;
+typedef unsigned char as_uint8_t;
+typedef signed short as_int16_t;
+typedef unsigned short as_uint16_t;
+#define HAS16
+typedef signed int as_int32_t;
+#define PRIInteg32 "d"
+typedef unsigned int as_uint32_t;
+#define AS_64_IS_LONG
+#define LOCALE_NLS
+#endif /* __linux__ */
+
+#endif /* __riscv && __riscv_xlen == 64 */
 
 /*===========================================================================*/
 /* Misc... */
@@ -1581,6 +1777,12 @@ typedef unsigned long as_uint64_t;
 #else
 #error "your platform so far is not included in AS's header files!"
 #error "please edit sysdefs.h!"
+#endif
+
+#ifdef AS_UNUSED_TO_VOID
+# define UNUSED(x) (void)x
+#else
+# define UNUSED(x) {}
 #endif
 
 #ifdef CKMALLOC

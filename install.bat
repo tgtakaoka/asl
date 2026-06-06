@@ -54,8 +54,12 @@ set docdirs=DE EN
 for %%i in (%docdirs%) do copy doc_%%i\as.doc %6\%5\as_%%i.doc
 for %%i in (%docdirs%) do copy doc_%%i\as.tex %6\%5\as_%%i.tex
 for %%i in (%docdirs%) do copy doc_%%i\as.htm %6\%5\as_%%i.htm
-copy doc_COM\taborg*.tex %6\%5
-copy doc_COM\ps*.tex %6\%5
 copy doc_COM\biblio.tex %6\%5
+copy doc_COM\taborg.tex %6\%5
+copy doc_COM\tabids.tex %6\%5
+copy doc_COM\pscpu.tex %6\%5
+copy doc_COM\pscomm.tex %6\%5
 copy doc_COM\cp3finst.tex %6\%5
-copy COPYING %6\%5
+copy doc_COM\78z80inst.tex %6\%5
+copy doc_COM\recstruct.tex %6\%5
+copy COPYING README README.LANGS %6\%5
