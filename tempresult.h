@@ -32,17 +32,9 @@ struct as_dynstr;
 
 typedef unsigned tRegInt;
 
-typedef void (*DissectRegProc)(
-#ifdef __PROTOS__
-char *pDest, size_t DestSize, tRegInt Value, tSymbolSize InpSize
-#endif
-);
+typedef void (*dissect_reg_fnc_t)(char *p_dest, size_t dest_size, tRegInt value, tSymbolSize inp_size);
 
-typedef int (*compare_reg_fnc_t)(
-#ifdef __PROTOS__
-tRegInt value1, tSymbolSize reg_size1, tRegInt value2, tSymbolSize reg_size2
-#endif
-);
+typedef int (*compare_reg_fnc_t)(tRegInt value1, tSymbolSize reg_size1, tRegInt value2, tSymbolSize reg_size2);
 
 /*
  * Used in register's number to signify a built in alternate name
@@ -54,7 +46,7 @@ tRegInt value1, tSymbolSize reg_size1, tRegInt value2, tSymbolSize reg_size2
 
 typedef struct sRegDescr
 {
-  DissectRegProc Dissect;
+  dissect_reg_fnc_t Dissect;
   compare_reg_fnc_t compare;
   tRegInt Reg;
 } tRegDescr;

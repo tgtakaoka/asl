@@ -10,23 +10,11 @@
 /*                                                                           */
 /*****************************************************************************/
 
-typedef void (*tCPUSwitchProc)(
-#ifdef __PROTOS__
-void
-#endif
-);
+typedef void (*tCPUSwitchProc)(void);
 
-typedef void (*tCPUSwitchUserProc)(
-#ifdef __PROTOS__
-void *pUserData
-#endif
-);
+typedef void (*tCPUSwitchUserProc)(void *pUserData);
 
-typedef void (*tPrintLineCPUProc)(
-#ifdef __PROTOS__
-const char *
-#endif
-);
+typedef void (*tPrintLineCPUProc)(const char *);
 
 typedef void (*tCPUFreeUserDataProc)(void *pUserData);
 

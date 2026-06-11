@@ -258,7 +258,7 @@ void MWrite4B(Byte *Buffer, LongWord Value)
   Buffer[0] = (Value >> 24) & 0xff;
 }
 
-#ifdef HAS64
+#ifdef AS_HAS64
 QuadWord MRead8L(Byte *Buffer)
 {
   return (((LargeWord) Buffer[7]) << 56) |
@@ -331,34 +331,33 @@ static void CheckDataTypes(void)
   }
   CheckSingle(sizeof(Byte),    1, "Byte");
   CheckSingle(sizeof(ShortInt), 1, "ShortInt");
-#ifdef HAS16
+#ifdef AS_HAS16
   CheckSingle(sizeof(Word),    2, "Word");
   CheckSingle(sizeof(Integer), 2, "Integer");
 #endif
   CheckSingle(sizeof(LongInt), 4, "LongInt");
   CheckSingle(sizeof(LongWord), 4, "LongWord");
-#ifdef HAS64
+#ifdef AS_HAS64
   CheckSingle(sizeof(QuadInt), 8, "QuadInt");
   CheckSingle(sizeof(QuadWord), 8, "QuadWord");
 #endif
-#ifdef HAS128
+#ifdef AS_HAS128
   CheckSingle(sizeof(OctaInt), 16, "OctaInt");
   CheckSingle(sizeof(OctaWord), 16, "OctaWord");
 #endif
-#ifdef IEEEFLOAT_8_DOUBLE
+#ifdef AS_IEEEFLOAT_8_DOUBLE
   CheckSingle(sizeof(as_float_t),  8, "as_float_t");
 #endif
-#ifdef IEEEFLOAT_10_10_LONG_DOUBLE
+#ifdef AS_IEEEFLOAT_10_10_LONG_DOUBLE
   CheckSingle(sizeof(as_float_t), 10, "as_float_t");
 #endif
-#ifdef IEEEFLOAT_10_12_LONG_DOUBLE
+#ifdef AS_IEEEFLOAT_10_12_LONG_DOUBLE
   CheckSingle(sizeof(as_float_t), 12, "as_float_t");
 #endif
-#ifdef IEEEFLOAT_10_16_LONG_DOUBLE
+#ifdef AS_IEEEFLOAT_10_16_LONG_DOUBLE
   CheckSingle(sizeof(as_float_t), 16, "as_float_t");
 #endif
 }
-
 
 static const char *AssignSingle(int size)
 {
@@ -383,11 +382,11 @@ static const char *AssignSingle(int size)
 
 static void AssignFormats(void)
 {
-#ifdef HAS16
+#ifdef AS_HAS16
   IntegerFormat = Integ16Format = AssignSingle(2);
 #endif
   LongIntFormat = Integ32Format = AssignSingle(4);
-#ifdef HAS64
+#ifdef AS_HAS64
   QuadIntFormat = Integ64Format = AssignSingle(8);
 #endif
 }

@@ -26,11 +26,7 @@ typedef enum
   e_cmd_unknown
 } as_cmd_result_t;
 
-typedef as_cmd_result_t (*as_cmd_callback_t)(
-#ifdef __PROTOS__
-Boolean neg_flag, const char *p_arg
-#endif
-);
+typedef as_cmd_result_t (*as_cmd_callback_t)(Boolean neg_flag, const char *p_arg);
 
 typedef struct
 {

@@ -18,11 +18,7 @@ struct sLineComp;
 struct sStrComp;
 struct as_dynstr;
 
-typedef void (*TSwitchProc)(
-#ifdef __PROTOS__
-void
-#endif
-);
+typedef void (*TSwitchProc)(void);
 
 
 extern long GTime(void);

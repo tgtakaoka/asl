@@ -77,7 +77,7 @@ extern void MWrite4L(Byte *Buffer, LongWord Value);
 
 extern void MWrite4B(Byte *Buffer, LongWord Value);
 
-#ifdef HAS64
+#ifdef AS_HAS64
 extern QuadWord MRead8L(Byte *Buffer);
 
 extern QuadWord MRead8B(Byte *Buffer);

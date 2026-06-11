@@ -744,9 +744,18 @@ static Boolean decode_adr(tStrComp *p_arg, adr_vals_t *p_result, LongWord pc_val
 
     else
     {
+      LongInt disp;
+
       /* disp(rm,rn) allows at most 16 bit displacement */
-      
-      LongInt disp = EvalStrIntExpressionWithFlags(&disp_arg, ((lo_reg != NO_REG) && (hi_reg != NO_REG)) ? SInt16 : SInt32, &ok, &p_result->val_flags);
+
+      if (*disp_arg.str.p_str)
+        disp = EvalStrIntExpressionWithFlags(&disp_arg, ((lo_reg != NO_REG) && (hi_reg != NO_REG)) ? SInt16 : SInt32, &ok, &p_result->val_flags);
+      else
+      {
+        disp = 0;
+        ok = True;
+        p_result->val_flags = eSymbolFlag_None;
+      }
 
       /* AP/FP short offset */
 

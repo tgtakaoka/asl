@@ -39,9 +39,6 @@
 
 #ifdef _MSC_VER
 
-#define __PROTOS__
-#define AS_UNUSED_TO_VOID
-
 /*
  * Windows systems using Microsoft Visual Studio.
  */
@@ -60,29 +57,14 @@
 
 # define ARCHSYSNAME "windows-msvc"
 
-# define DEFSMADE
-# define OPENRDMODE "rb"
-# define OPENWRMODE "wb"
-# define OPENUPMODE "rb+"
-# define IEEEFLOAT_8_DOUBLE
-# define SLASHARGS
-# define PATHSEP '\\'
-# define SPATHSEP "\\"
-# define DIRSEP ';'
-# define SDIRSEP ";"
-# define DRSEP ':'
-# define SDRSEP ":"
-# define NULLDEV "NUL"
-typedef signed char as_int8_t;
-typedef unsigned char as_uint8_t;
-typedef signed short as_int16_t;
-typedef unsigned short as_uint16_t;
-# define HAS16
-typedef signed int as_int32_t;
-# define PRIas_int32_t "d"
-typedef unsigned int as_uint32_t;
-#define AS_64_IS_LONGLONG
-# define W32_NLS
+# define AS_FOPEN_MODES_DOS
+# define AS_PATHSYNTAX_DOS
+# define AS_8_IS_CHAR
+# define AS_16_IS_SHORT
+# define AS_32_IS_INT
+# define AS_64_IS_LONGLONG
+# define AS_IEEEFLOAT_8_DOUBLE
+# define AS_W32_NLS
 #endif
 
 /*---------------------------------------------------------------------------*/
@@ -179,14 +161,6 @@ typedef unsigned int as_uint32_t;
 #endif
 
 /*---------------------------------------------------------------------------*/
-/* If the compiler claims to be ANSI, we surely can use prototypes */
-
-#ifdef __STDC__
-# define __PROTOS__
-# define AS_UNUSED_TO_VOID
-#endif
-
-/*---------------------------------------------------------------------------*/
 /* just a hack to allow distinguishing SunOS from Solaris on Sparcs... */
 
 #ifdef sparc
@@ -243,29 +217,22 @@ typedef unsigned int as_uint32_t;
    see my SunOS quarrels in the Sparc section... */
 
 #ifdef __sunos__
-#ifndef __GNUC__
-# undef AS_HAS_LONGLONG
-# define AS_HAS_LONGLONG 0
-#endif
-#define ARCHSYSNAME "sun-sunos"
-#define DEFSMADE
-#define OPENRDMODE "r"
-#define OPENWRMODE "w"
-#define OPENUPMODE "r+"
-#define IEEEFLOAT_8_DOUBLE
-typedef signed char as_int8_t;
-typedef unsigned char as_uint8_t;
-typedef signed short as_int16_t;
-typedef unsigned short as_uint16_t;
-#define HAS16
-typedef signed int as_int32_t;
-#define PRIas_int32_t "d"
-typedef unsigned int as_uint32_t;
-#define AS_64_IS_LONGLONG
-#define memmove(s1,s2,len) bcopy(s2,s1,len)
+# ifndef __GNUC__
+#  undef AS_HAS_LONGLONG
+#  define AS_HAS_LONGLONG 0
+# endif
+# define ARCHSYSNAME "sun-sunos"
+# define AS_FOPEN_MODES_UNIX
+# define AS_PATHSYNTAX_UNIX
+# define AS_8_IS_CHAR
+# define AS_16_IS_SHORT
+# define AS_32_IS_INT
+# define AS_64_IS_LONGLONG
+# define AS_IEEEFLOAT_8_DOUBLE
+# define AS_NO_NLS
+# define memmove(s1,s2,len) bcopy(s2,s1,len)
 extern void bcopy();
-#define NO_NLS
-#endif
+#endif /* __sunos__ */
 
 /*---------------------------------------------------------------------------*/
 /* SUN/3 with NetBSD 1.x:
@@ -273,23 +240,16 @@ extern void bcopy();
    quite a normal 32-Bit-UNIX system */
 
 #ifdef __NetBSD__
-#define ARCHSYSNAME "sun-netbsd"
-#define DEFSMADE
-#define OPENRDMODE "r"
-#define OPENWRMODE "w"
-#define OPENUPMODE "r+"
-#define IEEEFLOAT_8_DOUBLE
-typedef signed char as_int8_t;
-typedef unsigned char as_uint8_t;
-typedef signed short as_int16_t;
-typedef unsigned short as_uint16_t;
-#define HAS16
-typedef signed int as_int32_t;
-#define PRIas_int32_t "d"
-typedef unsigned int as_uint32_t;
-#define AS_64_IS_LONGLONG
-#define LOCALE_NLS
-#endif
+# define ARCHSYSNAME "sun-netbsd"
+# define AS_FOPEN_MODES_UNIX
+# define AS_PATHSYNTAX_UNIX
+# define AS_8_IS_CHAR
+# define AS_16_IS_SHORT
+# define AS_32_IS_INT
+# define AS_64_IS_LONGLONG
+# define AS_IEEEFLOAT_8_DOUBLE
+# define AS_LOCALE_NLS
+#endif /* __NetBSD__ */
 
 /*---------------------------------------------------------------------------*/
 /* PCS/Cadmus:
@@ -297,28 +257,21 @@ typedef unsigned int as_uint32_t;
    quite a bare system, lots of work required... */
 
 #ifdef __MUNIX__
-#define ARCHSYSNAME "pcs-munix"
-#define DEFSMADE
-#define OPENRDMODE "r"
-#define OPENWRMODE "w"
-#define OPENUPMODE "r+"
-#define IEEEFLOAT_8_DOUBLE
+# define ARCHSYSNAME "pcs-munix"
+# define AS_FOPEN_MODES_UNIX
+# define AS_PATHSYNTAX_UNIX
+# define AS_8_IS_CHAR
+# define AS_16_IS_SHORT
+# define AS_32_IS_INT
+# undef AS_HAS_LONGLONG
+# define AS_HAS_LONGLONG 0
+# define AS_IEEEFLOAT_8_DOUBLE
 extern double strtod();
-#define NEEDS_STRSTR
-typedef char as_int8_t;
-typedef unsigned char as_uint8_t;
-typedef short as_int16_t;
-typedef unsigned short as_uint16_t;
-#define HAS16
-typedef int as_int32_t;
-#define PRIas_int32_t "d"
-typedef unsigned int as_uint32_t;
-#undef AS_HAS_LONGLONG
-#define AS_HAS_LONGLONG 0
-#define memmove(s1,s2,len) bcopy(s2,s1,len)
+# define NEEDS_STRSTR
+# define memmove(s1,s2,len) bcopy(s2,s1,len)
 extern char *getenv();
-#define NO_NLS
-#endif
+# define AS_NO_NLS
+#endif /* __MUNIX__ */
 
 /*---------------------------------------------------------------------------*/
 /* Linux/68K:
@@ -326,27 +279,20 @@ extern char *getenv();
    quite a normal 32-Bit-UNIX system */
 
 #ifdef __linux__
-#define ARCHSYSNAME "unknown-linux"
-#define DEFSMADE
-#define OPENRDMODE "r"
-#define OPENWRMODE "w"
-#define OPENUPMODE "r+"
-#if AS_HAS_LONGDOUBLE
-# define IEEEFLOAT_10_2P8_LONG_DOUBLE
-#else
-# define IEEEFLOAT_8_DOUBLE
-#endif
-typedef signed char as_int8_t;
-typedef unsigned char as_uint8_t;
-typedef signed short as_int16_t;
-typedef unsigned short as_uint16_t;
-#define HAS16
-typedef signed int as_int32_t;
-#define PRIas_int32_t "d"
-typedef unsigned int as_uint32_t;
-#define AS_64_IS_LONGLONG
-#define NO_NLS
-#endif
+# define ARCHSYSNAME "unknown-linux"
+# define AS_FOPEN_MODES_UNIX
+# define AS_PATHSYNTAX_UNIX
+# define AS_8_IS_CHAR
+# define AS_16_IS_SHORT
+# define AS_32_IS_INT
+# define AS_64_IS_LONGLONG
+# if AS_HAS_LONGDOUBLE
+#  define AS_IEEEFLOAT_10_2P8_LONG_DOUBLE
+# else
+#  define AS_IEEEFLOAT_8_DOUBLE
+# endif
+# define AS_NO_NLS
+#endif /* __linux__ */
 
 #endif /* __m68k */
 
@@ -374,32 +320,25 @@ typedef unsigned int as_uint32_t;
    32-bit-UNIX... */
 
 #ifdef __sunos__
-#ifndef __GNUC__
-# undef AS_HAS_LONGLONG
-# define AS_HAS_LONGLONG 0
-#endif
-#define ARCHSYSNAME "sun-sunos"
-#define DEFSMADE
-#define OPENRDMODE "r"
-#define OPENWRMODE "w"
-#define OPENUPMODE "r+"
-#define IEEEFLOAT_8_DOUBLE
-typedef signed char as_int8_t;
-typedef unsigned char as_uint8_t;
-typedef signed short as_int16_t;
-typedef unsigned short as_uint16_t;
-#define HAS16
-typedef signed int as_int32_t;
-#define PRIas_int32_t "d"
-typedef unsigned int as_uint32_t;
-#define AS_64_IS_LONGLONG
-#define fpos_t long
-#ifdef __STDC__
+# ifndef __GNUC__
+#  undef AS_HAS_LONGLONG
+#  define AS_HAS_LONGLONG 0
+# endif
+# define ARCHSYSNAME "sun-sunos"
+# define AS_FOPEN_MODES_UNIX
+# define AS_PATHSYNTAX_UNIX
+# define AS_8_IS_CHAR
+# define AS_16_IS_SHORT
+# define AS_32_IS_INT
+# define AS_64_IS_LONGLONG
+# define AS_IEEEFLOAT_8_DOUBLE
+# define fpos_t long
+# ifdef __STDC__
 extern void bcopy();
-#endif
-#define memmove(s1,s2,len) bcopy(s2,s1,len)
-#define NO_NLS
-#endif
+# endif
+# define memmove(s1,s2,len) bcopy(s2,s1,len)
+# define AS_NO_NLS
+#endif /* __sunos__ */
 
 /*---------------------------------------------------------------------------*/
 /* SUN Sparc with Solaris 2.x:
@@ -407,23 +346,17 @@ extern void bcopy();
    quite a normal 32-Bit-UNIX system */
 
 #ifdef __solaris__
-#define ARCHSYSNAME "sun-solaris"
-#define DEFSMADE
-#define OPENRDMODE "r"
-#define OPENWRMODE "w"
-#define OPENUPMODE "r+"
-#define IEEEFLOAT_8_DOUBLE
-typedef signed char as_int8_t;
-typedef unsigned char as_uint8_t;
-typedef signed short as_int16_t;
-typedef unsigned short as_uint16_t;
-#define HAS16
-typedef signed int as_int32_t;
-#define PRIas_int32_t "d"
-typedef unsigned int as_uint32_t;
-#define AS_64_IS_LONGLONG
-#define LOCALE_NLS
-#endif
+# define ARCHSYSNAME "sun-solaris"
+# define AS_FOPEN_MODES_UNIX
+# define AS_PATHSYNTAX_UNIX
+# define AS_IEEEFLOAT_8_DOUBLE
+# define AS_8_IS_CHAR
+# define AS_16_IS_SHORT
+# define AS_32_IS_INT
+# define AS_64_IS_LONGLONG
+# define AS_IEEEFLOAT_8_DOUBLE
+# define AS_LOCALE_NLS
+#endif /* __solaris__ */
 
 /*---------------------------------------------------------------------------*/
 /* Sparc with NetBSD 1.x:
@@ -431,45 +364,31 @@ typedef unsigned int as_uint32_t;
    quite a normal 32-Bit-UNIX system */
 
 #ifdef __NetBSD__
-#define ARCHSYSNAME "sun-netbsd"
-#define DEFSMADE
-#define OPENRDMODE "r"
-#define OPENWRMODE "w"
-#define OPENUPMODE "r+"
-#define IEEEFLOAT_8_DOUBLE
-typedef signed char as_int8_t;
-typedef unsigned char as_uint8_t;
-typedef signed short as_int16_t;
-typedef unsigned short as_uint16_t;
-#define HAS16
-typedef signed int as_int32_t;
-#define PRIas_int32_t "d"
-typedef unsigned int as_uint32_t;
-#define AS_64_IS_LONGLONG
-#define LOCALE_NLS
-#endif
+# define ARCHSYSNAME "sun-netbsd"
+# define AS_FOPEN_MODES_UNIX
+# define AS_PATHSYNTAX_UNIX
+# define AS_8_IS_CHAR
+# define AS_16_IS_SHORT
+# define AS_32_IS_INT
+# define AS_64_IS_LONGLONG
+# define AS_IEEEFLOAT_8_DOUBLE
+# define AS_LOCALE_NLS
+#endif /* __NetBSD__ */
 
 /*---------------------------------------------------------------------------*/
 /* Sparc with Linux                                                          */
 
 #ifdef __linux__
-#define ARCHSYSNAME "unknown-linux"
-#define DEFSMADE
-#define OPENRDMODE "r"
-#define OPENWRMODE "w"
-#define OPENUPMODE "r+"
-#define IEEEFLOAT_8_DOUBLE
-typedef signed char as_int8_t;
-typedef unsigned char as_uint8_t;
-typedef signed short as_int16_t;
-typedef unsigned short as_uint16_t;
-#define HAS16
-typedef signed int as_int32_t;
-#define PRIas_int32_t "d"
-typedef unsigned int as_uint32_t;
-#define AS_64_IS_LONGLONG
-#define LOCALE_NLS
-#endif
+# define ARCHSYSNAME "unknown-linux"
+# define AS_FOPEN_MODES_UNIX
+# define AS_PATHSYNTAX_UNIX
+# define AS_8_IS_CHAR
+# define AS_16_IS_SHORT
+# define AS_32_IS_INT
+# define AS_64_IS_LONGLONG
+# define AS_IEEEFLOAT_8_DOUBLE
+# define AS_LOCALE_NLS
+#endif /* __linux__ */
 
 #endif /* __sparc */
 
@@ -488,28 +407,21 @@ typedef unsigned int as_uint32_t;
    cc isn't worth trying, believe me! */
 
 #ifdef __ultrix
-#ifndef __GNUC__
-# undef AS_HAS_LONGLONG
-# define AS_HAS_LONGLONG 0
-#endif
-#define ARCHSYSNAME "dec-ultrix"
-#define DEFSMADE
-#define OPENRDMODE "r"
-#define OPENWRMODE "w"
-#define OPENUPMODE "r+"
-#define IEEEFLOAT_8_DOUBLE
-#define NEEDS_STRDUP
-typedef signed char as_int8_t;
-typedef unsigned char as_uint8_t;
-typedef signed short as_int16_t;
-typedef unsigned short as_uint16_t;
-#define HAS16
-typedef signed int as_int32_t;
-#define PRIas_int32_t "d"
-typedef unsigned int as_uint32_t;
-#define AS_64_IS_LONGLONG
-#define NO_NLS
-#endif
+# ifndef __GNUC__
+#  undef AS_HAS_LONGLONG
+#  define AS_HAS_LONGLONG 0
+# endif
+# define ARCHSYSNAME "dec-ultrix"
+# define AS_FOPEN_MODES_UNIX
+# define AS_PATHSYNTAX_UNIX
+# define NEEDS_STRDUP
+# define AS_8_IS_CHAR
+# define AS_16_IS_SHORT
+# define AS_32_IS_INT
+# define AS_64_IS_LONGLONG
+# define AS_IEEEFLOAT_8_DOUBLE
+# define AS_NO_NLS
+#endif /* __ultrix */
 
 /*---------------------------------------------------------------------------*/
 /* R2000/3000 with NetBSD 1.2:
@@ -517,23 +429,16 @@ typedef unsigned int as_uint32_t;
    quite a normal 32-Bit-UNIX system */
 
 #ifdef __NetBSD__
-#define ARCHSYSNAME "dec-netbsd"
-#define DEFSMADE
-#define OPENRDMODE "r"
-#define OPENWRMODE "w"
-#define OPENUPMODE "r+"
-#define IEEEFLOAT_8_DOUBLE
-typedef signed char as_int8_t;
-typedef unsigned char as_uint8_t;
-typedef signed short as_int16_t;
-typedef unsigned short as_uint16_t;
-#define HAS16
-typedef signed int as_int32_t;
-#define PRIas_int32_t "d"
-typedef unsigned int as_uint32_t;
-#define AS_64_IS_LONGLONG
-#define LOCALE_NLS
-#endif
+# define ARCHSYSNAME "dec-netbsd"
+# define AS_FOPEN_MODES_UNIX
+# define AS_PATHSYNTAX_UNIX
+# define AS_8_IS_CHAR
+# define AS_16_IS_SHORT
+# define AS_32_IS_INT
+# define AS_64_IS_LONGLONG
+# define AS_IEEEFLOAT_8_DOUBLE
+# define AS_LOCALE_NLS
+#endif /* __NetBSD__ */
 
 /*---------------------------------------------------------------------------*/
 /* R3000/4x00 with Irix 5.x:
@@ -542,23 +447,16 @@ typedef unsigned int as_uint32_t;
   seems also to work with 6.2... */
 
 #ifdef __sgi
-#define ARCHSYSNAME "sgi-irix"
-#define DEFSMADE
-#define OPENRDMODE "r"
-#define OPENWRMODE "w"
-#define OPENUPMODE "r+"
-#define IEEEFLOAT_8_DOUBLE
-typedef signed char as_int8_t;
-typedef unsigned char as_uint8_t;
-typedef signed short as_int16_t;
-typedef unsigned short as_uint16_t;
-#define HAS16
-typedef signed int as_int32_t;
-#define PRIas_int32_t "d"
-typedef unsigned int as_uint32_t;
-#define AS_64_IS_LONGLONG
-#define LOCALE_NLS
-#endif
+# define ARCHSYSNAME "sgi-irix"
+# define AS_FOPEN_MODES_UNIX
+# define AS_PATHSYNTAX_UNIX
+# define AS_8_IS_CHAR
+# define AS_16_IS_SHORT
+# define AS_32_IS_INT
+# define AS_64_IS_LONGLONG
+# define AS_IEEEFLOAT_8_DOUBLE
+# define AS_LOCALE_NLS
+#endif /* __sgi */
 
 /*---------------------------------------------------------------------------*/
 /* R3000/4x00 with Linux:
@@ -566,23 +464,16 @@ typedef unsigned int as_uint32_t;
   quite a normal 32-Bit-UNIX system */
 
 #ifdef __linux__
-#define ARCHSYSNAME "unknown-linux"
-#define DEFSMADE
-#define OPENRDMODE "r"
-#define OPENWRMODE "w"
-#define OPENUPMODE "r+"
-#define IEEEFLOAT_8_DOUBLE
-typedef signed char as_int8_t;
-typedef unsigned char as_uint8_t;
-typedef signed short as_int16_t;
-typedef unsigned short as_uint16_t;
-#define HAS16
-typedef signed int as_int32_t;
-#define PRIas_int32_t "d"
-typedef unsigned int as_uint32_t;
-#define AS_64_IS_LONGLONG
-#define LOCALE_NLS
-#endif
+# define ARCHSYSNAME "unknown-linux"
+# define AS_FOPEN_MODES_UNIX
+# define AS_PATHSYNTAX_UNIX
+# define AS_8_IS_CHAR
+# define AS_16_IS_SHORT
+# define AS_32_IS_INT
+# define AS_64_IS_LONGLONG
+# define AS_IEEEFLOAT_8_DOUBLE
+# define AS_LOCALE_NLS
+#endif /* __linux__ */
 
 #endif /* __mips */
 
@@ -597,45 +488,31 @@ typedef unsigned int as_uint32_t;
 /* HP-PA 1.x with HP-UX: */
 
 #ifdef __hpux
-#define ARCHSYSNAME "hp-hpux"
-#define DEFSMADE
-#define OPENRDMODE "r"
-#define OPENWRMODE "w"
-#define OPENUPMODE "r+"
-#define IEEEFLOAT_8_DOUBLE
-typedef signed char as_int8_t;
-typedef unsigned char as_uint8_t;
-typedef signed short as_int16_t;
-typedef unsigned short as_uint16_t;
-#define HAS16
-typedef signed int as_int32_t;
-#define PRIas_int32_t "d"
-typedef unsigned int as_uint32_t;
-#define AS_64_IS_LONGLONG
-#define LOCALE_NLS
-#endif
+# define ARCHSYSNAME "hp-hpux"
+# define AS_FOPEN_MODES_UNIX
+# define AS_PATHSYNTAX_UNIX
+# define AS_8_IS_CHAR
+# define AS_16_IS_SHORT
+# define AS_32_IS_INT
+# define AS_64_IS_LONGLONG
+# define AS_IEEEFLOAT_8_DOUBLE
+# define AS_LOCALE_NLS
+#endif /* __hpux */
 
 /*---------------------------------------------------------------------------*/
 /* HP-PA 1.x with Linux: */
 
 #ifdef __linux__
-#define ARCHSYSNAME "unknown-linux"
-#define DEFSMADE
-#define OPENRDMODE "r"
-#define OPENWRMODE "w"
-#define OPENUPMODE "r+"
-#define IEEEFLOAT_8_DOUBLE
-typedef signed char as_int8_t;
-typedef unsigned char as_uint8_t;
-typedef signed short as_int16_t;
-typedef unsigned short as_uint16_t;
-#define HAS16
-typedef signed int as_int32_t;
-#define PRIas_int32_t "d"
-typedef unsigned int as_uint32_t;
-#define AS_64_IS_LONGLONG
-#define LOCALE_NLS
-#endif
+# define ARCHSYSNAME "unknown-linux"
+# define AS_FOPEN_MODES_UNIX
+# define AS_PATHSYNTAX_UNIX
+# define AS_8_IS_CHAR
+# define AS_16_IS_SHORT
+# define AS_32_IS_INT
+# define AS_64_IS_LONGLONG
+# define AS_IEEEFLOAT_8_DOUBLE
+# define AS_LOCALE_NLS
+#endif /* __linux__ */
 
 #endif /* __hppa */
 
@@ -650,24 +527,16 @@ typedef unsigned int as_uint32_t;
 /* POWER64 with Linux (Macintosh) */
 
 #ifdef __linux__
-
-#define ARCHSYSNAME "unknown-linux"
-#define DEFSMADE
-#define OPENRDMODE "r"
-#define OPENWRMODE "w"
-#define OPENUPMODE "r+"
-#define IEEEFLOAT_8_DOUBLE
-typedef signed char as_int8_t;
-typedef unsigned char as_uint8_t;
-typedef signed short as_int16_t;
-typedef unsigned short as_uint16_t;
-#define HAS16
-typedef signed int as_int32_t;
-#define PRIas_int32_t "d"
-typedef unsigned int as_uint32_t;
-#define AS_64_IS_LONG
-#define LOCALE_NLS
-#endif
+# define ARCHSYSNAME "unknown-linux"
+# define AS_FOPEN_MODES_UNIX
+# define AS_PATHSYNTAX_UNIX
+# define AS_8_IS_CHAR
+# define AS_16_IS_SHORT
+# define AS_32_IS_INT
+# define AS_64_IS_LONG
+# define AS_IEEEFLOAT_8_DOUBLE
+# define AS_LOCALE_NLS
+#endif /* __linux__ */
 
 /*===========================================================================*/
 /* POWER(32) Platform(s): */
@@ -680,71 +549,49 @@ typedef unsigned int as_uint32_t;
 /* POWER with AIX 4.1: rs6000 */
 
 #ifdef _AIX
-#define ARCHSYSNAME "ibm-aix"
-#define DEFSMADE
-#define OPENRDMODE "r"
-#define OPENWRMODE "w"
-#define OPENUPMODE "r+"
-#define IEEEFLOAT_8_DOUBLE
-typedef signed char as_int8_t;
-typedef unsigned char as_uint8_t;
-typedef signed short as_int16_t;
-typedef unsigned short as_uint16_t;
-#define HAS16
-typedef signed int as_int32_t;
-#define PRIas_int32_t "d"
-typedef unsigned int as_uint32_t;
-#undef AS_HAS_LONGLONG
-#define AS_HAS_LONGLONG 0
-#define LOCALE_NLS
-#endif
+# define ARCHSYSNAME "ibm-aix"
+# define AS_FOPEN_MODES_UNIX
+# define AS_PATHSYNTAX_UNIX
+# define AS_8_IS_CHAR
+# define AS_16_IS_SHORT
+# define AS_32_IS_INT
+# undef AS_HAS_LONGLONG
+# define AS_HAS_LONGLONG 0
+# define AS_IEEEFLOAT_8_DOUBLE
+# define AS_LOCALE_NLS
+#endif /* _AIX */
 
 /*---------------------------------------------------------------------------*/
 /* POWER with Linux (Macintosh) */
 
 #ifdef __linux__
-
-#define ARCHSYSNAME "unknown-linux"
-#define DEFSMADE
-#define OPENRDMODE "r"
-#define OPENWRMODE "w"
-#define OPENUPMODE "r+"
-#define IEEEFLOAT_8_DOUBLE
-typedef signed char as_int8_t;
-typedef unsigned char as_uint8_t;
-typedef signed short as_int16_t;
-typedef unsigned short as_uint16_t;
-#define HAS16
-typedef signed int as_int32_t;
-#define PRIas_int32_t "d"
-typedef unsigned int as_uint32_t;
-#define AS_64_IS_LONGLONG
-#define LOCALE_NLS
-#endif
+# define ARCHSYSNAME "unknown-linux"
+# define AS_FOPEN_MODES_UNIX
+# define AS_PATHSYNTAX_UNIX
+# define AS_8_IS_CHAR
+# define AS_16_IS_SHORT
+# define AS_32_IS_INT
+# define AS_64_IS_LONGLONG
+# define AS_IEEEFLOAT_8_DOUBLE
+# define AS_LOCALE_NLS
+#endif /* __linux__ */
 
 /*---------------------------------------------------------------------------*/
 /* POWER with OSX (Macintosh) */
 
 #ifdef __APPLE__
-#define ARCHSYSNAME "apple-macosx"
-#define DEFSMADE
-#define OPENRDMODE "r"
-#define OPENWRMODE "w"
-#define OPENUPMODE "r+"
-#define IEEEFLOAT_8_DOUBLE
-typedef signed char as_int8_t;
-typedef unsigned char as_uint8_t;
-typedef signed short as_int16_t;
-typedef unsigned short as_uint16_t;
-#define HAS16
-typedef signed int as_int32_t;
-#define PRIas_int32_t "d"
-typedef unsigned int as_uint32_t;
-#undef AS_HAS_LONGLONG
-#define AS_HAS_LONGLONG 1
-#define AS_64_IS_LONGLONG
-#define NO_NLS
-#endif
+# define ARCHSYSNAME "apple-macosx"
+# define AS_FOPEN_MODES_UNIX
+# define AS_PATHSYNTAX_UNIX
+# define AS_8_IS_CHAR
+# define AS_16_IS_SHORT
+# define AS_32_IS_INT
+# undef AS_HAS_LONGLONG
+# define AS_HAS_LONGLONG 1
+# define AS_64_IS_LONGLONG
+# define AS_IEEEFLOAT_8_DOUBLE
+# define AS_NO_NLS
+#endif /* __APPLE__ */
 
 #endif /* _POWER */
 
@@ -759,25 +606,18 @@ typedef unsigned int as_uint32_t;
 /* POWER64 with Linux */
 
 #ifdef __linux__
-#define ARCHSYSNAME "unknown-linux"
-#define DEFSMADE
-#define OPENRDMODE "r"
-#define OPENWRMODE "w"
-#define OPENUPMODE "r+"
-#define IEEEFLOAT_8_DOUBLE
-typedef signed char as_int8_t;
-typedef unsigned char as_uint8_t;
-typedef signed short as_int16_t;
-typedef unsigned short as_uint16_t;
-#define HAS16
-typedef signed int as_int32_t;
-#define PRIas_int32_t "d"
-typedef unsigned int as_uint32_t;
-#undef AS_HAS_LONGLONG
-#define AS_HAS_LONGLONG 1
-#define AS_64_IS_LONGLONG
-#define LOCALE_NLS
-#endif
+# define ARCHSYSNAME "unknown-linux"
+# define AS_FOPEN_MODES_UNIX
+# define AS_PATHSYNTAX_UNIX
+# define AS_8_IS_CHAR
+# define AS_16_IS_SHORT
+# define AS_32_IS_INT
+# undef AS_HAS_LONGLONG
+# define AS_HAS_LONGLONG 1
+# define AS_64_IS_LONGLONG
+# define AS_IEEEFLOAT_8_DOUBLE
+# define AS_LOCALE_NLS
+#endif /* __linux__ */
 
 #endif /* _POWER64 */
 
@@ -793,24 +633,18 @@ typedef unsigned int as_uint32_t;
 
 
 #ifdef __linux__
-#define ARCHSYSNAME "unknown-linux"
-#define DEFSMADE
-#define OPENRDMODE "r"
-#define OPENWRMODE "w"
-#define OPENUPMODE "r+"
-#define IEEEFLOAT
-typedef signed char as_int8_t;
-typedef unsigned char as_uint8_t;
-typedef signed short as_int16_t;
-typedef unsigned short as_uint16_t;
-#define HAS16
-typedef signed int as_int32_t;
-typedef unsigned int as_uint32_t;
-#undef AS_HAS_LONGLONG
-#define AS_HAS_LONGLONG 1
-#define AS_64_IS_LONGLONG
-#define LOCALE_NLS
-#endif
+# define ARCHSYSNAME "unknown-linux"
+# define AS_FOPEN_MODES_UNIX
+# define AS_PATHSYNTAX_UNIX
+# define AS_8_IS_CHAR
+# define AS_16_IS_SHORT
+# define AS_32_IS_INT
+# undef AS_HAS_LONGLONG
+# define AS_HAS_LONGLONG 1
+# define AS_64_IS_LONGLONG
+# define AS_IEEEFLOAT_8_DOUBLE
+# define AS_LOCALE_NLS
+#endif /* __linux__ */
 
 #endif /* __s390__ */
 
@@ -822,29 +656,21 @@ typedef unsigned int as_uint32_t;
 #define ARCHPRNAME "s390x"
 
 #ifdef __linux__
+# define ARCHSYSNAME "unknown-linux"
+# define AS_FOPEN_MODES_UNIX
+# define AS_PATHSYNTAX_UNIX
+# define AS_8_IS_CHAR
+# define AS_16_IS_SHORT
+# define AS_32_IS_INT
+# define AS_64_IS_LONG
+# define AS_IEEEFLOAT_8_DOUBLE
+# define AS_LOCALE_NLS
 
-#define ARCHSYSNAME "unknown-linux"
-#define DEFSMADE
-#define OPENRDMODE "r"
-#define OPENWRMODE "w"
-#define OPENUPMODE "r+"
-#define IEEEFLOAT_8_DOUBLE
-typedef signed char as_int8_t;
-typedef unsigned char as_uint8_t;
-typedef signed short as_int16_t;
-typedef unsigned short as_uint16_t;
-#define HAS16
-typedef signed int as_int32_t;
-#define PRIas_int32_t "d"
-typedef unsigned int as_uint32_t;
-#define AS_64_IS_LONG
-#define LOCALE_NLS
-
-#ifdef __SIZEOF_INT128__
+# ifdef __SIZEOF_INT128__
 typedef __uint128_t as_uint128_t;
 typedef __int128_t as_int128_t;
-# define HAS128
-#endif
+#  define AS_HAS128
+# endif
 
 #endif /* __linux__ */
 
@@ -861,30 +687,23 @@ typedef __int128_t as_int128_t;
 /* VAX with Ultrix: */
 
 #ifdef __ultrix
-#ifndef __GNUC__
-# undef AS_HAS_LONGLONG
-# define AS_HAS_LONGLONG 0
-#endif
-#define ARCHSYSNAME "dec-ultrix"
-#define DEFSMADE
-#define OPENRDMODE "r"
-#define OPENWRMODE "w"
-#define OPENUPMODE "r+"
-#define HOST_DECFLOAT
-#define NEEDS_STRDUP
-#define NEED_GETTIMEOFDAY
-#define BKOKEN_SPRINTF
-typedef signed char as_int8_t;
-typedef unsigned char as_uint8_t;
-typedef signed short as_int16_t;
-typedef unsigned short as_uint16_t;
-#define HAS16
-typedef signed int as_int32_t;
-#define PRIas_int32_t "d"
-typedef unsigned int as_uint32_t;
-#define AS_64_IS_LONGLONG
-#define NO_NLS
-#endif
+# ifndef __GNUC__
+#  undef AS_HAS_LONGLONG
+#  define AS_HAS_LONGLONG 0
+# endif
+# define ARCHSYSNAME "dec-ultrix"
+# define AS_FOPEN_MODES_UNIX
+# define AS_PATHSYNTAX_UNIX
+# define AS_8_IS_CHAR
+# define AS_16_IS_SHORT
+# define AS_32_IS_INT
+# define AS_64_IS_LONGLONG
+# define AS_DECFLOAT
+# define NEEDS_STRDUP
+# define NEED_GETTIMEOFDAY
+# define BKOKEN_SPRINTF
+# define AS_NO_NLS
+#endif /* __ultrix */
 
 /*---------------------------------------------------------------------------*/
 /* VAX with NetBSD 1.x:
@@ -892,23 +711,16 @@ typedef unsigned int as_uint32_t;
    quite a normal 32-Bit-UNIX system - except for the float format... */
 
 #ifdef __NetBSD__
-#define ARCHSYSNAME "vax-netbsd"
-#define DEFSMADE
-#define OPENRDMODE "r"
-#define OPENWRMODE "w"
-#define OPENUPMODE "r+"
-#define HOST_DECFLOAT
-typedef signed char as_int8_t;
-typedef unsigned char as_uint8_t;
-typedef signed short as_int16_t;
-typedef unsigned short as_uint16_t;
-#define HAS16
-typedef signed int as_int32_t;
-#define PRIas_int32_t "d"
-typedef unsigned int as_uint32_t;
-#define AS_64_IS_LONGLONG
-#define LOCALE_NLS
-#endif
+# define ARCHSYSNAME "vax-netbsd"
+# define AS_FOPEN_MODES_UNIX
+# define AS_PATHSYNTAX_UNIX
+# define AS_8_IS_CHAR
+# define AS_16_IS_SHORT
+# define AS_32_IS_INT
+# define AS_64_IS_LONGLONG
+# define AS_DECFLOAT
+# define AS_LOCALE_NLS
+#endif /* __NetBSD__ */
 
 #endif /* vax */
 
@@ -926,23 +738,16 @@ typedef unsigned int as_uint32_t;
    OSF has full NLS support */
 
 #ifdef __osf__
-#define ARCHSYSNAME "dec-osf"
-#define DEFSMADE
-#define OPENRDMODE "r"
-#define OPENWRMODE "w"
-#define OPENUPMODE "r+"
-#define IEEEFLOAT_8_DOUBLE
-typedef signed char as_int8_t;
-typedef unsigned char as_uint8_t;
-typedef signed short as_int16_t;
-typedef unsigned short as_uint16_t;
-#define HAS16
-typedef signed int as_int32_t;
-#define PRIas_int32_t "d"
-typedef unsigned int as_uint32_t;
-#define AS_64_IS_LONG
-#define LOCALE_NLS
-#endif
+# define ARCHSYSNAME "dec-osf"
+# define AS_FOPEN_MODES_UNIX
+# define AS_PATHSYNTAX_UNIX
+# define AS_8_IS_CHAR
+# define AS_16_IS_SHORT
+# define AS_32_IS_INT
+# define AS_64_IS_LONG
+# define AS_IEEEFLOAT_8_DOUBLE
+# define AS_LOCALE_NLS
+#endif /* __osf__ */
 
 /*---------------------------------------------------------------------------*/
 /* DEC Alpha with Linux and GCC:
@@ -950,23 +755,16 @@ typedef unsigned int as_uint32_t;
    see OSF... */
 
 #ifdef __linux__
-#define ARCHSYSNAME "unknown-linux"
-#define DEFSMADE
-#define OPENRDMODE "r"
-#define OPENWRMODE "w"
-#define OPENUPMODE "r+"
-#define IEEEFLOAT_8_DOUBLE
-typedef signed char as_int8_t;
-typedef unsigned char as_uint8_t;
-typedef signed short as_int16_t;
-typedef unsigned short as_uint16_t;
-#define HAS16
-typedef signed int as_int32_t;
-#define PRIas_int32_t "d"
-typedef unsigned int as_uint32_t;
-#define AS_64_IS_LONG
-#define LOCALE_NLS
-#endif
+# define ARCHSYSNAME "unknown-linux"
+# define AS_FOPEN_MODES_UNIX
+# define AS_PATHSYNTAX_UNIX
+# define AS_8_IS_CHAR
+# define AS_16_IS_SHORT
+# define AS_32_IS_INT
+# define AS_64_IS_LONG
+# define AS_IEEEFLOAT_8_DOUBLE
+# define AS_LOCALE_NLS
+#endif /* __linux__ */
 
 /*---------------------------------------------------------------------------*/
 /* DEC Alpha with NetBSD and GCC:
@@ -974,42 +772,28 @@ typedef unsigned int as_uint32_t;
    see OSF... */
 
 #ifdef __NetBSD__
-#define ARCHSYSNAME "unknown-netbsd"
-#define DEFSMADE
-#define OPENRDMODE "r"
-#define OPENWRMODE "w"
-#define OPENUPMODE "r+"
-#define IEEEFLOAT_8_DOUBLE
-typedef signed char as_int8_t;
-typedef unsigned char as_uint8_t;
-typedef signed short as_int16_t;
-typedef unsigned short as_uint16_t;
-#define HAS16
-typedef signed int as_int32_t;
-#define PRIas_int32_t "d"
-typedef unsigned int as_uint32_t;
-#define AS_64_IS_LONG
-#define LOCALE_NLS
-#endif
+# define ARCHSYSNAME "unknown-netbsd"
+# define AS_FOPEN_MODES_UNIX
+# define AS_PATHSYNTAX_UNIX
+# define AS_8_IS_CHAR
+# define AS_16_IS_SHORT
+# define AS_32_IS_INT
+# define AS_64_IS_LONG
+# define AS_IEEEFLOAT_8_DOUBLE
+# define AS_LOCALE_NLS
+#endif /* __NetBSD__ */
 
 #ifdef __FreeBSD__
-#define ARCHSYSNAME "unknown-freebsd"
-#define DEFSMADE
-#define OPENRDMODE "r"
-#define OPENWRMODE "w"
-#define OPENUPMODE "r+"
-#define IEEEFLOAT_8_DOUBLE
-typedef signed char as_int8_t;
-typedef unsigned char as_uint8_t;
-typedef signed short as_int16_t;
-typedef unsigned short as_uint16_t;
-#define HAS16
-typedef signed int as_int32_t;
-#define PRIas_int32_t "d"
-typedef unsigned int as_uint32_t;
-#define AS_64_IS_LONG
-#define NO_NLS
-#endif
+# define ARCHSYSNAME "unknown-freebsd"
+# define AS_FOPEN_MODES_UNIX
+# define AS_PATHSYNTAX_UNIX
+# define AS_8_IS_CHAR
+# define AS_16_IS_SHORT
+# define AS_32_IS_INT
+# define AS_64_IS_LONG
+# define AS_IEEEFLOAT_8_DOUBLE
+# define AS_NO_NLS
+#endif /* __FreeBSD__ */
 
 #endif /* __alpha */
 
@@ -1026,23 +810,16 @@ typedef unsigned int as_uint32_t;
    principally, a normal 32-bit UNIX */
 
 #ifdef __NetBSD__
-#define ARCHSYSNAME "i386-netbsd"
-#define DEFSMADE
-#define OPENRDMODE "r"
-#define OPENWRMODE "w"
-#define OPENUPMODE "r+"
-#define IEEEFLOAT_8_DOUBLE
-typedef signed char as_int8_t;
-typedef unsigned char as_uint8_t;
-typedef signed short as_int16_t;
-typedef unsigned short as_uint16_t;
-#define HAS16
-typedef signed int as_int32_t;
-#define PRIas_int32_t "d"
-typedef unsigned int as_uint32_t;
-#define AS_64_IS_LONGLONG
-#define LOCALE_NLS
-#endif
+# define ARCHSYSNAME "i386-netbsd"
+# define AS_FOPEN_MODES_UNIX
+# define AS_PATHSYNTAX_UNIX
+# define AS_8_IS_CHAR
+# define AS_16_IS_SHORT
+# define AS_32_IS_INT
+# define AS_64_IS_LONGLONG
+# define AS_IEEEFLOAT_8_DOUBLE
+# define AS_LOCALE_NLS
+#endif /* __NetBSD__ */
 
 /*---------------------------------------------------------------------------*/
 /* Intel i386 with Linux and GCC:
@@ -1050,28 +827,20 @@ typedef unsigned int as_uint32_t;
    principally, a normal 32-bit *NIX */
 
 #ifdef __linux__
-
 #define ARCHSYSNAME "unknown-linux"
-#define DEFSMADE
-#define OPENRDMODE "r"
-#define OPENWRMODE "w"
-#define OPENUPMODE "r+"
-#if AS_HAS_LONGDOUBLE
-# define IEEEFLOAT_10_12_LONG_DOUBLE
-#else
-# define IEEEFLOAT_8_DOUBLE
-#endif
-typedef signed char as_int8_t;
-typedef unsigned char as_uint8_t;
-typedef signed short as_int16_t;
-typedef unsigned short as_uint16_t;
-#define HAS16
-typedef signed int as_int32_t;
-#define PRIas_int32_t "d"
-typedef unsigned int as_uint32_t;
-#define AS_64_IS_LONGLONG
-#define LOCALE_NLS
-#endif
+# define AS_FOPEN_MODES_UNIX
+# define AS_PATHSYNTAX_UNIX
+# define AS_8_IS_CHAR
+# define AS_16_IS_SHORT
+# define AS_32_IS_INT
+# define AS_64_IS_LONGLONG
+# if AS_HAS_LONGDOUBLE
+#  define AS_IEEEFLOAT_10_12_LONG_DOUBLE
+# else
+#  define AS_IEEEFLOAT_8_DOUBLE
+# endif
+# define AS_LOCALE_NLS
+#endif /* __linux__ */
 
 /*---------------------------------------------------------------------------*/
 /* Intel i386 with FreeBSD and GCC:
@@ -1079,46 +848,32 @@ typedef unsigned int as_uint32_t;
    principally, a normal 32-bit *NIX */
 
 #ifdef __FreeBSD__
-#define ARCHSYSNAME "unknown-freebsd"
-#define DEFSMADE
-#define OPENRDMODE "r"
-#define OPENWRMODE "w"
-#define OPENUPMODE "r+"
-#define IEEEFLOAT_8_DOUBLE
-typedef signed char as_int8_t;
-typedef unsigned char as_uint8_t;
-typedef signed short as_int16_t;
-typedef unsigned short as_uint16_t;
-#define HAS16
-typedef signed int as_int32_t;
-#define PRIas_int32_t "d"
-typedef unsigned int as_uint32_t;
-#define AS_64_IS_LONGLONG
-#define NO_NLS
-#endif
+# define ARCHSYSNAME "unknown-freebsd"
+# define AS_FOPEN_MODES_UNIX
+# define AS_PATHSYNTAX_UNIX
+# define AS_8_IS_CHAR
+# define AS_16_IS_SHORT
+# define AS_32_IS_INT
+# define AS_64_IS_LONGLONG
+# define AS_IEEEFLOAT_8_DOUBLE
+# define AS_NO_NLS
+#endif /* __FreeBSD__ */
 
 /*---------------------------------------------------------------------------*/
 /* Intel i386 with Darwin and GCC:
    principally, a normal 32-bit *NIX */
 
 #ifdef __APPLE__
-#define ARCHSYSNAME "apple-osx"
-#define DEFSMADE
-#define OPENRDMODE "r"
-#define OPENWRMODE "w"
-#define OPENUPMODE "r+"
-#define IEEEFLOAT_8_DOUBLE
-typedef signed char as_int8_t;
-typedef unsigned char as_uint8_t;
-typedef signed short as_int16_t;
-typedef unsigned short as_uint16_t;
-#define HAS16
-typedef signed int as_int32_t;
-#define PRIas_int32_t "d"
-typedef unsigned int as_uint32_t;
-#define AS_64_IS_LONGLONG
-#define LOCALE_NLS
-#endif
+# define ARCHSYSNAME "apple-osx"
+# define AS_FOPEN_MODES_UNIX
+# define AS_PATHSYNTAX_UNIX
+# define AS_8_IS_CHAR
+# define AS_16_IS_SHORT
+# define AS_32_IS_INT
+# define AS_64_IS_LONGLONG
+# define AS_IEEEFLOAT_8_DOUBLE
+# define AS_LOCALE_NLS
+#endif /* __APPLE__ */
 
 /*---------------------------------------------------------------------------*/
 /* Intel i386 with Windows and Cygnus GCC:
@@ -1129,35 +884,20 @@ typedef unsigned int as_uint32_t;
 
 /* no long long data type if C89 is used */
 
-#if (defined __STDC__) && (!defined __STDC_VERSION__)
-# define NOLONGLONG
-#endif
+# if (defined __STDC__) && (!defined __STDC_VERSION__)
+#  define NOLONGLONG
+# endif
 
-#define ARCHSYSNAME "unknown-win32"
-#define DEFSMADE
-#define OPENRDMODE "rb"
-#define OPENWRMODE "wb"
-#define OPENUPMODE "rb+"
-#define IEEEFLOAT_8_DOUBLE
-#define SLASHARGS
-#define PATHSEP '\\'
-#define SPATHSEP "\\"
-#define DIRSEP ';'
-#define SDIRSEP ";"
-#define DRSEP ':'
-#define SDRSEP ":"
-#define NULLDEV "NUL"
-typedef signed char as_int8_t;
-typedef unsigned char as_uint8_t;
-typedef signed short as_int16_t;
-typedef unsigned short as_uint16_t;
-#define HAS16
-typedef signed int as_int32_t;
-#define PRIas_int32_t "d"
-typedef unsigned int as_uint32_t;
-#define AS_64_IS_LONGLONG
-#define W32_NLS
-#endif
+# define ARCHSYSNAME "unknown-win32"
+# define AS_FOPEN_MODES_DOS
+# define AS_PATHSYNTAX_DOS
+# define AS_8_IS_CHAR
+# define AS_16_IS_SHORT
+# define AS_32_IS_INT
+# define AS_64_IS_LONGLONG
+# define AS_IEEEFLOAT_8_DOUBLE
+# define AS_W32_NLS
+#endif /* _WIN32 */
 
 /*---------------------------------------------------------------------------*/
 /* Intel i386 with OS/2 and emx-GCC:
@@ -1165,31 +905,16 @@ typedef unsigned int as_uint32_t;
    well, not really a UNIX... */
 
 #ifdef __EMX__
-#define ARCHSYSNAME "unknown-os2"
-#define DEFSMADE
-#define OPENRDMODE "rb"
-#define OPENWRMODE "wb"
-#define OPENUPMODE "rb+"
-#define IEEEFLOAT_8_DOUBLE
-#define SLASHARGS
-#define PATHSEP '\\'
-#define SPATHSEP "\\"
-#define DIRSEP ';'
-#define SDIRSEP ";"
-#define DRSEP ':'
-#define SDRSEP ":"
-#define NULLDEV "NUL"
-typedef signed char as_int8_t;
-typedef unsigned char as_uint8_t;
-typedef signed short as_int16_t;
-typedef unsigned short as_uint16_t;
-#define HAS16
-typedef signed int as_int32_t;
-#define PRIas_int32_t "d"
-typedef unsigned int as_uint32_t;
-#define AS_64_IS_LONGLONG
-#define OS2_NLS
-#endif
+# define ARCHSYSNAME "unknown-os2"
+# define AS_FOPEN_MODES_DOS
+# define AS_PATHSYNTAX_DOS
+# define AS_8_IS_CHAR
+# define AS_16_IS_SHORT
+# define AS_32_IS_INT
+# define AS_64_IS_LONGLONG
+# define AS_IEEEFLOAT_8_DOUBLE
+# define AS_OS2_NLS
+#endif /* __EMX__ */
 
 /*---------------------------------------------------------------------------*/
 /* Intel i386 with OS/2 and IBMC:
@@ -1197,30 +922,16 @@ typedef unsigned int as_uint32_t;
 well, not really a UNIX... */
 
 #ifdef __IBMC__
-#define DEFSMADE
-#define NODUP
-#define OPENRDMODE "rb"
-#define OPENWRMODE "wb"
-#define OPENUPMODE "rb+"
-#define IEEEFLOAT_8_DOUBLE
-#define SLASHARGS
-#define PATHSEP '\\'
-#define SPATHSEP "\\"
-#define DRSEP ':'
-#define SDRSEP ":"
-#define NULLDEV "NUL"
-typedef signed char as_int8_t;
-typedef unsigned char as_uint8_t;
-typedef signed short as_int16_t;
-typedef unsigned short as_uint16_t;
-#define HAS16
-typedef signed int as_int32_t;
-#define PRIas_int32_t "d"
-typedef unsigned int as_uint32_t;
-#undef AS_HAS_LONGLONG
-#define AS_HAS_LONGLONG 0
-#define OS2_NLS
-#endif
+# define AS_FOPEN_MODES_DOS
+# define AS_PATHSYNTAX_DOS
+# define AS_8_IS_CHAR
+# define AS_16_IS_SHORT
+# define AS_32_IS_INT
+# undef AS_HAS_LONGLONG
+# define AS_HAS_LONGLONG 0
+# define AS_IEEEFLOAT_8_DOUBLE
+# define AS_OS2_NLS
+#endif /* __IBMC__ */
 
 /*---------------------------------------------------------------------------*/
 /* Intel x86 with MS-DOS and Borland-C:
@@ -1229,53 +940,36 @@ typedef unsigned int as_uint32_t;
    assure we get a usable memory model */
 
 #ifdef __MSDOS__
-#ifdef __TURBOC__
-#ifndef __LARGE__
-#error Wrong memory model - use large!
-#endif
-#undef ARCHPRNAME
-#ifdef __DPMI16__
-#define ARCHPRNAME "i286"
-#define ARCHSYSNAME "unknown-dpmi"
-#else
-#define ARCHPRNAME "i86"
-#define ARCHSYSNAME "unknown-msdos"
-#endif
-#define CKMALLOC
-#define HEAPRESERVE 4096
-#define DEFSMADE
-#define OPENRDMODE "rb"
-#define OPENWRMODE "wb"
-#define OPENUPMODE "rb+"
-#define IEEEFLOAT_8_DOUBLE
+# ifdef __TURBOC__
+#  ifndef __LARGE__
+#   error Wrong memory model - use large!
+#  endif
+#  undef ARCHPRNAME
+#  ifdef __DPMI16__
+#   define ARCHPRNAME "i286"
+#   define ARCHSYSNAME "unknown-dpmi"
+#  else
+#   define ARCHPRNAME "i86"
+#   define ARCHSYSNAME "unknown-msdos"
+#  endif
+#  define CKMALLOC
+#  define HEAPRESERVE 4096
+#  define AS_FOPEN_MODES_DOS
+#  define AS_PATHSYNTAX_DOS
+#  define AS_8_IS_CHAR
+#  define AS_16_IS_SHORT
+#  define AS_32_IS_LONG
+#  undef AS_HAS_LONGLONG
+#  define AS_HAS_LONGLONG 0
+#  define AS_IEEEFLOAT_8_DOUBLE
 /*
-#define IEEEFLOAT_10_10_LONG_DOUBLE
-#define HUGE_VALL _LHUGE_VAL
-#define strtold(s,e) _strtold(s,e)
+#  define AS_IEEEFLOAT_10_10_LONG_DOUBLE
+#  define HUGE_VALL _LHUGE_VAL
+#  define strtold(s,e) _strtold(s,e)
 */
-#define SLASHARGS
-#define PATHSEP '\\'
-#define SPATHSEP "\\"
-#define DIRSEP ';'
-#define SDIRSEP ";"
-#define DRSEP ':'
-#define SDRSEP ":"
-#define NULLDEV "NUL"
-typedef signed char as_int8_t;
-typedef unsigned char as_uint8_t;
-typedef signed short as_int16_t;
-typedef unsigned short as_uint16_t;
-#define HAS16
-typedef signed long as_int32_t;
-#define PRIas_int32_t "ld"
-typedef unsigned long as_uint32_t;
-#undef AS_HAS_LONGLONG
-#define AS_HAS_LONGLONG 0
-#define DOS_NLS
-#define __PROTOS__
-#define AS_UNUSED_TO_VOID
-#endif
-#endif
+#  define AS_DOS_NLS
+# endif /* __TURBOC__ */
+#endif /* __MSDOS__ */
 
 #endif /* __i386 */
 
@@ -1283,7 +977,7 @@ typedef unsigned long as_uint32_t;
 /*===========================================================================*/
 /* Intel x86_64 Platform(s): */
 
-#if  (defined __k8__) || (defined __x86_64) || (defined __x86_64__)
+#if (defined __k8__) || (defined __x86_64) || (defined __x86_64__)
 
 #define ARCHPRNAME "x86_64"
 
@@ -1294,41 +988,34 @@ typedef unsigned long as_uint32_t;
 
 #if defined(__linux__) || defined(__FreeBSD__) || defined(__NetBSD__) || defined(__APPLE__)
 
-#ifdef __linux__
-#define ARCHSYSNAME "unknown-linux"
-#elif defined __FreeBSD__
-#define ARCHSYSNAME "unknown-freebsd"
-#elif defined __NetBSD__
-#define ARCHSYSNAME "unknown-netbsd"
-#else
-#define ARCHSYSNAME "apple-osx"
-#endif
+# ifdef __linux__
+# define ARCHSYSNAME "unknown-linux"
+# elif defined __FreeBSD__
+# define ARCHSYSNAME "unknown-freebsd"
+# elif defined __NetBSD__
+# define ARCHSYSNAME "unknown-netbsd"
+# else
+# define ARCHSYSNAME "apple-osx"
+# endif
 
-#define DEFSMADE
-#define OPENRDMODE "r"
-#define OPENWRMODE "w"
-#define OPENUPMODE "r+"
-#if AS_HAS_LONGDOUBLE
-# define IEEEFLOAT_10_16_LONG_DOUBLE
-#else
-# define IEEEFLOAT_8_DOUBLE
-#endif
-typedef signed char as_int8_t;
-typedef unsigned char as_uint8_t;
-typedef signed short as_int16_t;
-typedef unsigned short as_uint16_t;
-#define HAS16
-typedef signed int as_int32_t;
-#define PRIas_int32_t "d"
-typedef unsigned int as_uint32_t;
-#define AS_64_IS_LONG
-#define LOCALE_NLS
+# define AS_FOPEN_MODES_UNIX
+# define AS_PATHSYNTAX_UNIX
+# define AS_8_IS_CHAR
+# define AS_16_IS_SHORT
+# define AS_32_IS_INT
+# define AS_64_IS_LONG
+# if AS_HAS_LONGDOUBLE
+#  define AS_IEEEFLOAT_10_16_LONG_DOUBLE
+# else
+#  define AS_IEEEFLOAT_8_DOUBLE
+# endif
+# define AS_LOCALE_NLS
 
-#ifdef __SIZEOF_INT128__
+# ifdef __SIZEOF_INT128__
 typedef __uint128_t as_uint128_t;
 typedef __int128_t as_int128_t;
-# define HAS128
-#endif
+#  define AS_HAS128
+# endif
 
 #endif /* __linux__ || __FreeBSD__ || __NetBSD__ || __APPLE__ */
 
@@ -1340,36 +1027,19 @@ typedef __int128_t as_int128_t;
    get 64 bits. */
 
 #ifdef _WIN32
-
-#define ARCHSYSNAME "unknown-win64"
-#define DEFSMADE
-#define OPENRDMODE "rb"
-#define OPENWRMODE "wb"
-#define OPENUPMODE "rb+"
-#if AS_HAS_LONGDOUBLE
-# define IEEEFLOAT_10_16_LONG_DOUBLE
-#else
-# define IEEEFLOAT_8_DOUBLE
-#endif
-#define SLASHARGS
-#define PATHSEP '\\'
-#define SPATHSEP "\\"
-#define DIRSEP ';'
-#define SDIRSEP ";"
-#define DRSEP ':'
-#define SDRSEP ":"
-#define NULLDEV "NUL"
-typedef signed char as_int8_t;
-typedef unsigned char as_uint8_t;
-typedef signed short as_int16_t;
-typedef unsigned short as_uint16_t;
-#define HAS16
-typedef signed int as_int32_t;
-#define PRIas_int32_t "d"
-typedef unsigned int as_uint32_t;
-#define AS_64_IS_LONGLONG
-#define NO_NLS
-
+# define ARCHSYSNAME "unknown-win64"
+# define AS_FOPEN_MODES_DOS
+# define AS_PATHSYNTAX_DOS
+# define AS_8_IS_CHAR
+# define AS_16_IS_SHORT
+# define AS_32_IS_INT
+# define AS_64_IS_LONGLONG
+# if AS_HAS_LONGDOUBLE
+#  define AS_IEEEFLOAT_10_16_LONG_DOUBLE
+# else
+#  define AS_IEEEFLOAT_8_DOUBLE
+# endif
+# define AS_NO_NLS
 #endif /* _WIN32 */
 
 #endif /* __k8__ || __x86_64 || __x86_64__ */
@@ -1385,26 +1055,15 @@ typedef unsigned int as_uint32_t;
 /* Intel ia64 with Linux and GCC:                                            */
 
 #ifdef __linux__
-
-#define ARCHSYSNAME "unknown-linux"
-#define DEFSMADE
-#define OPENRDMODE "r"
-#define OPENWRMODE "w"
-#define OPENUPMODE "r+"
-#define IEEEFLOAT
-typedef signed char as_int8_t;
-typedef unsigned char as_uint8_t;
-typedef signed short as_int16_t;
-typedef unsigned short as_uint16_t;
-#define HAS16
-typedef signed int as_int32_t;
-#define PRIas_int32_t "d"
-typedef unsigned int as_uint32_t;
-typedef signed long long Integ64;
-typedef unsigned long long Card64;
-#define AS_64_IS_LONGLONG
-#define LOCALE_NLS
-
+# define ARCHSYSNAME "unknown-linux"
+# define AS_FOPEN_MODES_UNIX
+# define AS_PATHSYNTAX_UNIX
+# define AS_8_IS_CHAR
+# define AS_16_IS_SHORT
+# define AS_32_IS_INT
+# define AS_64_IS_LONGLONG
+# define AS_IEEEFLOAT_8_DOUBLE
+# define AS_LOCALE_NLS
 #endif /* __linux__ */
 
 #endif /* __ia64__ */
@@ -1420,22 +1079,15 @@ typedef unsigned long long Card64;
 /* ARM linux with GCC */
 
 #ifdef __linux__
-#define ARCHSYSNAME "unknown-linux-arm"
-#define DEFSMADE
-#define OPENRDMODE "r"
-#define OPENWRMODE "w"
-#define OPENUPMODE "r+"
-#define IEEEFLOAT_8_DOUBLE
-typedef signed char as_int8_t;
-typedef unsigned char as_uint8_t;
-typedef signed short as_int16_t;
-typedef unsigned short as_uint16_t;
-#define HAS16
-typedef signed int as_int32_t;
-#define PRIas_int32_t "d"
-typedef unsigned int as_uint32_t;
-#define AS_64_IS_LONGLONG
-#define LOCALE_NLS
+# define ARCHSYSNAME "unknown-linux-arm"
+# define AS_FOPEN_MODES_UNIX
+# define AS_PATHSYNTAX_UNIX
+# define AS_8_IS_CHAR
+# define AS_16_IS_SHORT
+# define AS_32_IS_INT
+# define AS_64_IS_LONGLONG
+# define AS_IEEEFLOAT_8_DOUBLE
+# define AS_LOCALE_NLS
 #endif /* __linux__ */
 
 /*---------------------------------------------------------------------------*/
@@ -1446,22 +1098,15 @@ typedef unsigned int as_uint32_t;
 #ifdef __EPOC32__
 
 #ifdef __EPOCEMX__
-#define ARCHSYSNAME "psion-epoc32-epocemx"
-#define DEFSMADE
-#define OPENRDMODE "r"
-#define OPENWRMODE "w"
-#define OPENUPMODE "r+"
-#define IEEEFLOAT_8_DOUBLE
-typedef signed char as_int8_t;
-typedef unsigned char as_uint8_t;
-typedef signed short as_int16_t;
-typedef unsigned short as_uint16_t;
-#define HAS16
-typedef signed int as_int32_t;
-#define PRIas_int32_t "d"
-typedef unsigned int as_uint32_t;
-#define AS_64_IS_LONGLONG
-#define NO_NLS
+# define ARCHSYSNAME "psion-epoc32-epocemx"
+# define AS_FOPEN_MODES_UNIX
+# define AS_PATHSYNTAX_UNIX
+# define AS_8_IS_CHAR
+# define AS_16_IS_SHORT
+# define AS_32_IS_INT
+# define AS_64_IS_LONGLONG
+# define AS_IEEEFLOAT_8_DOUBLE
+# define AS_NO_NLS
 #endif /* __EPOCEMX__ */
 
 
@@ -1480,45 +1125,31 @@ typedef unsigned int as_uint32_t;
 /* AArch64 with Linux and GCC: */
 
 #ifdef __linux__
-#define ARCHSYSNAME "unknown-linux"
-#define DEFSMADE
-#define OPENRDMODE "r"
-#define OPENWRMODE "w"
-#define OPENUPMODE "r+"
-#define IEEEFLOAT_8_DOUBLE
-typedef signed char as_int8_t;
-typedef unsigned char as_uint8_t;
-typedef signed short as_int16_t;
-typedef unsigned short as_uint16_t;
-#define HAS16
-typedef signed int as_int32_t;
-#define PRIas_int32_t "d"
-typedef unsigned int as_uint32_t;
-#define AS_64_IS_LONG
-#define LOCALE_NLS
-#endif
+# define ARCHSYSNAME "unknown-linux"
+# define AS_FOPEN_MODES_UNIX
+# define AS_PATHSYNTAX_UNIX
+# define AS_8_IS_CHAR
+# define AS_16_IS_SHORT
+# define AS_32_IS_INT
+# define AS_64_IS_LONG
+# define AS_IEEEFLOAT_8_DOUBLE
+# define AS_LOCALE_NLS
+#endif /* __linux__ */
 
 /*---------------------------------------------------------------------------*/
 /* AArch64 with macOS (Apple M-series CPU) */
 
 #ifdef __APPLE__
-#define ARCHSYSNAME "apple-darwin"
-#define DEFSMADE
-#define OPENRDMODE "r"
-#define OPENWRMODE "w"
-#define OPENUPMODE "r+"
-#define IEEEFLOAT_8_DOUBLE
-typedef signed char as_int8_t;
-typedef unsigned char as_uint8_t;
-typedef signed short as_int16_t;
-typedef unsigned short as_uint16_t;
-#define HAS16
-typedef signed int as_int32_t;
-#define PRIas_int32_t "d"
-typedef unsigned int as_uint32_t;
-#define AS_64_IS_LONG
-#define LOCALE_NLS
-#endif
+# define ARCHSYSNAME "apple-darwin"
+# define AS_FOPEN_MODES_UNIX
+# define AS_PATHSYNTAX_UNIX
+# define AS_8_IS_CHAR
+# define AS_16_IS_SHORT
+# define AS_32_IS_INT
+# define AS_64_IS_LONG
+# define AS_IEEEFLOAT_8_DOUBLE
+# define AS_LOCALE_NLS
+#endif /* __APPLE__ */
 
 #endif /* __aarch64__ */
 
@@ -1533,22 +1164,15 @@ typedef unsigned int as_uint32_t;
 /* RISC-V linux with GCC */
 
 #ifdef __linux__
-#define ARCHSYSNAME "unknown-linux"
-#define DEFSMADE
-#define OPENRDMODE "r"
-#define OPENWRMODE "w"
-#define OPENUPMODE "r+"
-#define IEEEFLOAT_8_DOUBLE
-typedef signed char as_int8_t;
-typedef unsigned char as_uint8_t;
-typedef signed short as_int16_t;
-typedef unsigned short as_uint16_t;
-#define HAS16
-typedef signed int as_int32_t;
-#define PRIas_int32_t "d"
-typedef unsigned int as_uint32_t;
-#define AS_64_IS_LONGLONG
-#define LOCALE_NLS
+# define ARCHSYSNAME "unknown-linux"
+# define AS_FOPEN_MODES_UNIX
+# define AS_PATHSYNTAX_UNIX
+# define AS_8_IS_CHAR
+# define AS_16_IS_SHORT
+# define AS_32_IS_INT
+# define AS_64_IS_LONGLONG
+# define AS_IEEEFLOAT_8_DOUBLE
+# define AS_LOCALE_NLS
 #endif /* __linux__ */
 
 #endif /* __riscv __riscv_xlen == 32 */
@@ -1564,22 +1188,15 @@ typedef unsigned int as_uint32_t;
 /* RISC-V 64-bit linux with GCC */
 
 #if defined __linux__
-#define ARCHSYSNAME "unknown-linux"
-#define DEFSMADE
-#define OPENRDMODE "r"
-#define OPENWRMODE "w"
-#define OPENUPMODE "r+"
-#define IEEEFLOAT
-typedef signed char as_int8_t;
-typedef unsigned char as_uint8_t;
-typedef signed short as_int16_t;
-typedef unsigned short as_uint16_t;
-#define HAS16
-typedef signed int as_int32_t;
-#define PRIInteg32 "d"
-typedef unsigned int as_uint32_t;
-#define AS_64_IS_LONG
-#define LOCALE_NLS
+# define ARCHSYSNAME "unknown-linux"
+# define AS_FOPEN_MODES_UNIX
+# define AS_PATHSYNTAX_UNIX
+# define AS_8_IS_CHAR
+# define AS_16_IS_SHORT
+# define AS_32_IS_INT
+# define AS_64_IS_LONG
+# define AS_IEEEFLOAT_8_DOUBLE
+# define AS_LOCALE_NLS
 #endif /* __linux__ */
 
 #endif /* __riscv && __riscv_xlen == 64 */
@@ -1588,24 +1205,52 @@ typedef unsigned int as_uint32_t;
 /* Misc... */
 
 /*---------------------------------------------------------------------------*/
-/* Just for curiosity, it won't work without 16 bit int's... */
+/* Just for curiosity, it won't work without a 16 bit int type... */
 
 #ifdef _CRAYMPP
-#define OPENRDMODE "r"
-#define OPENWRMODE "w"
-#define OPENUPMODE "r+"
-#define IEEEFLOAT_8_DOUBLE
-typedef signed char as_int8_t;
-typedef unsigned char as_uint8_t;
-typedef signed short as_int32_t;
-#define PRIas_int32_t "d"
-typedef unsigned short as_uint32_t;
-#define AS_64_IS_LONG
-#define LOCALE_NLS
+# define AS_FOPEN_MODES_UNIX
+# define AS_PATHSYNTAX_UNIX
+# define AS_8_IS_CHAR
+# define AS_32_IS_SHORT
+# define AS_64_IS_LONG
+# define CRAYFLOAT_8_DOUBLE
+# define AS_LOCALE_NLS
 #endif
 
 /*===========================================================================*/
-/* Post-Processing: check for definition, add defaults */
+/* Post-Processing: */
+
+/*---------------------------------------------------------------------------*/
+/* Integer Type expansion: */
+
+#ifdef AS_8_IS_CHAR
+typedef signed char as_int8_t;
+typedef unsigned char as_uint8_t;
+#endif
+
+#ifdef AS_16_IS_SHORT
+typedef signed short as_int16_t;
+typedef unsigned short as_uint16_t;
+# define AS_HAS16
+#endif
+
+#ifdef AS_32_IS_SHORT
+typedef signed short as_int32_t;
+# define PRIas_int32_t "d"
+typedef unsigned short as_uint32_t;
+#endif
+
+#ifdef AS_32_IS_INT
+typedef signed int as_int32_t;
+# define PRIas_int32_t "d"
+typedef unsigned int as_uint32_t;
+#endif
+
+#ifdef AS_32_IS_LONG
+typedef signed long as_int32_t;
+# define PRIas_int32_t "ld"
+typedef unsigned long as_uint32_t;
+#endif
 
 /* Host provides 64 bit int as long long: can only use it if long long
    is available: */
@@ -1614,7 +1259,7 @@ typedef unsigned short as_uint32_t;
 # if AS_HAS_LONGLONG
 typedef signed long long as_int64_t;
 typedef unsigned long long as_uint64_t;
-#  define HAS64
+#  define AS_HAS64
 # endif /* AS_HAS_LONGLONG */
 #endif /* AS_64_IS_LONGLONG */
 
@@ -1624,23 +1269,26 @@ typedef unsigned long long as_uint64_t;
 #ifdef AS_64_IS_LONG
 typedef signed long as_int64_t;
 typedef unsigned long as_uint64_t;
-# define HAS64
+# define AS_HAS64
 # undef AS_HAS_LONGLONG
 # define AS_HAS_LONGLONG 0
 #endif /* AS_64_IS_LONG */
 
-#ifdef HAS128
-# ifndef HAS64
+#ifdef AS_HAS128
+# ifndef AS_HAS64
 #  error have 128 but no 64 bit integer
 # endif
 #endif
+
+/*---------------------------------------------------------------------------*/
+/* Float Type expansion: */
 
 /* Some VAX compilers internally seem to use D float
    and are unable to parse the G float DBL_MAX literal
    of 8.98...E+308 from float.h.
    So we put a hand-crafted constant in memory: */
 
-#ifdef HOST_DECFLOAT
+#ifdef AS_DECFLOAT
  typedef double as_float_t;
 # ifdef __GFLOAT
    extern double as_decfloat_get_max_gfloat(void);
@@ -1651,37 +1299,37 @@ typedef unsigned long as_uint64_t;
 # define AS_FLOAT_DIG DBL_DIG
 # define AS_HUGE_VAL HUGE_VAL
 # define as_strtof(s,e) strtod(s,e)
-#endif /* HOST_DECFLOAT */
+#endif /* AS_DECFLOAT */
 
-#ifdef IEEEFLOAT_8_DOUBLE
+#ifdef AS_IEEEFLOAT_8_DOUBLE
  typedef double as_float_t;
 # define AS_FLOAT_MAX DBL_MAX
 # define AS_FLOAT_DIG DBL_DIG
 # define AS_HUGE_VAL HUGE_VAL
 # define as_strtof(s,e) strtod(s,e)
-#endif /* IEEEFLOAT_8_DOUBLE */
+#endif /* AS_IEEEFLOAT_8_DOUBLE */
 
-#ifdef IEEEFLOAT_10_16_LONG_DOUBLE
-# define IEEEFLOAT_10_LONG_DOUBLE
+#ifdef AS_IEEEFLOAT_10_16_LONG_DOUBLE
+# define AS_IEEEFLOAT_10_LONG_DOUBLE
 # define XPRIas_float_t "L"
-#endif /* IEEEFLOAT_10_16_LONG_DOUBLE */
+#endif /* AS_IEEEFLOAT_10_16_LONG_DOUBLE */
 
-#ifdef IEEEFLOAT_10_12_LONG_DOUBLE
-# define IEEEFLOAT_10_LONG_DOUBLE
+#ifdef AS_IEEEFLOAT_10_12_LONG_DOUBLE
+# define AS_IEEEFLOAT_10_LONG_DOUBLE
 # define XPRIas_float_t "L"
-#endif /* IEEEFLOAT_10_12_LONG_DOUBLE */
+#endif /* AS_IEEEFLOAT_10_12_LONG_DOUBLE */
 
-#ifdef IEEEFLOAT_10_10_LONG_DOUBLE
-# define IEEEFLOAT_10_LONG_DOUBLE
+#ifdef AS_IEEEFLOAT_10_10_LONG_DOUBLE
+# define AS_IEEEFLOAT_10_LONG_DOUBLE
 # define XPRIas_float_t "L"
-#endif /* IEEEFLOAT_10_10_LONG_DOUBLE */
+#endif /* AS_IEEEFLOAT_10_10_LONG_DOUBLE */
 
-#ifdef IEEEFLOAT_10_2P8_LONG_DOUBLE
-# define IEEEFLOAT_10_LONG_DOUBLE
+#ifdef AS_IEEEFLOAT_10_2P8_LONG_DOUBLE
+# define AS_IEEEFLOAT_10_LONG_DOUBLE
 # define XPRIas_float_t "L"
-#endif /* IEEEFLOAT_10_2P8_LONG_DOUBLE */
+#endif /* AS_IEEEFLOAT_10_2P8_LONG_DOUBLE */
 
-#ifdef IEEEFLOAT_10_LONG_DOUBLE
+#ifdef AS_IEEEFLOAT_10_LONG_DOUBLE
  typedef long double as_float_t;
 # define AS_FLOAT_MAX LDBL_MAX
 # define AS_FLOAT_DIG LDBL_DIG
@@ -1704,7 +1352,7 @@ typedef unsigned long as_uint64_t;
 # define as_sinh(f) sinh(f)
 # define as_cosh(f) coshl(f)
 # define as_tanh(f) tanhl(f)
-#endif /* IEEEFLOAT_10_LONG_DOUBLE */
+#endif /* AS_IEEEFLOAT_10_LONG_DOUBLE */
 
 #ifndef as_strtof
 # define as_strtof(s,e) strtod(s,e)
@@ -1764,26 +1412,48 @@ typedef unsigned long as_uint64_t;
 # define as_tanh(f) tanh(f)
 #endif
 
-#ifdef DEFSMADE
-#ifndef PATHSEP
-#define PATHSEP '/'
-#define SPATHSEP "/"
-#define DIRSEP ':'
-#define SDIRSEP ":"
-#endif
-#ifndef NULLDEV
-#define NULLDEV "/dev/null"
-#endif
-#else
-#error "your platform so far is not included in AS's header files!"
-#error "please edit sysdefs.h!"
+/*---------------------------------------------------------------------------*/
+/* Path & open modes expansion: */
+
+#ifdef AS_FOPEN_MODES_DOS
+# define OPENRDMODE "rb"
+# define OPENWRMODE "wb"
+# define OPENUPMODE "rb+"
+#endif /* AS_FOPEN_MODES_DOS */
+
+#ifdef AS_FOPEN_MODES_UNIX
+# define OPENRDMODE "r"
+# define OPENWRMODE "w"
+# define OPENUPMODE "r+"
+#endif /* AS_FOPEN_MODES_UNIX */
+
+#ifdef AS_PATHSYNTAX_DOS
+# define SLASHARGS
+# define PATHSEP '\\'
+# define SPATHSEP "\\"
+# define DIRSEP ';'
+# define SDIRSEP ";"
+# define DRSEP ':'
+# define SDRSEP ":"
+# define NULLDEV "NUL"
+#endif /* AS_PATHSYNTAX_DOS */
+
+#ifdef AS_PATHSYNTAX_UNIX
+# define PATHSEP '/'
+# define SPATHSEP "/"
+# define DIRSEP ':'
+# define SDIRSEP ":"
+# define NULLDEV "/dev/null"
+#endif /* AS_PATHSYNTAX_UNIX */
+
+/*---------------------------------------------------------------------------*/
+
+#if !defined PATHSEP || !defined OPENRDMODE || !defined AS_FLOAT_MAX
+# error "your platform so far is not included in AS's header files!"
+# error "please edit sysdefs.h!"
 #endif
 
-#ifdef AS_UNUSED_TO_VOID
-# define UNUSED(x) (void)x
-#else
-# define UNUSED(x) {}
-#endif
+#define UNUSED(x) (void)x
 
 #ifdef CKMALLOC
 #define malloc(s) ckmalloc(s)

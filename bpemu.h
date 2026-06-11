@@ -15,11 +15,7 @@
 #include <stddef.h>
 #include "datatypes.h"
 
-typedef void (*charcallback)(
-#ifdef __PROTOS__
-char *Name
-#endif
-);
+typedef void (*charcallback)(char *Name);
 
 extern void FExpand(char *p_dest, size_t dest_size, const char *p_src);
 
@@ -42,6 +38,8 @@ extern Boolean Odd (int inp);
 extern Boolean DirScan(const char *Mask, charcallback callback);
 
 extern LongInt MyGetFileTime(char *Name);
+
+extern int as_fsize(const char *p_path, LargeWord *p_size);
 
 #ifdef __CYGWIN32__
 extern char *DeCygWinDirList(char *pStr);

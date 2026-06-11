@@ -27,12 +27,12 @@ typedef struct
   tCodepage Codepage; /* mom. gewaehlter Zeichensatz */
   void (*DateString)(Word Year, Word Month, Word Day, char *Dest, size_t DestSize);
   void (*TimeString)(Word Hour, Word Minute, Word Second, Word Sec100, char *Dest, size_t DestSize);
-#if (defined OS2_NLS) || (defined DOS_NLS)
+#if (defined AS_OS2_NLS) || (defined AS_DOS_NLS)
   DateFormat DateFmt;  /* Datumsreihenfolge */
   const char *DateSep; /* Trennzeichen zwischen Datumskomponenten */
   TimeFormat TimeFmt;  /* 12/24-Stundenanzeige */
   const char *TimeSep; /* Trennzeichen zwischen Zeitkomponenten */
-#elif defined LOCALE_NLS
+#elif defined AS_LOCALE_NLS
   const char *DateFmtStr;
   const char *TimeFmtStr;
 #endif
@@ -77,7 +77,7 @@ static void DumpNLSInfo(void)
 
   printf("Country      = %d\n", NLSInfo.Country);
   printf("Codepage     = %s\n", CodepageNames[NLSInfo.Codepage]);
-#if (defined OS2_NLS) || (defined DOS_NLS)
+#if (defined AS_OS2_NLS) || (defined AS_DOS_NLS)
   printf("DateFmt      = ");
   switch(NLSInfo.DateFmt)
   {
@@ -110,7 +110,7 @@ static void DumpNLSInfo(void)
       printf("???\n");
   }
   printf("TimeSep      = %s\n", NLSInfo.TimeSep);
-#elif defined LOCALE_NLS
+#elif defined AS_LOCALE_NLS
   printf("DateFmtStr   = %s\n", NLSInfo.DateFmtStr);
   printf("TimeFmtStr   = %s\n", NLSInfo.TimeFmtStr);
 #endif
@@ -301,7 +301,7 @@ void UpCaseFromCodeTable(void)
   }
 }
 
-#if (defined OS2_NLS) || (defined DOS_NLS)
+#if (defined AS_OS2_NLS) || (defined AS_DOS_NLS)
 
 static void DOS_OS2_DateString(Word Year, Word Month, Word Day, char *Dest, size_t DestSize)
 {
@@ -336,11 +336,11 @@ static void DOS_OS2_TimeString(Word Hour, Word Minute, Word Second, Word Sec100,
   if (NLSInfo.TimeFmt == TimeFormatUSA)
     as_snprcatf(Dest, DestSize, "%c", (OriHour > 12) ? 'p' : 'a');
 }
-#endif /* OS2_NLS || DOS_NLS */
+#endif /* AS_OS2_NLS || AS_DOS_NLS */
 
 /*-------------------------------------------------------------------------------*/
 
-#if defined OS2_NLS
+#if defined AS_OS2_NLS
 
 #define INCL_DOSNLS
 #include <os2.h>
@@ -396,7 +396,7 @@ static void QueryInfo(void)
   DosQueryCollate(sizeof(CollateTable), &ccode, CollateTable, &erglen);
 }
 
-#elif defined W32_NLS
+#elif defined AS_W32_NLS
 
 static void Default_DateString(Word Year, Word Month, Word Day, char *Dest, size_t DestSize)
 {
@@ -448,7 +448,7 @@ static void QueryInfo(void)
     CollateTable[z] = toupper(z);
 }
 
-#elif defined DOS_NLS
+#elif defined AS_DOS_NLS
 
 #include <dos.h>
 
@@ -581,7 +581,7 @@ static void QueryInfo(void)
 #endif /* __DPMI16__ */
 }
 
-#elif defined LOCALE_NLS
+#elif defined AS_LOCALE_NLS
 
 #include <locale.h>
 #include <langinfo.h>
@@ -679,7 +679,7 @@ static void QueryInfo(void)
     CollateTable[z] = toupper(z);
 }
 
-#else /* NO_NLS */
+#else /* AS_NO_NLS */
 
 static void Default_DateString(Word Year, Word Month, Word Day, char *Dest, size_t DestSize)
 {
@@ -971,7 +971,7 @@ tCodepage NLS_GetCodepage(void)
 
 void nls_init(void)
 {
-#ifdef LOCALE_NLS
+#ifdef AS_LOCALE_NLS
   (void) setlocale(LC_TIME, "");
   (void) setlocale(LC_MONETARY, "");
 #endif

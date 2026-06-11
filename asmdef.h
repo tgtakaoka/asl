@@ -134,17 +134,9 @@ extern LongWord MaxCodeLen;
 
 #define LOCSYMSIGHT 3       /* max. sight for nameless temporary symbols */
 
-typedef void (*SimpProc)(
-#ifdef __PROTOS__
-void
-#endif
-);
+typedef void (*SimpProc)(void);
 
-typedef void (*DissectBitProc)(
-#ifdef __PROTOS__
-char *pDest, size_t DestSize, LargeWord Inp
-#endif
-);
+typedef void (*DissectBitProc)(char *pDest, size_t DestSize, LargeWord Inp);
 
 typedef Word WordField[6];          /* fuer Zahlenumwandlung */
 typedef struct _TTransTable
@@ -297,7 +289,7 @@ extern Boolean (*IsDef)(void);
 extern void (*SwitchFrom)(void);
 extern void (*InternSymbol)(char *Asc, TempResult *Erg);
 extern DissectBitProc DissectBit;
-extern DissectRegProc DissectReg;
+extern dissect_reg_fnc_t DissectReg;
 extern as_qualify_quote_fnc_t QualifyQuote;
 
 extern StringPtr IncludeList;

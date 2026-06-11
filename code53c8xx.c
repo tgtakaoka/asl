@@ -278,6 +278,17 @@ static CompType DecodeComp(const tStrComp *pInp, LongWord *Outp)
   }
 }
 
+static LargeInt EvalStrIntExpressionOrZero(const tStrComp *p_arg, IntType int_type, Boolean *p_ok)
+{
+  if (*p_arg->str.p_str)
+    return EvalStrIntExpression(p_arg, int_type, p_ok);
+  else
+  {
+    *p_ok = True;
+    return 0;
+  }
+}
+
 /*---------------------------------------------------------------------------*/
 
 static void DecodeFixed(Word Index)
@@ -420,7 +431,7 @@ static void DecodeCHMOV(Word Index)
       if (OK)
       {
         KillPrefBlanksStrComp(pAdrArg);
-        DAsmCode[1] = EvalStrIntExpression(pAdrArg, UInt32, &OK);
+        DAsmCode[1] = EvalStrIntExpressionOrZero(pAdrArg, UInt32, &OK);
         if (OK)
           CodeLen = 8;
       }

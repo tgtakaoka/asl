@@ -15,17 +15,9 @@
 
 #include "datatypes.h"
 
-typedef void (*InstProc)(
-#ifdef __PROTOS__
-Word Index
-#endif
-);
+typedef void (*InstProc)(Word Index);
 
-typedef Boolean (*inst_fnc_t)(
-#ifdef __PROTOS__
-Word index
-#endif
-);
+typedef Boolean (*inst_fnc_t)(Word index);
 
 typedef struct _TInstTableEntry
 {

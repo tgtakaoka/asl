@@ -32,11 +32,7 @@
 #define BinSuffix ".bin"
 
 
-typedef void (*ProcessProc)(
-#ifdef __PROTOS__
-const char *FileName, LongWord Offset
-#endif
-);
+typedef void (*ProcessProc)(const char *FileName, LongWord Offset);
 
 
 static FILE *TargFile;

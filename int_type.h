@@ -49,20 +49,22 @@ typedef enum
 DefCPPOps_Enum(IntType)
 #endif
 
-#ifdef HAS128
-#define LargeUIntType UInt128
-#define LargeSIntType SInt128
-#define LargeIntType Int128
+#include "datatypes.h"
+
+#ifdef AS_HAS128
+# define LargeUIntType UInt128
+# define LargeSIntType SInt128
+# define LargeIntType Int128
 #else
-#ifdef HAS64
-#define LargeUIntType UInt64
-#define LargeSIntType SInt64
-#define LargeIntType Int64
-#else
-#define LargeUIntType UInt32
-#define LargeSIntType SInt32
-#define LargeIntType Int32
-#endif
+# ifdef AS_HAS64
+# define LargeUIntType UInt64
+# define LargeSIntType SInt64
+# define LargeIntType Int64
+# else
+#  define LargeUIntType UInt32
+#  define LargeSIntType SInt32
+#  define LargeIntType Int32
+# endif
 #endif
 
 #endif /* _INT_TYPE_H */

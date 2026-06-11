@@ -106,7 +106,7 @@ static int GetValue(LongInt Type, LargeWord Offset, LargeWord *p_result)
     case RelocTypeB32:
       *p_result = MRead4B(Buffer + Offset);
       return 0;
-#ifdef HAS64
+#ifdef AS_HAS64
     case RelocTypeL64:
       *p_result = MRead8L(Buffer + Offset);
       return 0;
@@ -142,7 +142,7 @@ static void PutValue(LargeWord Value, LongInt Type, LargeWord Offset)
     case RelocTypeB32:
       MWrite4B(Buffer + Offset, Value);
       break;
-#ifdef HAS64
+#ifdef AS_HAS64
     case RelocTypeL64:
       MWrite8L(Buffer + Offset, Value);
       break;

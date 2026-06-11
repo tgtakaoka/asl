@@ -11,7 +11,6 @@
 #include "stdinc.h"
 #include "bpemu.h"
 #include <string.h>
-#include <sys/stat.h>
 #include <ctype.h>
 #include <float.h>
 #include "nonzstring.h"
@@ -650,7 +649,7 @@ static Boolean FuncACOTH(TempResult *pResult, const TempResult *pArgs, unsigned 
 static Boolean fnc_fsize(TempResult *p_result, const TempResult *p_args, unsigned arg_cnt)
 {
   char found_file_name[STRINGSIZE];
-  struct stat status;
+  LargeWord file_size;
   UNUSED(arg_cnt);
 
   if (FSearch(found_file_name, sizeof(found_file_name), p_args[0].Contents.str.p_str, CurrFileName, ""))
@@ -659,7 +658,7 @@ static Boolean fnc_fsize(TempResult *p_result, const TempResult *p_args, unsigne
     as_tempres_set_none(p_result);
     return False;
   }
-  if (stat(found_file_name, &status))
+  if (as_fsize(found_file_name, &file_size))
   {
     WrXError(ErrNum_OpeningFile, found_file_name);
     as_tempres_set_none(p_result);
@@ -667,7 +666,7 @@ static Boolean fnc_fsize(TempResult *p_result, const TempResult *p_args, unsigne
   }
   else
   {
-    as_tempres_set_int(p_result, status.st_size);
+    as_tempres_set_int(p_result, file_size);
     return True;
   }
 }

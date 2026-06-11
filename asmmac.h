@@ -45,11 +45,7 @@ typedef struct _TInputTag
   Boolean GlobalSymbols;
   tLstMacroExp OrigDoLst;
   LongInt StartLine;
-  Boolean (*Processor)(
-#ifdef __PROTOS__
-                       struct _TInputTag *P, struct sStrComp *p_dest
-#endif
-                                                      );
+  Boolean (*Processor)(struct _TInputTag *P, struct sStrComp *p_dest);
   LongInt ParCnt,ParZ;
   StringList Params;
   LongInt LineCnt, ContLineCnt, LineZ;
@@ -60,21 +56,9 @@ typedef struct _TInputTag
   Boolean IsEmpty, FromFile, UsesAllArgs, UsesNumArgs;
   FILE *Datei;
   void *Buffer;
-  void (*Cleanup)(
-#ifdef __PROTOS__
-                  struct _TInputTag *P
-#endif
-                                      );
-  void (*Restorer)(
-#ifdef __PROTOS__
-                   struct _TInputTag *P
-#endif
-                                       );
-  Boolean (*GetPos)(
-#ifdef __PROTOS__
-                    struct _TInputTag *P, char *Dest, size_t DestSize, Boolean ActGNUErrors
-#endif
-                                                    );
+  void (*Cleanup)(struct _TInputTag *P);
+  void (*Restorer)(struct _TInputTag *P);
+  Boolean (*GetPos)(struct _TInputTag *P, char *Dest, size_t DestSize, Boolean ActGNUErrors);
   PMacroRec Macro;
   LongInt LocHandle;
 } TInputTag, *PInputTag;
@@ -82,11 +66,7 @@ typedef struct _TInputTag
 typedef struct _TOutputTag
 {
   struct _TOutputTag *Next;
-  void (*Processor)(
-#ifdef __PROTOS__
-                    void
-#endif
-                        );
+  void (*Processor)(void);
   Integer NestLevel;
   PInputTag Tag;
   PMacroRec Mac;

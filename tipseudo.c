@@ -121,11 +121,7 @@ static void pseudo_lqxx(Integer num)
     CodeLen = 0;
 }
 
-typedef void (*tcallback)(
-#ifdef __PROTOS__
-Boolean *, int *, LargeInt, tSymbolFlags
-#endif
-);
+typedef void (*tcallback)(Boolean *, int *, LargeInt, tSymbolFlags);
 
 static void pseudo_store(tcallback callback, Word MaxMultCharLen)
 {
