@@ -1236,20 +1236,20 @@ typedef unsigned short as_uint16_t;
 
 #ifdef AS_32_IS_SHORT
 typedef signed short as_int32_t;
-# define PRIas_int32_t "d"
 typedef unsigned short as_uint32_t;
+# define AS_PRId32 "d"
 #endif
 
 #ifdef AS_32_IS_INT
 typedef signed int as_int32_t;
-# define PRIas_int32_t "d"
 typedef unsigned int as_uint32_t;
+# define AS_PRId32 "d"
 #endif
 
 #ifdef AS_32_IS_LONG
 typedef signed long as_int32_t;
-# define PRIas_int32_t "ld"
 typedef unsigned long as_uint32_t;
+# define AS_PRId32 "ld"
 #endif
 
 /* Host provides 64 bit int as long long: can only use it if long long
@@ -1289,48 +1289,40 @@ typedef unsigned long as_uint64_t;
    So we put a hand-crafted constant in memory: */
 
 #ifdef AS_DECFLOAT
- typedef double as_float_t;
+# define AS_FLOAT_DOUBLE
 # ifdef __GFLOAT
    extern double as_decfloat_get_max_gfloat(void);
 #  define AS_FLOAT_MAX as_decfloat_get_max_gfloat()
-# else
-#  define AS_FLOAT_MAX DBL_MAX
 # endif
-# define AS_FLOAT_DIG DBL_DIG
-# define AS_HUGE_VAL HUGE_VAL
-# define as_strtof(s,e) strtod(s,e)
 #endif /* AS_DECFLOAT */
 
 #ifdef AS_IEEEFLOAT_8_DOUBLE
- typedef double as_float_t;
-# define AS_FLOAT_MAX DBL_MAX
-# define AS_FLOAT_DIG DBL_DIG
-# define AS_HUGE_VAL HUGE_VAL
-# define as_strtof(s,e) strtod(s,e)
-#endif /* AS_IEEEFLOAT_8_DOUBLE */
+# define AS_FLOAT_DOUBLE
+#endif
 
 #ifdef AS_IEEEFLOAT_10_16_LONG_DOUBLE
 # define AS_IEEEFLOAT_10_LONG_DOUBLE
-# define XPRIas_float_t "L"
-#endif /* AS_IEEEFLOAT_10_16_LONG_DOUBLE */
+#endif
 
 #ifdef AS_IEEEFLOAT_10_12_LONG_DOUBLE
 # define AS_IEEEFLOAT_10_LONG_DOUBLE
-# define XPRIas_float_t "L"
-#endif /* AS_IEEEFLOAT_10_12_LONG_DOUBLE */
+#endif
 
 #ifdef AS_IEEEFLOAT_10_10_LONG_DOUBLE
 # define AS_IEEEFLOAT_10_LONG_DOUBLE
-# define XPRIas_float_t "L"
-#endif /* AS_IEEEFLOAT_10_10_LONG_DOUBLE */
+#endif
 
 #ifdef AS_IEEEFLOAT_10_2P8_LONG_DOUBLE
 # define AS_IEEEFLOAT_10_LONG_DOUBLE
-# define XPRIas_float_t "L"
-#endif /* AS_IEEEFLOAT_10_2P8_LONG_DOUBLE */
+#endif
 
 #ifdef AS_IEEEFLOAT_10_LONG_DOUBLE
+# define AS_FLOAT_LONG_DOUBLE
+#endif
+
+#ifdef AS_FLOAT_LONG_DOUBLE
  typedef long double as_float_t;
+# define XPRIas_float_t "L"
 # define AS_FLOAT_MAX LDBL_MAX
 # define AS_FLOAT_DIG LDBL_DIG
 # define AS_HUGE_VAL HUGE_VALL
@@ -1352,65 +1344,35 @@ typedef unsigned long as_uint64_t;
 # define as_sinh(f) sinh(f)
 # define as_cosh(f) coshl(f)
 # define as_tanh(f) tanhl(f)
-#endif /* AS_IEEEFLOAT_10_LONG_DOUBLE */
+#endif /* AS_FLOAT_LONG_DOUBLE */
 
-#ifndef as_strtof
-# define as_strtof(s,e) strtod(s,e)
-#endif
-#ifndef XPRIas_float_t
+#ifdef AS_FLOAT_DOUBLE
+ typedef double as_float_t;
 # define XPRIas_float_t ""
-#endif
-#ifndef as_fabs
+# ifndef AS_FLOAT_MAX
+#  define AS_FLOAT_MAX DBL_MAX
+# endif
+# define AS_FLOAT_DIG DBL_DIG
+# define AS_HUGE_VAL HUGE_VAL
+# define as_strtof(s,e) strtod(s,e)
 # define as_fabs(f) fabs(f)
-#endif
-#ifndef as_ldexp
 # define as_ldexp(f,e) ldexp(f,e)
-#endif
-#ifndef as_frexp
 # define as_frexp(f,e) frexp(f,e)
-#endif
-#ifndef as_modf
 # define as_modf(f,e) modf(f,e)
-#endif
-#ifndef as_sqrt
 # define as_sqrt(f) sqrt(f)
-#endif
-#ifndef as_sin
 # define as_sin(f) sin(f)
-#endif
-#ifndef as_cos
 # define as_cos(f) cos(f)
-#endif
-#ifndef as_tan
 # define as_tan(f) tan(f)
-#endif
-#ifndef as_asin
 # define as_asin(f) asin(f)
-#endif
-#ifndef as_acos
 # define as_acos(f) acos(f)
-#endif
-#ifndef as_atan
 # define as_atan(f) atan(f)
-#endif
-#ifndef as_sinh
 # define as_sinh(f) sinh(f)
-#endif
-#ifndef as_exp
 # define as_exp(f) exp(f)
-#endif
-#ifndef as_log
 # define as_log(f) log(f)
-#endif
-#ifndef as_log10
 # define as_log10(f) log10(f)
-#endif
-#ifndef as_cosh
 # define as_cosh(f) cosh(f)
-#endif
-#ifndef as_tanh
 # define as_tanh(f) tanh(f)
-#endif
+#endif /* AS_FLOAT_DOUBLE */
 
 /*---------------------------------------------------------------------------*/
 /* Path & open modes expansion: */

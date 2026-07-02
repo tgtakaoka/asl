@@ -33,6 +33,7 @@
 #include "ieeefloat.h"
 #include "decfloat.h"
 #include "tifloat.h"
+#include "bfloat.h"
 
 #include "intpseudo.h"
 
@@ -1035,6 +1036,13 @@ static Boolean Replicate16_To_1(const tCurrCodeFill *pStartPos, const tCurrCodeF
   return True;
 }
 
+static int as_float_2_bfloat16_or_ieee2(as_float_t inp, Byte *p_dest, Boolean needs_big, const struct sLayoutCtx *p_ctx)
+{
+  return (p_ctx->flags & eIntPseudoFlag_BFloatFormat)
+       ? as_float_2_bfloat16(inp, p_dest, needs_big)
+       : as_float_2_ieee2(inp, p_dest, needs_big);
+}
+
 static Boolean Put16F_To_1(as_float_t t, tSymbolFlags flags, struct sLayoutCtx *pCtx)
 {
   int ret, z;
@@ -1042,7 +1050,7 @@ static Boolean Put16F_To_1(as_float_t t, tSymbolFlags flags, struct sLayoutCtx *
 
   if (!IncMaxCodeLen(pCtx, 16))
     return False;
-  if ((ret = as_float_2_ieee2(t, tmp, False)) < 0)
+  if ((ret = as_float_2_bfloat16_or_ieee2(t, tmp, False, pCtx)) < 0)
   {
     asmerr_check_fp_dispose_result(ret, pCtx->pCurrComp);
     return False;
@@ -1076,7 +1084,7 @@ static Boolean Put16F_To_4(as_float_t t, tSymbolFlags flags, struct sLayoutCtx *
 
   if (!IncMaxCodeLen(pCtx, 4))
     return False;
-  if ((ret = as_float_2_ieee2(t, tmp, False)) < 0)
+  if ((ret = as_float_2_bfloat16_or_ieee2(t, tmp, False, pCtx)) < 0)
   {
     asmerr_check_fp_dispose_result(ret, pCtx->pCurrComp);
     return False;
@@ -1124,7 +1132,7 @@ static Boolean Put16F_To_8(as_float_t t, tSymbolFlags flags, struct sLayoutCtx *
 
   if (!IncMaxCodeLen(pCtx, 2))
     return False;
-  if ((ret = as_float_2_ieee2(t, BAsmCode + pCtx->CurrCodeFill.FullWordCnt, !!pCtx->LoHiMap)) < 0)
+  if ((ret = as_float_2_bfloat16_or_ieee2(t, BAsmCode + pCtx->CurrCodeFill.FullWordCnt, !!pCtx->LoHiMap, pCtx)) < 0)
   {
     asmerr_check_fp_dispose_result(ret, pCtx->pCurrComp);
     return False;
@@ -1157,7 +1165,7 @@ static Boolean Put16F_To_16(as_float_t t, tSymbolFlags flags, struct sLayoutCtx 
   if (!IncMaxCodeLen(pCtx, 1))
     return False;
 
-  if ((ret = as_float_2_ieee2(t, Tmp, !!pCtx->LoHiMap)) < 0)
+  if ((ret = as_float_2_bfloat16_or_ieee2(t, Tmp, !!pCtx->LoHiMap, pCtx)) < 0)
   {
     asmerr_check_fp_dispose_result(ret, pCtx->pCurrComp);
     return False;
@@ -1191,7 +1199,7 @@ static Boolean Put16F_To_32(as_float_t t, tSymbolFlags flags, struct sLayoutCtx 
   Byte Tmp[2];
   int ret;
 
-  if ((ret = as_float_2_ieee2(t, Tmp, False)) < 0)
+  if ((ret = as_float_2_bfloat16_or_ieee2(t, Tmp, False, pCtx)) < 0)
   {
     asmerr_check_fp_dispose_result(ret, pCtx->pCurrComp);
     return False;
@@ -4004,6 +4012,7 @@ void AddIntelPseudo(PInstTable p_inst_table, int_pseudo_flags_t flags)
   AddInstTable(p_inst_table, "DN", flags | eIntPseudoFlag_AllowInt, DecodeIntelDN);
   AddInstTable(p_inst_table, "DB", flags | eIntPseudoFlag_AllowInt | eIntPseudoFlag_AllowString, DecodeIntelDB);
   AddInstTable(p_inst_table, "DW", flags | eIntPseudoFlag_AllowInt | eIntPseudoFlag_AllowString | eIntPseudoFlag_AllowFloat, DecodeIntelDW);
+  AddInstTable(p_inst_table, "BF16", flags | eIntPseudoFlag_AllowFloat | eIntPseudoFlag_BFloatFormat, DecodeIntelDW);
   AddInstTable(p_inst_table, "DP", flags | eIntPseudoFlag_AllowInt, DecodeIntelDP);
   AddInstTable(p_inst_table, "DD", flags | eIntPseudoFlag_AllowInt | eIntPseudoFlag_AllowString | eIntPseudoFlag_AllowFloat, DecodeIntelDD);
   AddInstTable(p_inst_table, "DQ", flags | eIntPseudoFlag_AllowInt | eIntPseudoFlag_AllowString | eIntPseudoFlag_AllowFloat, DecodeIntelDQ);

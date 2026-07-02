@@ -51,7 +51,7 @@
 
 \vspace{1cm}\par
 
-{\large Stand Mai 2026}
+{\large Stand Juli 2026}
 \end{raggedright}
 
 \clearpage
@@ -6049,9 +6049,9 @@ f"ur \tty{BLKB}, 2 Byte f"ur \tty{BLKW}, 4 Byte f"ur \tty{BLKL} und
 
 %%- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-\subsection{DN,DB,DW,DD,DQ,DT \& DO}
+\subsection{DN,DB,DW,DD,DQ,DT,DO \& BF16}
 \ttindex{DN}\ttindex{DB}\ttindex{DW}\ttindex{DD}
-\ttindex{DQ}\ttindex{DT}\ttindex{DO}
+\ttindex{DQ}\ttindex{DT}\ttindex{DO}\ttindex{BF16}
 
 {\em\begin{tabbing}
 G"ultigkeit: \= Intel (au"ser 4004/4040), Zilog, Toshiba, NEC, TMS370,\\
@@ -6075,6 +6075,7 @@ verlegt:
 \item{\tty{DQ}: 64-Bit-Integer oder Gleitkomma mit doppelter Genauigkeit}
 \item{\tty{DT}: Gepackter BCD Integer oder Gleitkomma mit erweiterter Genauigkeit (80 Bit)}
 \item{\tty{DO}: Gleitkomma mit vierfacher Genauigkeit (128 Bit)}
+\item{\tty{BF16}: Gleitkomma im BFloat16-Format}
 \end{itemize}
 Zum anderen erfolgt die Unterscheidung, ob Konstantendefinition oder
 Speicherreservierung, im Operanden.  Eine Reservierung von Speicher
@@ -12946,7 +12947,10 @@ drei weitere Optionen:
       berechnen.  Die Pr"ufsumme wird einmal als 32-Bit-Wert ausgegeben,
       zum anderen wird das Zweierkomplement der Bits 0..7 in der letzten
       Speicherstelle abgelegt, so da"s die Modulo-256-Summe zu 0 wird.}
-\item{\tty{m}:  f"ur den Fall, da"s ein Prozessor mit 16- oder 32-Bit-Datenbus
+\item{\tty{byte-swap}: erlaubt es, die Bytes in der Bin"ardatei umzusortieren.
+      Mit einer \tty{2} als Argument werden die Bytes paarweise getauscht,
+      mit einer \tty{4} werden Vierergruppen gespiegelt.}
+\item{\tty{m}: f"ur den Fall, da"s ein Prozessor mit 16- oder 32-Bit-Datenbus
       eingesetzt wird und die Bin"ardatei f"ur mehrere EPROMs aufgesplittet
       werden mu"s.  Das Argument kann folgende Werte annehmen:
       \begin{itemize}

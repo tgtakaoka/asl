@@ -69,7 +69,7 @@
 
 \vspace{1cm}\par
 
-{\large Edition May 2026}
+{\large Edition July 2026}
 \end{raggedright}
 
 \clearpage
@@ -5877,9 +5877,9 @@ bytes for \tty{BLKL}, and 8 bytes for \tty{BLKD}).
 
 %%- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-\subsection{DN,DB,DW,DD,DQ,DT, and DO}
+\subsection{DN,DB,DW,DD,DQ,DT,DO and BF16}
 \ttindex{DN}\ttindex{DB}\ttindex{DW}\ttindex{DD}
-\ttindex{DQ}\ttindex{DT}\ttindex{DO}
+\ttindex{DQ}\ttindex{DT}\ttindex{DO}\ttindex{BF16}
 
 {\em\begin{tabbing}
 valid for: \= Intel (except for 4004/4040), Zilog, Toshiba,\\
@@ -5900,6 +5900,7 @@ the specification of the operand length is moved into the mnemonic:
 \item{\tty{DQ}: 64-bit integer or double precision floating point}
 \item{\tty{DT}: packed BCD integer or extended precision floating point (80 bits)}
 \item{\tty{DO}: quad precision floating point (128 bits)}
+\item{\tty{BF16}: floating point in bfloat16 format}
 \end{itemize}
 Second, the distinction between constant definition and memory
 reservation is done by the operand.  A reservation of memory is
@@ -12637,13 +12638,16 @@ file:
       MCS-48 microcontrollers (empty cells of their
       EPROM array contain zeroes, so \$00 would be
       the correct value in this case).}
-\item{\tty{s}:  commands the program to calculate a checksum
+\item{\tty{s}: commands the program to calculate a checksum
       of the binary file.  This sum is printed as
       a 32-bit value, and the two's complement of
       the least significant bit will be stored in
       the file's last byte.  This way, the modulus-
       256-sum of the file will become zero.}
-\item{\tty{m}:  is designed for the case that a CPU with a
+\item{\tty{byte-swap}: allows to re-sort bytes in the
+      binary file.  A \tty{2} as argument performs a pairwise
+      swap, while a \tty{4} swaps quartets of bytes.}
+\item{\tty{m}: is designed for the case that a CPU with a
       16- or 32-bit data bus is used and the file
       has to be split for several EPROMs.  The
       argument may have the following values:

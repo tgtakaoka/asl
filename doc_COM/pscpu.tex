@@ -24,9 +24,9 @@ DC         \> DS          \> PACKING     \> XSFR        \> YSFR \\
 
 {\tt\begin{tabbing}
 \hspace{3cm}\=\hspace{3cm}\=\hspace{3cm}\=\hspace{3cm}\=\kill
-BIGENDIAN  \> DB          \> DD          \> DN          \> DO \\
-DQ         \> DS          \> DT          \> DW          \> REG \\
-SUPMODE \\
+BIGENDIAN  \> BF16        \> DB          \> DD          \> DN \\
+DO         \> DQ          \> DS          \> DT          \> DW \\
+REG        \> SUPMODE \\
 \end{tabbing}}
 
 \subsubsection{IBM PALM}
@@ -35,8 +35,9 @@ SUPMODE \\
 
 {\tt\begin{tabbing}
 \hspace{3cm}\=\hspace{3cm}\=\hspace{3cm}\=\hspace{3cm}\=\kill
-DB         \> DD          \> DN          \> DO          \> DQ \\
-DS         \> DT          \> DW          \> PORT        \> REG \\
+BF16       \> DB          \> DD          \> DN          \> DO \\
+DQ         \> DS          \> DT          \> DW          \> PORT \\
+REG \\
 \end{tabbing}}
 
 \subsubsection{Motorola M-Core}
@@ -212,10 +213,10 @@ FCC        \> FDB         \> RMB \\
 
 {\tt\begin{tabbing}
 \hspace{3cm}\=\hspace{3cm}\=\hspace{3cm}\=\hspace{3cm}\=\kill
-ADR        \> ASSUME      \> BYT         \> DB          \> DD \\
-DDB        \> DN          \> DO          \> DQ          \> DS \\
-DT         \> DW          \> DFS         \> FCB         \> FCC \\
-FDB        \> RMB \\
+ADR        \> ASSUME      \> BF16        \> BYT         \> DB \\
+DD         \> DDB         \> DN          \> DO          \> DQ \\
+DS         \> DT          \> DW          \> DFS         \> FCB \\
+FCC        \> FDB         \> RMB \\
 \end{tabbing}}
 
 \subsubsection{Mitsubishi MELPS-4500}
@@ -243,8 +244,8 @@ DATA       \> DC          \> DS          \> RES \\
 
 {\tt\begin{tabbing}
 \hspace{3cm}\=\hspace{3cm}\=\hspace{3cm}\=\hspace{3cm}\=\kill
-DB         \> DD          \> DN          \> DO          \> DQ \\
-DS         \> DT          \> DW          \> REG \\
+BF16       \> DB          \> DD          \> DN          \> DO \\
+DQ         \> DS          \> DT          \> DW          \> REG \\
 \end{tabbing}}
 
 \subsubsection{Mitsubishi M16C}
@@ -253,8 +254,8 @@ DS         \> DT          \> DW          \> REG \\
 
 {\tt\begin{tabbing}
 \hspace{3cm}\=\hspace{3cm}\=\hspace{3cm}\=\hspace{3cm}\=\kill
-DB         \> DD          \> DN          \> DO          \> DQ \\
-DS         \> DT          \> DW          \> REG \\
+BF16       \> DB          \> DD          \> DN          \> DO \\
+DQ         \> DS          \> DT          \> DW          \> REG \\
 \end{tabbing}}
 
 \subsubsection{DEC PDP-11}
@@ -324,8 +325,9 @@ DATA       \> DS          \> REG \\
 
 {\tt\begin{tabbing}
 \hspace{3cm}\=\hspace{3cm}\=\hspace{3cm}\=\hspace{3cm}\=\kill    
-DB         \> DD          \> DFB         \> DN          \> DO \\
-DQ         \> DS          \> DT          \> DW          \> PORT \\
+BF16       \> DB          \> DD          \> DFB         \> DN \\
+DO         \> DQ          \> DS          \> DT          \> DW \\
+PORT \\
 Z80SYNTAX \\
 \end{tabbing}}
 
@@ -335,8 +337,9 @@ Z80SYNTAX \\
 
 {\tt\begin{tabbing}
 \hspace{3cm}\=\hspace{3cm}\=\hspace{3cm}\=\hspace{3cm}\=\kill
-ASSUME     \> DB         \> DD          \> DN          \> DO \\
-DQ         \> DS         \> DT          \> DW          \> REG \\
+ASSUME     \> BF16       \> DB          \> DD          \> DN \\
+DO         \> DQ         \> DS          \> DT          \> DW \\
+REG \\
 \end{tabbing}}
 
 \subsubsection{Intel MCS-(2)51}
@@ -345,10 +348,10 @@ DQ         \> DS         \> DT          \> DW          \> REG \\
 
 {\tt\begin{tabbing}
 \hspace{3cm}\=\hspace{3cm}\=\hspace{3cm}\=\hspace{3cm}\=\kill
-BIGENDIAN  \> BIT         \> D1          \> DB          \> DD \\
-DN         \> DO          \> DQ          \> DS          \> DT \\
-DW         \> PORT        \> REG         \> SFR         \> SFRB \\
-SRCMODE \\
+BIGENDIAN  \> BIT         \> BF16        \> D1          \> DB \\
+DD         \> DN          \> DO          \> DQ          \> DS \\
+DT         \> DW          \> PORT        \> REG         \> SFR \\
+SFRB       \> SRCMODE (MCS-251) \\
 \end{tabbing}}
 
 \subsubsection{Intel MCS-96}
@@ -357,8 +360,8 @@ SRCMODE \\
 
 {\tt\begin{tabbing}
 \hspace{3cm}\=\hspace{3cm}\=\hspace{3cm}\=\hspace{3cm}\=\kill
-ASSUME     \> DB          \> DD          \> DN          \> DO \\
-DQ         \> DS          \> DT          \> DW \\
+ASSUME     \> BF16        \> DB          \> DD          \> DN \\
+DO         \> DQ          \> DS          \> DT          \> DW \\
 \end{tabbing}}
  
 \subsubsection{Intel 8080/8085}
@@ -367,8 +370,9 @@ DQ         \> DS          \> DT          \> DW \\
 
 {\tt\begin{tabbing}
 \hspace{3cm}\=\hspace{3cm}\=\hspace{3cm}\=\hspace{3cm}\=\kill
-DB         \> DD          \> DN          \> DO          \> DQ \\
-DS         \> DT          \> DW          \> PORT        \> REG \\
+BF16       \> DB          \> DD          \> DN          \> DO \\
+DQ         \> DS          \> DT          \> DW          \> PORT \\
+REG \\
 \end{tabbing}}
 
 \subsubsection{Intel 8086/80186/NEC V20...V5x}
@@ -377,9 +381,9 @@ DS         \> DT          \> DW          \> PORT        \> REG \\
 
 {\tt\begin{tabbing}
 \hspace{3cm}\=\hspace{3cm}\=\hspace{3cm}\=\hspace{3cm}\=\kill
-ASSUME     \> DB          \> DD          \> DN          \> DO \\
-DQ         \> DS          \> DT          \> DW          \> PORT \\
-REG \\
+ASSUME     \> BF16        \> DB          \> DD          \> DN \\
+DO         \> DQ          \> DS          \> DT          \> DW \\
+PORT       \> REG \\
 \end{tabbing}}
 
 \subsubsection{Intel i960}
@@ -388,9 +392,9 @@ REG \\
 
 {\tt\begin{tabbing}
 \hspace{3cm}\=\hspace{3cm}\=\hspace{3cm}\=\hspace{3cm}\=\kill    
-DB         \> DD          \> DN          \> DO          \> DQ \\
-DS         \> DT          \> DW          \> FPU         \> REG \\
-SPACE      \> SUPMODE     \> WORD \\
+BF16       \> DB          \> DD          \> DN          \> DO \\
+DQ         \> DS          \> DT          \> DW          \> FPU \\
+REG        \> SPACE       \> SUPMODE     \> WORD \\
 \end{tabbing}}
 
 \subsubsection{Signetics 8X30x}
@@ -408,9 +412,9 @@ LIV        \> RIV         \\
 
 {\tt\begin{tabbing}
 \hspace{3cm}\=\hspace{3cm}\=\hspace{3cm}\=\hspace{3cm}\=\kill
-ACON       \> BIGENDIAN  \> DB          \> DD          \> DN \\
-DO         \> DQ         \> DS          \> DT          \> DW \\
-RES \\
+ACON       \> BF16       \> BIGENDIAN   \> DB          \> DD \\
+DN         \> DO         \> DQ          \> DS          \> DT \\
+DW         \> RES \\
 \end{tabbing}}
 
 \subsubsection{Philips XA}
@@ -419,9 +423,10 @@ RES \\
 
 {\tt\begin{tabbing}
 \hspace{3cm}\=\hspace{3cm}\=\hspace{3cm}\=\hspace{3cm}\=\kill
-ASSUME     \> BIT         \> DB          \> DC[.$<$size$>$] \> DD \\
-DN         \> DO          \> DQ          \> DS[.$<$size$>$] \> DT \\
-DW         \> PADDING     \> PORT        \> REG             \> SUPMODE \\
+ASSUME     \> BF16        \> BIT         \> DB          \> DC[.$<$size$>$] \\
+DD         \> DN          \> DO          \> DQ          \> DS[.$<$size$>$] \\
+DT         \> DW          \> PADDING     \> PORT        \> REG             \\
+SUPMODE \\
 \end{tabbing}}
 
 \subsubsection{Atmel AVR}
@@ -430,9 +435,10 @@ DW         \> PADDING     \> PORT        \> REG             \> SUPMODE \\
 
 {\tt\begin{tabbing}
 \hspace{3cm}\=\hspace{3cm}\=\hspace{3cm}\=\hspace{3cm}\=\kill
-BIT        \> DATA       \> DB          \> DD           \> DN \\
-DO         \> DQ         \> DS          \> DT           \> DW \\
-PACKING    \> PORT       \> REG         \> RES          \> SFR \\
+BF16       \> BIT        \> DATA        \> DB           \> DD \\
+DN         \> DO         \> DQ          \> DS           \> DT \\
+DW         \> PACKING    \> PORT        \> REG          \> RES \\
+SFR \\
 \end{tabbing}}
 
 \subsubsection{AMD 29K}
@@ -441,9 +447,9 @@ PACKING    \> PORT       \> REG         \> RES          \> SFR \\
 
 {\tt\begin{tabbing}
 \hspace{3cm}\=\hspace{3cm}\=\hspace{3cm}\=\hspace{3cm}\=\kill
-ASSUME     \> DB          \> DD          \> DN          \> DO \\
-DQ         \> DS          \> DT          \> DW          \> EMULATED \\
-REG        \> SUPMODE \\
+ASSUME     \> BF16        \> DB          \> DD          \> DN \\
+DO         \> DQ          \> DS          \> DT          \> DW \\
+EMULATED   \> REG         \> SUPMODE \\
 \end{tabbing}}
 
 \subsubsection{Siemens 80C166/167}
@@ -452,9 +458,9 @@ REG        \> SUPMODE \\
 
 {\tt\begin{tabbing}
 \hspace{3cm}\=\hspace{3cm}\=\hspace{3cm}\=\hspace{3cm}\=\kill
-ASSUME     \> BIT         \> DB          \> DD          \> DN \\
-DO         \> DQ          \> DS          \> DT          \> DW \\
-REG \\
+ASSUME     \> BF16        \> BIT         \> DB          \> DD \\
+DN         \> DO          \> DQ          \> DS          \> DT \\
+DW         \> REG \\
 \end{tabbing}}
 
 \subsubsection{Zilog Zx80}
@@ -463,10 +469,10 @@ REG \\
 
 {\tt\begin{tabbing}
 \hspace{3cm}\=\hspace{3cm}\=\hspace{3cm}\=\hspace{3cm}\=\kill
-DB         \> DD          \> DEFB        \> DEFW        \> DN \\
-DO         \> DQ          \> DS          \> DT          \> DW \\
-EXTMODE    \> LWORDMODE   \> PRWINS(Z(1,2)80)\> REG         \> SUPMODE (Z280) \\
-WARNRELATIVE \\
+BF16       \> DB          \> DD          \> DEFB        \> DEFW \\
+DN         \> DO          \> DQ          \> DS          \> DT \\
+DW         \> EXTMODE     \> LWORDMODE   \> PRWINS(Z(1,2)80)\> REG \\
+SUPMODE (Z280) \> WARNRELATIVE \\
 \end{tabbing}}
 
 \subsubsection{Zilog Z8}
@@ -475,9 +481,9 @@ WARNRELATIVE \\
 
 {\tt\begin{tabbing}
 \hspace{3cm}\=\hspace{3cm}\=\hspace{3cm}\=\hspace{3cm}\=\kill
-DB         \> DEFBIT      \> DD          \> DN          \> DO \\
-DQ         \> DS          \> DT          \> DW          \> REG \\
-SFR \\
+BF16       \> DB          \> DEFBIT      \> DD          \> DN \\
+DO         \> DQ          \> DS          \> DT          \> DW \\
+REG        \> SFR \\
 \end{tabbing}}
 
 \subsubsection{Zilog Z8000}
@@ -486,9 +492,9 @@ SFR \\
 
 {\tt\begin{tabbing}
 \hspace{3cm}\=\hspace{3cm}\=\hspace{3cm}\=\hspace{3cm}\=\kill
-DB         \> DD          \> DEFBIT      \> DEFBITB    \> DN \\
-DO         \> DQ          \> DS          \> DT         \> DW \\
-PORT       \> REG         \\
+BF16       \> DB          \> DD          \> DEFBIT      \> DEFBITB \\
+DN         \> DO          \> DQ          \> DS          \> DT \\
+DW         \> PORT        \> REG         \\
 \end{tabbing}}
 
 \subsubsection{Xilinx KCPSM}
@@ -506,9 +512,9 @@ CONSTANT   \> NAMEREG     \> REG \\
 
 {\tt\begin{tabbing}
 \hspace{3cm}\=\hspace{3cm}\=\hspace{3cm}\=\hspace{3cm}\=\kill
-CONSTANT   \> DB         \> DD          \> DN          \> DO \\
-DQ         \> DS         \> DT          \> DW          \> NAMEREG \\
-PORT       \> REG \\
+BF16       \> CONSTANT   \> DB          \> DD          \> DN \\
+DO         \> DQ         \> DS          \> DT          \> DW \\
+NAMEREG    \> PORT       \> REG \\
 \end{tabbing}}
 
 \subsubsection{LatticeMico8}
@@ -517,8 +523,9 @@ PORT       \> REG \\
 
 {\tt\begin{tabbing}
 \hspace{3cm}\=\hspace{3cm}\=\hspace{3cm}\=\hspace{3cm}\=\kill
-DB         \> DD          \> DN         \> DO          \> DQ \\
-DS         \> DT          \> DW         \> PORT        \> REG \\
+BF16       \> DB         \> DD          \> DN          \> DO \\
+DQ         \> DS         \> DT          \> DW          \> PORT \\
+REG \\
 \end{tabbing}}
 
 \subsubsection{Toshiba TLCS-900}
@@ -527,8 +534,9 @@ DS         \> DT          \> DW         \> PORT        \> REG \\
 
 {\tt\begin{tabbing}
 \hspace{3cm}\=\hspace{3cm}\=\hspace{3cm}\=\hspace{3cm}\=\kill
-DB         \> DD          \> DN         \> DO          \> DQ \\
-DS         \> DT          \> DW         \> MAXIMUM     \> SUPMODE \\
+BF16       \> DB         \> DD          \> DN          \> DO \\
+DQ         \> DS         \> DT          \> DW          \> MAXIMUM \\
+SUPMODE \\
 \end{tabbing}}
 
 \subsubsection{Toshiba TLCS-90}
@@ -537,8 +545,8 @@ DS         \> DT          \> DW         \> MAXIMUM     \> SUPMODE \\
 
 {\tt\begin{tabbing}
 \hspace{3cm}\=\hspace{3cm}\=\hspace{3cm}\=\hspace{3cm}\=\kill
-DB         \> DD          \> DN         \> DO          \> DQ \\
-DS         \> DT          \> DW \\
+BF16       \> DB         \> DD          \> DN          \> DO \\
+DQ         \> DS         \> DT          \> DW \\
 \end{tabbing}}
 
 \subsubsection{Toshiba TLCS-870(/C)}
@@ -547,8 +555,8 @@ DS         \> DT          \> DW \\
 
 {\tt\begin{tabbing}
 \hspace{3cm}\=\hspace{3cm}\=\hspace{3cm}\=\hspace{3cm}\=\kill
-DB         \> DD          \> DN         \> DO          \> DQ \\
-DS         \> DT          \> DW \\
+BF16       \> DB         \> DD          \> DN         \> DO \\
+DQ         \> DS         \> DT          \> DW \\
 \end{tabbing}}
 
 \subsubsection{Toshiba TLCS-47(0(A))}
@@ -557,8 +565,9 @@ DS         \> DT          \> DW \\
 
 {\tt\begin{tabbing}
 \hspace{3cm}\=\hspace{3cm}\=\hspace{3cm}\=\hspace{3cm}\=\kill
-ASSUME     \> DB          \> DD         \> DN          \> DO \\
-DQ         \> DS          \> DT         \> DW          \> PORT \\
+ASSUME     \> BF16        \> DB         \> DD         \> DN \\
+DO         \> DQ          \> DS         \> DT         \> DW \\
+PORT \\
 \end{tabbing}}
 
 \subsubsection{Toshiba TLCS-42}
@@ -567,8 +576,9 @@ DQ         \> DS          \> DT         \> DW          \> PORT \\
 
 {\tt\begin{tabbing}
 \hspace{3cm}\=\hspace{3cm}\=\hspace{3cm}\=\hspace{3cm}\=\kill
-ASSUME     \> DB          \> DD         \> DN          \> DO \\
-DQ         \> DS          \> DT         \> DW          \> PORT \\
+ASSUME     \> BF16        \> DB         \> DD          \> DN \\
+DO         \> DQ          \> DS         \> DT          \> DW \\
+PORT \\
 \end{tabbing}}
 
 \subsubsection{Toshiba TLCS-9000}
@@ -577,8 +587,8 @@ DQ         \> DS          \> DT         \> DW          \> PORT \\
 
 {\tt\begin{tabbing}
 \hspace{3cm}\=\hspace{3cm}\=\hspace{3cm}\=\hspace{3cm}\=\kill
-DB         \> DD          \> DN         \> DO         \> DQ \\
-DS         \> DT          \> DW         \> REG \\
+BF16       \> DB         \> DD          \> DN         \> DO \\
+DQ         \> DS         \> DT          \> DW         \> REG \\
 \end{tabbing}}
 
 \subsubsection{Toshiba TC9331}
@@ -650,9 +660,9 @@ DC[.$<$size$>$] \> DS[.$<$size$>$]   \> PADDING \\
 
 {\tt\begin{tabbing}
 \hspace{3cm}\=\hspace{3cm}\=\hspace{3cm}\=\hspace{3cm}\=\kill
-ASSUME     \> BIT         \> DB          \> DD          \> DN \\
-DO         \> DQ          \> DS          \> DT          \> DW \\
-REG \\
+ASSUME     \> BF16        \> BIT         \> DB          \> DD \\
+DN         \> DO          \> DQ          \> DS          \> DT \\
+DW         \> REG \\
 \end{tabbing}}
 
 \subsubsection{6804}
@@ -661,9 +671,9 @@ REG \\
 
 {\tt\begin{tabbing}
 \hspace{3cm}\=\hspace{3cm}\=\hspace{3cm}\=\hspace{3cm}\=\kill
-ADR        \> BYT         \> DB          \> DFS         \> DS \\
-DW         \> FCB         \> FCC         \> FDB         \> RMB \\
-SFR \\
+ADR        \> BF16        \> BYT         \> DB          \> DFS \\
+DS         \> DW          \> FCB         \> FCC         \> FDB \\
+RMB        \> SFR \\
 \end{tabbing}}
 
 \subsubsection{Texas Instruments TMS3201x}
@@ -744,8 +754,8 @@ WORD \\
 
 {\tt\begin{tabbing}
 \hspace{3cm}\=\hspace{3cm}\=\hspace{3cm}\=\hspace{3cm}\=\kill
-DB         \> DD          \> DN          \> DO         \> DQ \\
-DS         \> DT          \> DW \\
+BF16       \> DB          \> DD          \> DN          \> DO \\
+DQ         \> DS          \> DT          \> DW \\
 \end{tabbing}}
 
 \subsubsection{Texas Instruments TMS70Cxx}
@@ -754,8 +764,8 @@ DS         \> DT          \> DW \\
 
 {\tt\begin{tabbing}
 \hspace{3cm}\=\hspace{3cm}\=\hspace{3cm}\=\hspace{3cm}\=\kill
-DB         \> DD          \> DN          \> DO         \> DQ \\
-DS         \> DT          \> DW \\
+BF16       \> DB          \> DD          \> DN          \> DO \\
+DQ         \> DS          \> DT          \> DW \\
 \end{tabbing}}
 
 \subsubsection{Texas Instruments TMS370}
@@ -764,8 +774,8 @@ DS         \> DT          \> DW \\
 
 {\tt\begin{tabbing}
 \hspace{3cm}\=\hspace{3cm}\=\hspace{3cm}\=\hspace{3cm}\=\kill
-DB         \> DBIT        \> DD          \> DN          \> DO \\
-DQ         \> DS          \> DT          \> DW \\
+BF16       \> DB          \> DBIT        \> DD          \> DN \\
+DO         \> DQ          \> DS          \> DT          \> DW \\
 \end{tabbing}}
 
 \subsubsection{Texas Instruments MSP430}
@@ -801,9 +811,9 @@ ASCII      \> ASSUME      \> LTORG       \> WORD \\
 
 {\tt\begin{tabbing}
 \hspace{3cm}\=\hspace{3cm}\=\hspace{3cm}\=\hspace{3cm}\=\kill
-ASCII      \> BIGENDIAN  \> BYTE        \> DB          \> DBYTE \\
-DD         \> DN         \> DO          \> DQ          \> DS \\
-DT         \> DW         \> REG \\
+ASCII      \> BF16       \> BIGENDIAN   \> BYTE        \> DB \\
+DBYTE      \> DD         \> DN          \> DO          \> DQ \\
+DS         \> DT         \> DW          \> REG \\
 \end{tabbing}}
 	
 \subsubsection{National INS807x}
@@ -812,8 +822,8 @@ DT         \> DW         \> REG \\
 
 {\tt\begin{tabbing}
 \hspace{3cm}\=\hspace{3cm}\=\hspace{3cm}\=\hspace{3cm}\=\kill
-DB         \> DD          \> DN          \> DO         \> DQ \\
-DS         \> DT          \> DW \\
+BF16       \> DB         \> DD          \> DN          \> DO \\
+DQ         \> DS         \> DT          \> DW \\
 \end{tabbing}}
         
 \subsubsection{National COP4}
@@ -822,10 +832,10 @@ DS         \> DT          \> DW \\
 
 {\tt\begin{tabbing}
 \hspace{3cm}\=\hspace{3cm}\=\hspace{3cm}\=\hspace{3cm}\=\kill
-ADDR       \> ADDRW       \> BYTE        \> DB          \> DD \\
-DO         \> DQ          \> DS          \> DSB         \> DSW \\
-DT         \> DW          \> FB          \> FW          \> SFR \\
-WORD \\
+ADDR       \> ADDRW       \> BF16        \> BYTE        \> DB \\
+DD         \> DO          \> DQ          \> DS          \> DSB \\
+DSW        \> DT          \> DW          \> FB          \> FW \\
+SFR        \> WORD \\
 \end{tabbing}}
 
 \subsubsection{National COP8}
@@ -834,9 +844,10 @@ WORD \\
 
 {\tt\begin{tabbing}
 \hspace{3cm}\=\hspace{3cm}\=\hspace{3cm}\=\hspace{3cm}\=\kill
-ADDR       \> ADDRW       \> BYTE        \> DB          \> DD \\
-DQ         \> DS          \> DSB         \> DSW         \> DT \\
-DW         \> FB          \> FW          \> SFR         \> WORD \\
+ADDR       \> ADDRW       \> BF16        \> BYTE        \> DB \\
+DD         \> DQ          \> DS          \> DSB         \> DSW \\
+DT         \> DW          \> FB          \> FW          \> SFR \\
+WORD \\
 \end{tabbing}}
 
 \subsubsection{National SC14xxx}
@@ -852,10 +863,10 @@ DW         \> DW16 \\
 \subsubsection{National NS32xxx}
 {\tt\begin{tabbing}
 \hspace{3cm}\=\hspace{3cm}\=\hspace{3cm}\=\hspace{3cm}\=\kill
-BIGENDIAN  \> BYTE        \> CUSTOM     \> DB           \> DD \\
-DOUBLE     \> DO          \> DQ         \> DS           \> DT \\
-DW         \> FLOAT       \> FPU        \> LONG         \> PMMU \\
-REG        \> SUPMODE     \> WORD \\
+BF16       \> BIGENDIAN   \> BYTE       \> CUSTOM       \> DB \\
+DD         \> DOUBLE      \> DO         \> DQ           \> DS \\
+DT         \> DW          \> FLOAT      \> FPU          \> LONG \\
+PMMU       \> REG         \> SUPMODE    \> WORD \\
 \end{tabbing}}
 
 \subsubsection{National CR16A/B}
@@ -890,8 +901,8 @@ REG        \> SPACE       \> SUPMODE    \> WORD \\
 
 {\tt\begin{tabbing}
 \hspace{3cm}\=\hspace{3cm}\=\hspace{3cm}\=\hspace{3cm}\=\kill
-DB          \> DD          \> DN        \> DO           \> DQ \\
-DS          \> DT          \> DW \\
+BF16        \> DB          \> DD          \> DN        \> DO \\
+DQ          \> DS          \> DT          \> DW \\
 \end{tabbing}}
 
 \subsubsection{Fairchild F8}
@@ -900,8 +911,8 @@ DS          \> DT          \> DW \\
 
 {\tt\begin{tabbing}
 \hspace{3cm}\=\hspace{3cm}\=\hspace{3cm}\=\hspace{3cm}\=\kill
-DB          \> DD          \> DN        \> DO           \> DQ \\
-DS          \> DT          \> DW        \> PORT \\
+BF16        \> DB          \> DD         \> DN         \> DO \\
+DQ          \> DS          \> DT         \> DW         \> PORT \\
 \end{tabbing}}
 
 \subsubsection{NEC $\mu$PD7800...$\mu$PD7806, $\mu$PD78(C)1x}
@@ -910,8 +921,9 @@ DS          \> DT          \> DW        \> PORT \\
 
 {\tt\begin{tabbing}
 \hspace{3cm}\=\hspace{3cm}\=\hspace{3cm}\=\hspace{3cm}\=\kill
-ASSUME     \> DB          \> DD          \> DN          \> DO \\
-DQ         \> DS          \> DT          \> DW          \> Z80SYNTAX \\
+ASSUME     \> BF16        \> DB          \> DD          \> DN \\
+DO         \> DQ          \> DS          \> DT          \> DW \\
+Z80SYNTAX \\
 \end{tabbing}}
 
 \subsubsection{NEC $\mu$PD7807...$\mu$PD7809}
@@ -920,8 +932,9 @@ DQ         \> DS          \> DT          \> DW          \> Z80SYNTAX \\
 
 {\tt\begin{tabbing}
 \hspace{3cm}\=\hspace{3cm}\=\hspace{3cm}\=\hspace{3cm}\=\kill
-ASSUME     \> DB          \> DEFBIT      \>DD          \> DN \\
-DO         \> DQ          \> DS          \> DT         \> DW \\
+ASSUME     \> BF16        \> DB          \> DEFBIT     \> DD \\
+DN         \> DO          \> DQ          \> DS         \> DT \\
+DW \\
 \end{tabbing}}
 
 \subsubsection{NEC 75xx}
@@ -930,8 +943,8 @@ DO         \> DQ          \> DS          \> DT         \> DW \\
 
 {\tt\begin{tabbing}
 \hspace{3cm}\=\hspace{3cm}\=\hspace{3cm}\=\hspace{3cm}\=\kill
-DB         \> DD          \> DN          \> DO         \> DQ \\
-DS         \> DT          \> DW \\
+BF16       \> DB          \> DD          \> DN         \> DO \\
+DQ         \> DS          \> DT          \> DW \\
 \end{tabbing}}
 
 \subsubsection{NEC $\mu$COM-43}
@@ -940,8 +953,8 @@ DS         \> DT          \> DW \\
 
 {\tt\begin{tabbing}
 \hspace{3cm}\=\hspace{3cm}\=\hspace{3cm}\=\hspace{3cm}\=\kill
-DB         \> DD          \> DN          \> DO         \> DQ \\
-DS         \> DT          \> DW \\
+BF16       \> DB          \> DD          \> DN         \> DO \\
+DQ         \> DS          \> DT          \> DW \\
 \end{tabbing}}
 
 \subsubsection{NEC 75K0}
@@ -950,9 +963,9 @@ DS         \> DT          \> DW \\
 
 {\tt\begin{tabbing}
 \hspace{3cm}\=\hspace{3cm}\=\hspace{3cm}\=\hspace{3cm}\=\kill
-ASSUME     \> BIT         \> DB          \> DD          \> DN \\
-DO         \> DQ          \> DS          \> DT          \> DW \\
-SFR \\
+ASSUME     \> BF16        \> BIT         \> DB          \> DD \\
+DN         \> DO          \> DQ          \> DS          \> DT \\
+DW         \> SFR \\
 \end{tabbing}}
 
 \subsubsection{NEC 78K0}
@@ -961,8 +974,8 @@ SFR \\
 
 {\tt\begin{tabbing}
 \hspace{3cm}\=\hspace{3cm}\=\hspace{3cm}\=\hspace{3cm}\=\kill
-DB         \> DD          \> DN          \> DO          \> DQ \\
-DS         \> DT          \> DW \\
+BF16       \> DB          \> DD          \> DN          \> DO \\
+DQ         \> DS          \> DT          \> DW \\
 \end{tabbing}}
 
 \subsubsection{NEC 78K2}
@@ -971,8 +984,8 @@ DS         \> DT          \> DW \\
 
 {\tt\begin{tabbing}
 \hspace{3cm}\=\hspace{3cm}\=\hspace{3cm}\=\hspace{3cm}\=\kill
-BIT        \> DB         \> DD          \> DN          \> DO \\
-DQ         \> DS         \> DT          \> DW \\
+BF16       \> BIT        \> DB          \> DD           \> DN \\
+DO         \> DQ         \> DS          \> DT           \> DW \\
 \end{tabbing}}
 
 \subsubsection{NEC 78K3}
@@ -981,8 +994,8 @@ DQ         \> DS         \> DT          \> DW \\
 
 {\tt\begin{tabbing}
 \hspace{3cm}\=\hspace{3cm}\=\hspace{3cm}\=\hspace{3cm}\=\kill
-BIT        \> DB         \> DD          \> DN          \> DO \\
-DQ         \> DS         \> DT          \> DW \\
+BF16       \> BIT        \> DB          \> DD           \> DN \\
+DO         \> DQ         \> DS          \> DT           \> DW \\
 \end{tabbing}}
 
 \subsubsection{NEC 78K4}
@@ -991,8 +1004,8 @@ DQ         \> DS         \> DT          \> DW \\
 
 {\tt\begin{tabbing}
 \hspace{3cm}\=\hspace{3cm}\=\hspace{3cm}\=\hspace{3cm}\=\kill
-BIT        \> DB         \> DD          \> DN          \> DO \\
-DQ         \> DS         \> DT          \> DW \\
+BF16       \> BIT        \> DB          \> DD          \> DN \\
+DO         \> DQ         \> DS          \> DT          \> DW \\
 \end{tabbing}}
 
 \subsubsection{NEC $\mu$PD772x}
@@ -1028,8 +1041,8 @@ DC[.$<$size$>$]\> DS[.$<$size$>$] \> PADDING \> REG         \> SUPMODE \\
 
 {\tt\begin{tabbing} 
 \hspace{3cm}\=\hspace{3cm}\=\hspace{3cm}\=\hspace{3cm}\=\kill
-DB         \> DD          \> DN          \> DO          \> DQ \\
-DS         \> DT          \> DW \\
+BF16       \> DB          \> DD          \> DN          \> DO \\
+DQ         \> DS          \> DT          \> DW \\
 \end{tabbing}}
 
 \subsubsection{Fujitsu F$^{2}$MC8L}
@@ -1038,8 +1051,8 @@ DS         \> DT          \> DW \\
 
 {\tt\begin{tabbing} 
 \hspace{3cm}\=\hspace{3cm}\=\hspace{3cm}\=\hspace{3cm}\=\kill
-DB         \> DD          \> DN          \> DO         \> DQ \\
-DS         \> DT          \> DW \\
+BF16       \> DB          \> DD          \> DN          \> DO \\
+DQ         \> DS          \> DT          \> DW \\
 \end{tabbing}}
 
 \subsubsection{Fujitsu F$^{2}$MC16L}
@@ -1048,8 +1061,8 @@ DS         \> DT          \> DW \\
 
 {\tt\begin{tabbing} 
 \hspace{3cm}\=\hspace{3cm}\=\hspace{3cm}\=\hspace{3cm}\=\kill
-DB         \> DD          \> DN          \> DO         \> DQ \\
-DS         \> DT          \> DW \\
+BF16       \> DB          \> DD          \> DN          \> DO \\
+DQ         \> DS          \> DT          \> DW \\
 \end{tabbing}}
 
 \subsubsection{OKI OLMS-40}
@@ -1094,8 +1107,8 @@ BIT        \> DATA       \> RES       \> SFR \\
 
 {\tt\begin{tabbing}
 \hspace{3cm}\=\hspace{3cm}\=\hspace{3cm}\=\hspace{3cm}\=\kill
-DB         \> DD          \> DN          \> DO          \> DQ \\
-DS         \> DT          \> DW \\
+BF16       \> DB         \> DD        \> DN          \> DO \\
+DQ         \> DS         \> DT        \> DW \\
 \end{tabbing}}
 
 
@@ -1105,8 +1118,8 @@ DS         \> DT          \> DW \\
 
 {\tt\begin{tabbing}
 \hspace{3cm}\=\hspace{3cm}\=\hspace{3cm}\=\hspace{3cm}\=\kill
-DB         \> DD          \> DQ          \> DN          \> DO \\
-DS         \> DT          \> DW          \> REG \\
+BF16       \> DB         \> DD        \> DQ          \> DN \\
+DO         \> DS         \> DT        \> DW          \> REG \\
 \end{tabbing}}
 
 \subsubsection{ATARI Vector}
@@ -1132,8 +1145,9 @@ DATA       \> EXTENDED    \> FLOAT \\
 
 {\tt\begin{tabbing}
 \hspace{3cm}\=\hspace{3cm}\=\hspace{3cm}\=\hspace{3cm}\=\kill
-BIT        \> DB          \> DD          \> DN          \> DO \\
-DQ         \> DS          \> DT          \> DW          \> REG \\
+BF16       \> BIT         \> DB          \> DD          \> DN \\
+DO         \> DQ          \> DS          \> DT          \> DW \\
+REG \\
 \end{tabbing}}
 
 \subsubsection{CP-1600}
@@ -1191,8 +1205,8 @@ RMB \\
 
 {\tt\begin{tabbing}
 \hspace{3cm}\=\hspace{3cm}\=\hspace{3cm}\=\hspace{3cm}\=\kill
-DN         \> DB          \> DD          \> DO          \> DQ \\
-DS         \> DT          \> DW \\
+BF16       \> DN          \> DB          \> DD          \> DO \\
+DQ         \> DS          \> DT          \> DW \\
 \end{tabbing}}
 
 \subsubsection{TBIL}

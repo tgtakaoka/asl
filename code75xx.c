@@ -318,7 +318,7 @@ static void AddAbs(const char *NewName, Word NewCode)
 
 static void InitFields(void)
 {
-  InstTable = CreateInstTable(103);
+  InstTable = CreateInstTable(203);
 
   add_null_pseudo(InstTable);
 
