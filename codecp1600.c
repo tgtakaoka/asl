@@ -17,8 +17,10 @@
 #include "chunks.h"
 #include "asmdef.h"
 #include "asmsub.h"
+#include "asmallg.h"
 #include "asmpars.h"
 #include "asmitree.h"
+#include "asmcode.h"
 #include "codevars.h"
 #include "codepseudo.h"
 #include "headids.h"
@@ -29,6 +31,10 @@
 
 /*---------------------------------------------------------------------------*/
 
+#define OPCODE_SDBD 0x0001
+#define REG_PC 7
+#define REG_SP 6
+
 static CPUVar CPUCP1600;
 
 static Word Bits;
@@ -37,39 +43,120 @@ static Boolean PrefixedSDBD;
 
 /*---------------------------------------------------------------------------*/
 
-static Boolean DecReg(const char *pAsc, Word *reg, Boolean errMsg)
-{
-	if (strlen(pAsc) != 2)
-	{
-		if(errMsg) WrError(ErrNum_InvRegName);
-		return False;
-	}
+/*!------------------------------------------------------------------------
+ * \fn     decode_reg_core(const char *p_arg, Word *p_reg)
+ * \brief  core register decode routine
+ * \param  p_arg source argument
+ * \param  p_reg result buffer
+ * \return True if argument names a register
+ * ------------------------------------------------------------------------ */
 
-	if (toupper(pAsc[0]) == 'R' && pAsc[1] >= '0' && pAsc[1] <= '7' )
+static Boolean decode_reg_core(const char *p_arg, Word *p_reg)
+{
+	if (strlen(p_arg) != 2)
+		return False;
+
+  if (toupper(p_arg[0]) == 'S' && toupper(p_arg[1]) == 'P')
+  {
+    *p_reg = REG_SP | REGSYM_FLAG_ALIAS;
+    return True;
+  }
+  if (toupper(p_arg[0]) == 'P' && toupper(p_arg[1]) == 'C')
+  {
+    *p_reg = REG_PC | REGSYM_FLAG_ALIAS;
+    return True;
+  }
+	if (toupper(p_arg[0]) == 'R' && p_arg[1] >= '0' && p_arg[1] <= '7' )
 	{
-		*reg = pAsc[1] - '0';
+		*p_reg = p_arg[1] - '0';
 		return True;
 	}
+  return False;
+}
 
-	if (errMsg) WrError(ErrNum_InvRegName);
-	return False;
+/*!------------------------------------------------------------------------
+ * \fn     dissect_reg_cp1600(char *p_dest, size_t dest_size, tRegInt value, tSymbolSize inp_size)
+ * \brief  dissect register symbols - CP-1600 variant
+ * \param  p_dest destination buffer
+ * \param  dest_size destination buffer size
+ * \param  value numeric register value
+ * \param  inp_size register size
+ * ------------------------------------------------------------------------ */
+
+static void dissect_reg_cp1600(char *p_dest, size_t dest_size, tRegInt value, tSymbolSize inp_size)
+{
+  switch (inp_size)
+  {
+    case eSymbolSize16Bit:
+      switch (value)
+      {
+        case REGSYM_FLAG_ALIAS | REG_PC:
+          as_snprintf(p_dest, dest_size, "PC");
+          break;
+        case REGSYM_FLAG_ALIAS | REG_SP:
+          as_snprintf(p_dest, dest_size, "SP");
+          break;
+        default:
+          as_snprintf(p_dest, dest_size, "R%u", (unsigned)(value & 7));
+      }
+      break;
+    default:
+      as_snprintf(p_dest, dest_size, "%d-%u", (int)inp_size, (unsigned)value);
+  }
+}
+
+/*!------------------------------------------------------------------------
+ * \fn     DecReg(const tStrComp *p_arg, Word *p_reg, Boolean errMsg)
+ * \brief  decode register (core name or symbol)
+ * \param  p_arg source argument
+ * \param  p_reg result buffer
+ * \param  errMsg report error if argument is no register?
+ * \return True if argument names a register
+ * ------------------------------------------------------------------------ */
+
+static Boolean DecReg(const tStrComp *p_arg, Word *p_reg, Boolean errMsg)
+{
+  tRegDescr reg_descr;
+  tEvalResult eval_result;
+  tRegEvalResult reg_eval_result;
+
+  if (decode_reg_core(p_arg->str.p_str, p_reg))
+  {
+    reg_descr.Reg = *p_reg;
+    eval_result.DataSize = eSymbolSize16Bit;
+    reg_eval_result = eIsReg;
+  }
+  else
+    reg_eval_result = EvalStrRegExpressionAsOperand(p_arg, &reg_descr, &eval_result, eSymbolSize16Bit, True);
+
+  switch (reg_eval_result)
+  {
+    case eIsReg:
+      *p_reg = reg_descr.Reg & ~REGSYM_FLAG_ALIAS;
+      return True;
+    default:
+      if (errMsg)
+        WrStrErrorPos(ErrNum_InvRegName, p_arg);
+      return False;
+  }
 }
 
 /*---------------------------------------------------------------------------*/
 
 static void DecodeRegAdrMVO(Word Index)
 {
-	Word reg;
-	Word adr;
-	Boolean OK;
-
 	PrefixedSDBD = False;
 		
 	if (ChkArgCnt(2,2))
 	{
-		if (!DecReg(ArgStr[1].str.p_str, &reg, True)) return;
+		Word reg;
+		Word adr;
+		Boolean OK;
+		tSymbolFlags flags;
 
-		adr = EvalStrIntExpression(&ArgStr[2], UInt16, &OK);
+		if (!DecReg(&ArgStr[1], &reg, True)) return;
+
+		adr = EvalStrIntExpressionWithFlags(&ArgStr[2], UInt16, &OK, &flags);
 		if (!OK) return;
 
 		if (adr & Mask)
@@ -79,6 +166,7 @@ static void DecodeRegAdrMVO(Word Index)
 		}
 
 		WAsmCode[0] = Index | reg;
+    set_w_guessed(flags, 1, 1, 0x3ff);
 		WAsmCode[1] = adr;
 		CodeLen = 2;
 	}
@@ -93,9 +181,9 @@ static void DecodeRegRegMVO(Word Index)
 
 	if (ChkArgCnt(2,2))
 	{
-		if(!DecReg(ArgStr[1].str.p_str, &regs, True)) return;
+		if (!DecReg(&ArgStr[1], &regs, True)) return;
 
-		if(!DecReg(ArgStr[2].str.p_str, &regd, True)) return;
+		if (!DecReg(&ArgStr[2], &regd, True)) return;
 		if (regd == 0 || regd == 7)
 		{
 			WrError(ErrNum_InvReg);
@@ -109,17 +197,18 @@ static void DecodeRegRegMVO(Word Index)
 
 static void DecodeRegImmMVO(Word Index)
 {
-	Word reg;
-	LongInt val;
-	Boolean OK;
-
 	PrefixedSDBD = False;
 		
 	if (ChkArgCnt(2,2))
 	{
-		if (!DecReg(ArgStr[1].str.p_str, &reg, True)) return;
+		Word reg;
+		LongInt val;
+		Boolean OK;
+    tSymbolFlags flags;
 
-		val = EvalStrIntExpression(&ArgStr[2], Int32, &OK);
+		if (!DecReg(&ArgStr[1], &reg, True)) return;
+
+		val = EvalStrIntExpressionWithFlags(&ArgStr[2], Int32, &OK, &flags);
 		if (!OK) return;
 		if (!ChkRange(val, -32768, 65535)) return;
 
@@ -130,6 +219,7 @@ static void DecodeRegImmMVO(Word Index)
 		}
 
 		WAsmCode[0] = Index | reg;
+    set_w_guessed(flags, 1, 1, 0xffff - Mask);
 		WAsmCode[1] = val;
 		CodeLen = 2;
 	}
@@ -137,15 +227,16 @@ static void DecodeRegImmMVO(Word Index)
 
 static void DecodeAdrReg(Word Index)
 {
-	Word reg;
-	Word adr;
-	Boolean OK;
-
 	PrefixedSDBD = False;
 		
 	if (ChkArgCnt(2,2))
 	{
-		adr = EvalStrIntExpression(&ArgStr[1], UInt16, &OK);
+		Word reg;
+		Word adr;
+		Boolean OK;
+    tSymbolFlags flags;
+
+		adr = EvalStrIntExpressionWithFlags(&ArgStr[1], UInt16, &OK, &flags);
 		if (!OK) return;
 
 		if (adr & Mask)
@@ -154,9 +245,10 @@ static void DecodeAdrReg(Word Index)
 			return;
 		}
 
-		if (!DecReg(ArgStr[2].str.p_str, &reg, True)) return;
+		if (!DecReg(&ArgStr[2], &reg, True)) return;
 
 		WAsmCode[0] = Index | reg;
+    set_w_guessed(flags, 1, 1, 0xffff - Mask);
 		WAsmCode[1] = adr;
 		CodeLen = 2;
 	}
@@ -171,7 +263,7 @@ static void DecodeRegReg(Word Index)
 
 	if (ChkArgCnt(2,2))
 	{
-		if(!DecReg(ArgStr[1].str.p_str, &regs, True)) return;
+		if (!DecReg(&ArgStr[1], &regs, True)) return;
 		if (Index & 0x0200)
 		{
 			if (regs == 0 || regs == 7)
@@ -181,7 +273,7 @@ static void DecodeRegReg(Word Index)
 			}
 		}
 
-		if(!DecReg(ArgStr[2].str.p_str, &regd, True)) return;
+		if (!DecReg(&ArgStr[2], &regd, True)) return;
 
 		WAsmCode[0] = Index | (regs << 3) | regd;
 		CodeLen = 1;
@@ -193,38 +285,42 @@ static void DecodeImmReg(Word Index)
 	LongInt val;
 	Word regd;
 	Boolean OK;
+  tSymbolFlags flags;
 	Boolean prefixed = PrefixedSDBD;
 	
 	PrefixedSDBD = False;
 
 	if (ChkArgCnt(2,2))
 	{
-		val = EvalStrIntExpression(&ArgStr[1], Int32, &OK);
+		val = EvalStrIntExpressionWithFlags(&ArgStr[1], Int32, &OK, &flags);
 		if (!OK) return;
 		if (!ChkRange(val, -32768, 65535)) return;
 
-		if(!DecReg(ArgStr[2].str.p_str, &regd, True)) return;
+		if (!DecReg(&ArgStr[2], &regd, True)) return;
 
 		if (prefixed)
 		{
 			WAsmCode[0] = Index | regd;
-			WAsmCode[1] = val & 0x00FF;
-			WAsmCode[2] = val >> 8;
+      set_w_guessed(flags, 1, 2, 0xff);
+			WAsmCode[1] = val & 0x00ff;
+			WAsmCode[2] = (val >> 8) & 0x00ff;
 			CodeLen = 3;
 		}
 		else
 		{
 			if (val & Mask)
 			{
-				WAsmCode[0] = 0x0001; /* SDBD */
+				WAsmCode[0] = OPCODE_SDBD;
 				WAsmCode[1] = Index | regd;
-				WAsmCode[2] = val & 0x00FF;
-				WAsmCode[3] = val >> 8;
+      set_w_guessed(flags, 2, 2, 0xff);
+				WAsmCode[2] = val & 0x00ff;
+				WAsmCode[3] = (val >> 8) & 0x00ff;
 				CodeLen = 4;
 			}
 			else
 			{
 				WAsmCode[0] = Index | regd;
+      set_w_guessed(flags, 1, 1, 0xff);
 				WAsmCode[1] = val;
 				CodeLen = 2;
 			}
@@ -240,7 +336,7 @@ static void DecodeRegDup(Word Index)
 
 	if (ChkArgCnt(1,1))
 	{
-		if(!DecReg(ArgStr[1].str.p_str, &reg, True)) return;
+		if (!DecReg(&ArgStr[1], &reg, True)) return;
 
 		WAsmCode[0] = Index | (reg << 3) | reg;
 		CodeLen = 1;
@@ -249,9 +345,10 @@ static void DecodeRegDup(Word Index)
 
 static void DecodeBranch(Word Index)
 {
-	Word cond = 0;
+	Word cond = 0, w0_guess_mask = 0x0000;
 	Word adr;
 	Boolean OK;
+  tSymbolFlags flags;
 	Word PC = EProgCounter();
 
 	PrefixedSDBD = False;
@@ -261,7 +358,9 @@ static void DecodeBranch(Word Index)
 		/* BEXT */
 		if (!ChkArgCnt(2,2)) return;
 
-		cond = EvalStrIntExpression(&ArgStr[2], UInt4, &OK);
+		cond = EvalStrIntExpressionWithFlags(&ArgStr[2], UInt4, &OK, &flags);
+    if (mFirstPassUnknownOrQuestionable(flags))
+      w0_guess_mask |= 0x000f;
 	}
 	else
 	{
@@ -270,9 +369,13 @@ static void DecodeBranch(Word Index)
 		cond = 0;
 	}
 
-	adr = EvalStrIntExpression(&ArgStr[1], UInt16, &OK);
+	adr = EvalStrIntExpressionWithFlags(&ArgStr[1], UInt16, &OK, &flags);
 	if (!OK) return;
+  if (mFirstPassUnknownOrQuestionable(flags))
+    w0_guess_mask |= 0x0020;
 
+  set_wasmcode_guessed(0, 1, w0_guess_mask);
+  set_w_guessed(flags, 1, 1, 0x03ff);
 	if (adr >= PC + 2)
 	{
 		WAsmCode[0] = Index | cond;
@@ -313,7 +416,7 @@ static void DecodeReg(Word Index)
 
 	if (ChkArgCnt(1,1))
 	{
-		if(!DecReg(ArgStr[1].str.p_str, &reg, True)) return;
+		if (!DecReg(&ArgStr[1], &reg, True)) return;
 
 		if (Index == 0x0030)
 		{
@@ -339,7 +442,9 @@ static void DecodeShift(Word Index)
 
 	if (ChkArgCnt(1,2))
 	{
-		if(!DecReg(ArgStr[1].str.p_str, &reg, True)) return;
+	  tSymbolFlags flags = eSymbolFlag_None;
+
+		if (!DecReg(&ArgStr[1], &reg, True)) return;
 		if (reg > 3)
 		{
 			WrError(ErrNum_InvReg);
@@ -350,8 +455,8 @@ static void DecodeShift(Word Index)
 		{
 			Word val;
 			Boolean OK;
-			
-			val = EvalStrIntExpression(&ArgStr[2], UInt16, &OK);
+
+			val = EvalStrIntExpressionWithFlags(&ArgStr[2], UInt16, &OK, &flags);
 			if (!OK) return;
 
 			if (val == 1)
@@ -369,6 +474,7 @@ static void DecodeShift(Word Index)
 			}
 		}
 
+    set_w_guessed(flags, 0, 1, 0x0004);
 		WAsmCode[0] = Index | bit | reg;
 		CodeLen = 1;
 	}
@@ -376,7 +482,7 @@ static void DecodeShift(Word Index)
 
 static void DecodeOptionalImm(Word Index)
 {
-	Word bit = 0;
+	Word bit = 0, bit_unknown_mask = 0x0000;
 
 	PrefixedSDBD = False;
 
@@ -386,11 +492,13 @@ static void DecodeOptionalImm(Word Index)
 		{
 			bit = 0x0000;
 		}
-		else{
+		else
+    {
 			Word val;
 			Boolean OK;
+      tSymbolFlags flags;
 
-			val = EvalStrIntExpression(&ArgStr[1], UInt16, &OK);
+			val = EvalStrIntExpressionWithFlags(&ArgStr[1], UInt16, &OK, &flags);
 			if (!OK) return;
 
 			if (val == 1)
@@ -406,7 +514,10 @@ static void DecodeOptionalImm(Word Index)
 				WrError(ErrNum_InvShiftArg);
 				return;
 			}
+      if (mFirstPassUnknownOrQuestionable(flags))
+        bit_unknown_mask |= 0x0001;
 		}
+    set_wasmcode_guessed(0, 1, bit_unknown_mask);
 		WAsmCode[0] = Index | bit;
 		CodeLen = 1;
 	}
@@ -420,7 +531,7 @@ static void DecodeFixed(Word Index)
 		CodeLen = 1;
 	}
 
-	if (Index == 0x0001) PrefixedSDBD = True;
+	if (Index == OPCODE_SDBD) PrefixedSDBD = True;
 	else PrefixedSDBD = False;
 }
 
@@ -429,6 +540,7 @@ static void DecodeJump(Word Index)
 	Word adr;
 	Boolean OK;
 	Word reg;
+  tSymbolFlags flags;
 
 	PrefixedSDBD = False;
 
@@ -439,14 +551,14 @@ static void DecodeJump(Word Index)
 
 		reg = 0;
 
-		adr = EvalStrIntExpression(&ArgStr[1], UInt16, &OK);		
+		adr = EvalStrIntExpressionWithFlags(&ArgStr[1], UInt16, &OK, &flags);
 	}
 	else
 	{
 		/* JSR/JSRD/JSRE */
 		if (!ChkArgCnt(2, 2)) return;
 
-		if (!DecReg(ArgStr[1].str.p_str, &reg, True)) return;
+		if (!DecReg(&ArgStr[1], &reg, True)) return;
 		if (reg < 4 || reg > 6)
 		{
 			WrError(ErrNum_InvReg);
@@ -454,13 +566,15 @@ static void DecodeJump(Word Index)
 		}
 		reg = (reg - 4) << 8;
 
-		adr = EvalStrIntExpression(&ArgStr[2], UInt16, &OK);
+		adr = EvalStrIntExpressionWithFlags(&ArgStr[2], UInt16, &OK, &flags);
 	}
 	if (!OK) return;
 
 	WAsmCode[0] = 0x0004;
-	WAsmCode[1] = Index | reg | ((adr & 0xFC00) >> 8);
-	WAsmCode[2] = adr & 0x03FF;
+  set_w_guessed(flags, 1, 1, 0x00fc);
+	WAsmCode[1] = Index | reg | ((adr & 0xfc00) >> 8);
+  set_w_guessed(flags, 2, 1, 0x03ff);
+	WAsmCode[2] = adr & 0x03ff;
 	CodeLen = 3;
 }
 
@@ -472,7 +586,7 @@ static void DecodeJR(Word Index)
 
 	if (ChkArgCnt(1,1))
 	{
-		if(!DecReg(ArgStr[1].str.p_str, &reg, True)) return;
+		if (!DecReg(&ArgStr[1], &reg, True)) return;
 
 		WAsmCode[0] = Index | (reg << 3);
 		CodeLen = 1;
@@ -513,14 +627,16 @@ static void DecodeRES(Word Index)
 	BookKeeping();
 }
 
-static void PutByte(Word value, int *p_half)
+static void PutByte(Word value, int *p_half, tSymbolFlags flags)
 {
 	if (*p_half & 1)
 	{
+    or_w_guessed(flags, CodeLen - 1, 1, 0xff00);
 		WAsmCode[CodeLen - 1] |= value << 8;
 	}
 	else
 	{
+    set_w_guessed(flags, CodeLen, 1, 0xff);
 		WAsmCode[CodeLen++] = value & 0xFF;
 	}
 	if (Packing)
@@ -554,6 +670,7 @@ static void DecodeWORD(Word Index)
 				case 0x0000: /* WORD */
 					if (ChkRange(t.Contents.Int, -32768, 65535))
 					{
+            set_w_guessed(t.Flags, CodeLen, 1, 0xffff);
 						WAsmCode[CodeLen++] = t.Contents.Int;
 					}
 					b = 0;
@@ -561,6 +678,7 @@ static void DecodeWORD(Word Index)
 				case 0x0001: /* BYTE */
 					if (ChkRange(t.Contents.Int, -32768, 65535))
 					{
+            set_w_guessed(t.Flags, CodeLen, 2, 0x00ff);
 						WAsmCode[CodeLen++] = t.Contents.Int & 0x00FF;
 						WAsmCode[CodeLen++] = (t.Contents.Int >> 8) & 0x00FF;
 					}
@@ -568,7 +686,7 @@ static void DecodeWORD(Word Index)
 					break;
 				case 0x0002: /* TEXT */
 					if (ChkRange(t.Contents.Int, 0, 255))
-						PutByte(t.Contents.Int & 0xff, &b);
+						PutByte(t.Contents.Int & 0xff, &b, t.Flags);
 					break;
 				default:
 					OK = False;
@@ -588,7 +706,7 @@ static void DecodeWORD(Word Index)
 					OK = False;
 				else
 					for (c = 0; c < (int)t.Contents.str.len; c++)
-						PutByte(t.Contents.str.p_str[c], &b);
+						PutByte(t.Contents.str.p_str[c], &b, t.Flags);
 				break;
 			default:
 				OK = False;
@@ -736,25 +854,25 @@ static void InitFields(void)
 	AddImmReg("XORI", 0x03F8);
 
 	/* Conditional Branch Instructions */
-	AddBranch("B", 0x0200);
-	AddBranch("BC", 0x0201);
-	AddBranch("BLGT", 0x0201);
-	AddBranch("BNC", 0x0209);
+	AddBranch("B"   , 0x0200);
+	AddBranch("BC"  , 0x0201);
+	AddBranch("BLGE", 0x0201);
+	AddBranch("BNC" , 0x0209);
 	AddBranch("BLLT", 0x0209);
-	AddBranch("BOV", 0x0202);
-	AddBranch("BNOV", 0x020A);
-	AddBranch("BPL", 0x0203);
-	AddBranch("BMI", 0x020B);
-	AddBranch("BZE", 0x0204);
-	AddBranch("BEQ", 0x0204);
-	AddBranch("BNZE", 0x020C);
-	AddBranch("BNEQ", 0x020C);
-	AddBranch("BLT", 0x0205);
-	AddBranch("BGE", 0x020D);
-	AddBranch("BLE", 0x0206);
-	AddBranch("BGT", 0x020E);
+	AddBranch("BOV" , 0x0202);
+	AddBranch("BNOV", 0x020a);
+	AddBranch("BPL" , 0x0203);
+	AddBranch("BMI" , 0x020b);
+	AddBranch("BZE" , 0x0204);
+	AddBranch("BEQ" , 0x0204);
+	AddBranch("BNZE", 0x020c);
+	AddBranch("BNEQ", 0x020c);
+	AddBranch("BLT" , 0x0205);
+	AddBranch("BGE" , 0x020d);
+	AddBranch("BLE" , 0x0206);
+	AddBranch("BGT" , 0x020e);
 	AddBranch("BUSC", 0x0207);
-	AddBranch("BESC", 0x020F);
+	AddBranch("BESC", 0x020f);
 	AddBranch("BEXT", 0x0210);
 	AddNOPP("NOPP", 0x0208);
 
@@ -791,7 +909,7 @@ static void InitFields(void)
 
 	/* Internal Control */
 	AddFixed("HLT", 0x0000);
-	AddFixed("SDBD", 0x0001);
+	AddFixed("SDBD", OPCODE_SDBD);
 	AddFixed("EIS", 0x0002);
 	AddFixed("DIS", 0x0003);
 	AddFixed("TCI", 0x0005);
@@ -820,6 +938,8 @@ static void InitFields(void)
 	AddWORD("BYTE", 0x0001); /* Flag Word */
 	AddWORD("TEXT", 0x0002); /* Flag Word */
 	AddInstTable(InstTable, "BITS", 0x0000, DecodeBITS);
+
+  AddInstTable(InstTable, "REG", 0, CodeREG);
 }
 
 static void DeinitFields(void)
@@ -837,7 +957,28 @@ static void MakeCode_CP1600(void)
 
 static Boolean IsDef_CP1600(void)
 {
-	return False;
+	return Memo("REG");
+}
+
+/*!------------------------------------------------------------------------
+ * \fn     intern_symbol_cp1600(char *pArg, TempResult *pResult)
+ * \brief  handle built-in (register) symbols for CP-1600
+ * \param  p_arg source argument
+ * \param  p_result result buffer
+ * ------------------------------------------------------------------------ */
+
+static void intern_symbol_cp1600(char *p_arg, TempResult *p_result)
+{
+  Word reg_num;
+
+  if (decode_reg_core(p_arg, &reg_num))
+  {
+    p_result->Typ = TempReg;
+    p_result->Contents.RegDescr.Reg = reg_num;
+    p_result->Contents.RegDescr.Dissect = dissect_reg_cp1600;
+    p_result->DataSize = eSymbolSize16Bit;
+    p_result->Contents.RegDescr.compare = NULL;
+  }
 }
 
 static void SwitchFrom_CP1600(void)
@@ -877,6 +1018,8 @@ static void SwitchTo_CP1600(void)
 	MakeCode = MakeCode_CP1600;
 	IsDef = IsDef_CP1600;
 	SwitchFrom = SwitchFrom_CP1600;
+  InternSymbol = intern_symbol_cp1600;
+  DissectReg = dissect_reg_cp1600;
 	InitFields();
 }
 
