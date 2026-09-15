@@ -255,6 +255,8 @@ static const char *ErrorNum2String(tErrorNum Num, char *Buf, int BufSize)
       msgno = Num_ErrMsgObsolete; break;
     case ErrNum_Unpredictable:
       msgno = Num_ErrMsgUnpredictable; break;
+    case ErrNum_ConflictingParallelDest:
+      msgno = Num_ErrMsgConflictingParallelDest; break;
     case ErrNum_AlphaNoSense:
       msgno = Num_ErrMsgAlphaNoSense; break;
     case ErrNum_Senseless:
@@ -449,6 +451,10 @@ static const char *ErrorNum2String(tErrorNum Num, char *Buf, int BufSize)
       msgno = Num_ErrMsgAddrMustBeAligned; break;
     case ErrNum_InvParAddrMode:
       msgno = Num_ErrMsgInvParAddrMode; break;
+    case ErrNum_InvParConstruct:
+      msgno = Num_ErrMsgInvParConstruct; break;
+    case ErrNum_NoCondExec:
+      msgno = Num_ErrMsgNoCondExec; break;
     case ErrNum_UndefCond:
       msgno = Num_ErrMsgUndefCond; break;
     case ErrNum_IncompCond:
@@ -996,7 +1002,10 @@ void WrXErrorPos(tErrorNum Num, const char *pExtendError, const struct sLineComp
 
 void WrStrErrorPos(tErrorNum Num, const struct sStrComp *pStrComp)
 {
-  WrXErrorPos(Num, pStrComp->str.p_str, &pStrComp->Pos);
+  if (pStrComp)
+    WrXErrorPos(Num, pStrComp->str.p_str, &pStrComp->Pos);
+  else
+    WrError(Num);
 }
 
 /*!------------------------------------------------------------------------

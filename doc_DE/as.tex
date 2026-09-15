@@ -51,7 +51,7 @@
 
 \vspace{1cm}\par
 
-{\large Stand Juli 2026}
+{\large Stand September 2026}
 \end{raggedright}
 
 \clearpage
@@ -226,7 +226,7 @@ folgende Prozessorfamilien implementiert:
 \item{Konami 052001}
 \item{Hitachi H8/300(H)}
 \item{Hitachi H8/500}
-\item{Hitachi SH7000/7600/7700}
+\item{Hitachi SH}
 \item{Hitachi HMCS400}
 \item{Hitachi H16}
 \item{Rockwell 6502, 65(S)C02, Commodore 65CE02, WDC W65C02S, Rockwell 65C19 und
@@ -1461,6 +1461,7 @@ mit Fragezeichen angezeigt.  Die folgenden Targets unterst"utzen dies aktuell:
 \item{PowerPC}
 \item{65xx/65xxx}
 \item{6800/6805/68HC08/6809/68HC11/68HC12}
+\item{SH}
 \item{8080/8085}
 \item{(e)Z80/Z180/Z280/Z380}
 \item{8048}
@@ -2548,7 +2549,7 @@ einmal sein.  Was sollte man als Erkenntnis aus diesem Abschnitt mitnehmen?
 
 {\em G"ultigkeit: PowerPC, M-Core, XGate, 4004/4040, MCS-48/(2)51, 8086,
      80C16x, AVR, XS1, Z8, KCPSM, Mico8, TMS340xx, MSP430(X), ST9, M16,
-     M16C, H8/300, H8/500, SH7x00, H16, 8080/8085, Zx80, i960, XA, 29K,
+     M16C, H8/300, H8/500, SH, H16, 8080/8085, Zx80, i960, XA, 29K,
      TLCS-9000, KENBAK, SC/MP, PDP-11, VAX}
 
 Manchmal ist es erw"unscht, nicht nur einer Speicheradresse oder einer
@@ -3054,7 +3055,7 @@ PIO_Ctrl   PORT PIO_Port_A+3
 \ttindex{REG}\ttindex{NAMEREG}
 
 {\em G"ultigkeit: 680x0, PowerPC, PALM, M*Core, XGate, H8,\\
-     SH7x00, H16, M16(C), PDP-11, WD16, VAX, 4004, MCS-48/51,\\
+     SH, H16, M16(C), PDP-11, WD16, VAX, 4004, MCS-48/51,\\
      8086, i960, XA, AVR, 29xxx,  80C16x, Z8, Z80, Z8000,\\
      KCPSM(3), LatticeMico8, TLCS-9000, ST9, MSP430(X), V60,\\
      SC/MP, NS32xxx, WE32xxx, XCore, KENBAK, CP-1600\\
@@ -3598,14 +3599,26 @@ Typen dienen lediglich der Einbindung des korrekten Registersatzes
 in der Datei \tty{REG53X.INC}.
 %%-----------
 \begin{cpulist}
-   SH7000 $\longrightarrow$ SH7600 $\longrightarrow$ SH7700
+   SH7000 (SH1) \\
+   SH7201 (SH2A \\
+   SH7205 (SH2A+FPU64) \\
+   SH7600 (SH2) \\
+   SH7615 (SH2+DSP) \\
+   SH7700 (SH3) \\
+   SH7720 (SH3+DSP) \\
+   SH7750 (SH4) \\
+   SH7780 (SH4A) \\
 \end{cpulist}
-Der Prozessorkern des 7600ers bietet eine Handvoll Befehle mehr, die
-L"ucken im Befehlssatz des 7000ers schlie"sen (verz"ogerte, bedingte
-sowie relative und indirekte Spr"unge, Multiplikationen mit 32-Bit-Operanden
-sowie Multiplizier/Addier-Befehle).  Die 7700er-Reihe (auch als SH3
-gel"aufig) bietet weiterhin eine zweite Registerbank, bessere
-Schiebebefehle sowie Befehle zur Cache-Steuerung.
+Es gab sehr viele Varianten von CPUs und MPUs mit SH-Kern.  Diese Targets
+sind Stellvertreter f"ur die verschiedenen Generationen von Kernen
+und die optionalen Funktionseinheiten.  Der SH2-Kern bietet eine
+Handvoll Befehle mehr, die L"ucken im Befehlssatz des SH1 schlie"sen
+(verz"ogerte, bedingte sowie relative und indirekte Spr"unge,
+Multiplikationen mit 32-Bit-Operanden sowie Multiplizier/Addier-Befehle).
+Der SH3-Kern erg"anzt eine zweite Registerbank, bessere Schiebebefehle
+sowie Befehle zur Cache-Steuerung.  SH2A ist eine 'Seitenentwicklung'
+mit Befehlserweiterungen, die nur dort vorhanden sind (Register-indirekte
+Adressierung mit 12 Bit Displacement, Bitoperationen).
 %%-----------
 \begin{cpulist}
    HD614023 $\longrightarrow$ HD614043 $\longrightarrow$ HD614081
@@ -4632,9 +4645,9 @@ jeweils zugeh"origen Unterkapitel mit prozessorspezifischen Hinweisen beschriebe
 {\em
 \begin{itemize}
 \item{G"ultigkeit SUPMODE: 680x0, NS32xxx, CR16C, PDP-11, i960,
-      TLCS-900, SH7000, i960, 29K, Z280, XA, PowerPC, M*CORE,
+      TLCS-900, SH, i960, 29K, Z280, XA, PowerPC, M*CORE,
       V60 und TMS9900}
-\item{G"ultigkeit FPU: 680x0, NS32xxx, 80x86, WE32xxx}
+\item{G"ultigkeit FPU: 680x0, NS32xxx, 80x86, WE32xxx, SH}
 \item{G"ultigkeit PMMU: 680x0, NS32xxx}
 \item{G"ultigkeit CUSTOM: NS32xxx}
 \end{itemize}
@@ -4766,7 +4779,7 @@ Der Default f"ur diesen Wert wiederum ist Null.  Erlaubte Werte sind von
 \subsection{PADDING}
 \ttindex{PADDING}
 
-{\em G"ultigkeit: 680x0, 68xx, M*Core, XA, H8, SH7000, TMS9900,\\
+{\em G"ultigkeit: 680x0, 68xx, M*Core, XA, H8, SH, TMS9900,\\
      MSP430(X), ST7/STM8, AVR (nur wenn die Granularit"at des Code-Segments
      8 Bit ist)}
 
@@ -5949,7 +5962,7 @@ von Parametern angegeben werden, die der Reihe nach abgearbeitet werden.
 \subsection{DC[.size]}
 \ttindex{DC}
 
-{\em G"ultigkeit: 680x0, M*Core, 68xx, H8, SH7x00, DSP56xxx,\\
+{\em G"ultigkeit: 680x0, M*Core, 68xx, H8, SH, DSP56xxx,\\
      XA, ST7/STM8, MN161x, IM61x0, CP-3F, SC61860}
 
 Dieser Befehl legt eine oder mehrere Konstanten des beim durch
@@ -6003,7 +6016,7 @@ Konstanten in einer Anweisung gemischt werden.
 \subsection{DS[.size]}
 \ttindex{DS}
 
-{\em G"ultigkeit: 680x0, M*Core, 68xx, H8, SH7x00, DSP56xxx,\\
+{\em G"ultigkeit: 680x0, M*Core, 68xx, H8, SH, DSP56xxx,\\
      XA, ST7/STM8, MN161x, IM61x0, CP-3F, PPS-4, SC61860}
 
 Mit diesem Befehl l"a"st sich zum einen Speicherplatz f"ur die angegebene
@@ -6797,9 +6810,9 @@ zum Beispiel zur Ablage von Prozessorbefehlen.
 \subsection{LTORG}
 \ttindex{LTORG}
 
-{\em G"ultigkeit: SH7x00, IM61x0, IMP-16, IPC-16}
+{\em G"ultigkeit: SH, IM61x0, IMP-16, IPC-16}
 
-Da der SH7000-Prozessor seine Register immediate nur mit 8-Bit-Werten
+Da der SH-Prozessor seine Register immediate nur mit 8-Bit-Werten
 laden kann, \asname{} dem Programmierer jedoch vorgaukelt, da"s es eine solche
 Einschr"ankung nicht g"abe, mu"s er die dabei entstehenden Konstanten
 irgendwo im Speicher ablegen.  Da es nicht sinnvoll w"are, dies einzeln
@@ -6807,7 +6820,7 @@ zu tun (wobei jedes Mal Sprungbefehle anfallen w"urden...), werden die
 Literale gesammelt und k"onnen vom Programmierer mit diesem Befehl
 gezielt blockweise (z.B. am Ende eines Unterprogrammes) abgelegt werden.
 Zu den zu beachtenden Details und Fallen sei auf das Kapitel mit den
-SH7000-spezifischen Dingen hingewiesen.
+SH-spezifischen Dingen hingewiesen.
 
 %%---------------------------------------------------------------------------
 
@@ -9022,7 +9035,7 @@ Zahlen wie f"ur H8/300.
 
 %%---------------------------------------------------------------------------
 
-\section{SH7000/7600/7700}
+\section{SH}
 
 Leider hat Hitachi auch hier wieder das Extrawurst-Format f"ur
 Hexadezimalzahlen verwendet, und wieder habe ich in \asname{} das nicht
@@ -9157,7 +9170,7 @@ also z.B. so:
 {\it keine} implizite Umrechnung der Adresse auf ein Displacement erfolgt,
 d.h. der Operand wird so eingesetzt, wie er ist (und w"urde in diesen
 Beispiel wohl mit hoher Wahrscheinlichkeit eine Fehlermeldung
-hervorrufen...).  Will man beim SH7x00 PC-relativ adressieren, so tut man
+hervorrufen...).  Will man beim SH PC-relativ adressieren, so tut man
 das einfach mit ,,absoluter'' Adressierung, die auf Maschinenebene ja
 gar nicht existiert:
 \begin{verbatim}
@@ -13180,6 +13193,11 @@ Angaben:
                 nach Aus"uhrungsreihenfolge sich unterschiedliche
                 Ergebnisse einstellen k"onnen.}
                {keines}
+\errentry{ 141}{widerstreitende Benutzung des gleichen Ziels in parallelem Konstrukt}
+               {Warnung}
+               {Zwei Anweisungen in einem parallelen Konstrukt verwenden
+                das gleiche Zielregister.  Das Ergebnis davon ist undefiniert.}
+               {das doppelt verwendete Register}
 \errentry{ 150}{Lokaloperator au"serhalb einer Sektion "uberfl"ussig}
                {Warnung}
                {Ein vorangestellter Klammeraffe dient
@@ -13721,11 +13739,21 @@ Angaben:
                 sind zwar im sequentiellen Modus zul"assig, jedoch nicht
                 bei parallelen Instruktionen.}
                {keines}
+\errentry{1356}{ung"ultiges paralleles Konstrukt}
+               {Fehler}
+               {Die parallele Ausf"uhrung dieser Instruktionen
+                ist nicht m"oglich.}
+               {keines}
 \errentry{1360}{undefinierte Bedingung}
                {Fehler}
                {Die benutzte Bedingung f"ur bedingte Spr"unge
                 existiert nicht.}
                {keines}
+\errentry{1364}{Befehl kann nicht bedingt ausgef"uhrt werden}
+               {Fehler}
+               {Dieser Maschinenbefehl kann nicht mit einer
+                Bedingung verkn"ufpt werden.}
+               {der fragliche Maschinenbefehl}
 \errentry{1365}{inkompatible Bedingungen}
                {Fehler}
                {Die benutzte Kombination von Bedingungen kann nicht

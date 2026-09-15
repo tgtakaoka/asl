@@ -69,7 +69,7 @@
 
 \vspace{1cm}\par
 
-{\large Edition July 2026}
+{\large Edition September 2026}
 \end{raggedright}
 
 \clearpage
@@ -230,7 +230,7 @@ following processor families have been implemented:
 \item{Konami 052001}
 \item{Hitachi H8/300(H)}
 \item{Hitachi H8/500}
-\item{Hitachi SH7000/7600/7700}
+\item{Hitachi SH}
 \item{Hitachi HMCS400}
 \item{Hitachi H16}
 \item{Rockwell 6502, 65(S)C02, Commodore 65CE02, WDC W65C02S, Rockwell 65C19, and
@@ -1421,6 +1421,7 @@ question marks.  The following targets currently support this feature:
 \item{PowerPC}
 \item{65xx/65xxx}
 \item{6800/6805/68HC08/6809/68HC11/68HC12}
+\item{SH}
 \item{8080/8085}
 \item{(e)Z80/Z180/Z280/Z380}
 \item{8048}
@@ -2476,7 +2477,7 @@ necessary.  Which is the essence you should learn from this section?
 
 {\em valid for: PowerPC, M-Core, XGate, 4004/4040, MCS-48/(2)51, 8086,
      80C16x, AVR, XS1, Z8, KCPSM, Mico8, TMS340xx, MSP430(X), ST9, M16,
-     M16C, H8/300, H8/500, SH7x00, H16, 8080/8085, Zx80, i960, XA, 29K,
+     M16C, H8/300, H8/500, SH, H16, 8080/8085, Zx80, i960, XA, 29K,
      TLCS-9000, KENBAK, SC/MP, PDP-11, VAX}
 
 Sometimes it is desirable not only to assign symbolic names to memory
@@ -2964,7 +2965,7 @@ PIO_ctrl   port PIO_port_A+3
 \ttindex{REG}\ttindex{NAMEREG}
 
 {\em valid for: 680x0, PowerPC, PALM, M*Core, XGate, H8,\\
-     SH7x00, H16, M16(C), PDP-11, WD16, VAX, 4004, MCS-48/51,\\
+     SH, H16, M16(C), PDP-11, WD16, VAX, 4004, MCS-48/51,\\
      8086, i960, XA, AVR, 29xxx,  80C16x, Z8, Z80, Z8000,\\
      KCPSM(3), LatticeMico8, TLCS-9000, ST9, MSP430(X), V60,\\
      SC/MP, NS32xxx, WE32xxx, XCore, KENBAK, CP-1600\\
@@ -3498,14 +3499,26 @@ only needed to include the correct subset of registers in the file
 \tty{REG53X.INC}.
 %%-----------
 \begin{cpulist}
-   SH7000 $\rightarrow$ SH7600 $\longrightarrow$ SH7700
+   SH7000 (SH1) \\
+   SH7201 (SH2A \\
+   SH7205 (SH2A+FPU64) \\
+   SH7600 (SH2) \\
+   SH7615 (SH2+DSP) \\
+   SH7700 (SH3) \\
+   SH7720 (SH3+DSP) \\
+   SH7750 (SH4) \\
+   SH7780 (SH4A) \\
 \end{cpulist}
-The processor core of the 7600 offers a few more instructions that
-close gaps in the 7000's instruction set (delayed conditional and
+There have been many variants of CPUs and FPUs with SH cores.  These
+targets represent the various generations of cores with associated
+optional function units.  The SH2 core offers a few more instructions that
+close gaps in the SH1's instruction set (delayed conditional and
 relative and indirect jumps, multiplications with 32-bit operands and
-multiply/add instructions).  The 7700 series (also known as SH3)
-furthermore offers a second register bank, better shift instructions, and
-instructions to control the cache.
+multiply/add instructions).  The SH3 core furthermore offers a second
+register bank, better shift instructions, and instructions to control
+the cache.  SH2A is a 'side development' with instruction extensions
+offered nowhere else (register indirect addressing with 12 bit displacement,
+bit operations).
 %%-----------
 \begin{cpulist}
    HD614023 $\longrightarrow$ HD614043 $\longrightarrow$ HD614081
@@ -4504,9 +4517,9 @@ certain target supports such options.
 {\em
 \begin{itemize}
 \item{SUPMODE valid for: 680x0, NS32xxx, CR16C, PDP-11, i960,
-      TLCS-900, SH7000, i960, 29K, Z280, XA, PowerPC, M*Core,
+      TLCS-900, SH, i960, 29K, Z280, XA, PowerPC, M*Core,
       V60, and TMS9900}
-\item{FPU valid for: 680x0, NS32xxx, 80x86, WE32xxx}
+\item{FPU valid for: 680x0, NS32xxx, 80x86, WE32xxx, SH}
 \item{PMMU valid for: 680x0, NS32xxx}
 \item{CUSTOM valid for: NS32xxx}
 \end{itemize}
@@ -4638,7 +4651,7 @@ value itself is zero.  Allowed values range from zero to seven.
 \subsection{PADDING}
 \ttindex{PADDING}
 
-{\em valid for: 680x0, 68xx, M*Core, XA, H8, SH7000, MSP430(X), TMS9900,\\
+{\em valid for: 680x0, 68xx, M*Core, XA, H8, SH, MSP430(X), TMS9900,\\
       ST7/STM8, AVR (only if code segment granularity is 8 bits)}
 
 Various processor families have a requirement that objects of more than
@@ -5780,7 +5793,7 @@ number of parameters which are being processed from left to right.
 \subsection{DC[.Size]}
 \ttindex{DC}
 
-{\em valid for: 680x0, M*Core, 68xx, H8, SH7x00, DSP56xxx, XA,
+{\em valid for: 680x0, M*Core, 68xx, H8, SH, DSP56xxx, XA,
   ST7/STM8, MN161x, IM61x0, CP-3F, SC61860}
 
 This instruction places one or several constants of the type
@@ -5830,7 +5843,7 @@ constants in a single statement.
 \subsection{DS[.Size]}
 \ttindex{DS}
 
-{\em valid for: 680x0, M*Core, 68xx, H8, SH7x00, DSP56xxx, XA, ST7/STM8,
+{\em valid for: 680x0, M*Core, 68xx, H8, SH, DSP56xxx, XA, ST7/STM8,
   MN161x, IM61x0, CP-3F, PPS-4, SC61860}
 
 On the one hand, this instruction enables to reserve memory space for
@@ -6589,9 +6602,9 @@ proper alignment for processor instructions.
 \subsection{LTORG}
 \ttindex{LTORG}
 
-{\em valid for: SH7x00, IM61x0, IMP-16, IPC-16}
+{\em valid for: SH, IM61x0, IMP-16, IPC-16}
 
-Although the SH7000 processor can do an immediate register load with
+Although the SH processor can do an immediate register load with
 8 bit only, \asname{} shows up with no such restriction.  This behaviour is
 instead simulated through constants in memory.  Storing them in
 the code segment (not far away from the register load instruction)
@@ -8784,7 +8797,7 @@ as for H8/500.
 
 %%---------------------------------------------------------------------------
 
-\section{SH7000/7600/7700}
+\section{SH}
 
 Unfortunately, Hitachi once again used their own format for
 hexadecimal numbers, and once again I was not able to reproduce this
@@ -8920,7 +8933,7 @@ programmer's manual:
 \bb{no} implicit conversion of the address to a displacement will occur,
 i.e. the operand is inserted as-is into the machine code (this will
 probably generate a value range error...).  If you want to use
-PC-relative addressing on the SH7x00, simply use ''absolute''
+PC-relative addressing on the SH, simply use ''absolute''
 addressing (which does not exist on machine level):
 \begin{verbatim}
         mov.l   Var,r8
@@ -12869,6 +12882,11 @@ described by:
                 cannot be predicted after the execution of the
                 instruction.}
                {none}
+\errentry{ 141}{conflicting usage of same destination in parallel construct}
+               {warning}
+               {Two instructions in this parallel construct use the same
+                register as destination.  The result of this is undefined.}
+               {the register in question}
 \errentry{ 150}{localization operator senseless out of a section}
                {warning}
                {An aheaded \@ must be used, so that it is
@@ -13377,11 +13395,20 @@ described by:
                {The addressing mode(s) used are allowed in sequential,
                 but not in parallel instructions}
                {none}
+\errentry{1356}{invalid parallel construct}
+               {error}
+               {These instructions cannot be executed in parallel.}
+               {none}
 \errentry{1360}{undefined condition}
                {error}
                {The branch condition used for a conditional jump does not
                 exist.}
                {none}
+\errentry{1364}{no conditional execution of this instruction}
+               {error}
+               {This machine instruction cannot be combined with a
+                condition.}
+               {the machine instruction in question}
 \errentry{1365}{incompatible conditions}
                {error}
                {The used combination of conditions is not possible

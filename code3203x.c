@@ -791,7 +791,7 @@ static void DecodeGen(Word Index)
   {
     int ParIndex;
     unsigned ARIndex, passes;
-    Boolean reverse;
+    Boolean reverse = False;
     tGenOrderInfo *p_curr_gen_info = NULL, *p_prev_gen_info = NULL;
     const char *p_prev_op = NULL;
 
@@ -1914,7 +1914,7 @@ static void MakeCode_3203X(void)
   if ((strlen(OpPart.str.p_str) > 2) && (!strncmp(OpPart.str.p_str, "||", 2)))
   {
     ThisPar = True;
-    strmov(OpPart.str.p_str, OpPart.str.p_str + 2);
+    StrCompCutLeft(&OpPart, 2);
   }
   if ((!NextPar) && (ThisPar))
   {

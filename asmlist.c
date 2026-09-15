@@ -24,7 +24,8 @@
 
 /* NOTE: Keep this to a value of the form 8*n, so the overall 'prefix'
          in front of the source line in the listing is a multiple of 8.
-         This way, Tabs in the source do not break up: */
+         This way, Tabs in the source line behind the Listing prefix'
+         do not break up: */
 
 #define LISTLINE_PREFIX_TOTAL 40
 
@@ -118,6 +119,8 @@ void MakeList(const char *pSrcLine)
 
     do
     {
+      unsigned num_printed = 0;
+
       /* Print list line header: First, the part configurable via format string: */
 
       const char *p_format;
@@ -279,6 +282,7 @@ void MakeList(const char *pSrcLine)
               ThisWordGuessed = get_basmcode_guessed(Index);
           }
           as_sdprcatf(&list_buf, " %0*.*lllu", (int)SystemListLen, (int)ListRadixBase, ThisWord);
+          num_printed++;
           if (list_unknown_values && (ThisWordGuessed != 0))
           {
             char mask_buf[100];
@@ -306,8 +310,20 @@ void MakeList(const char *pSrcLine)
           CurrListGran = 1;
           SystemListLen = p_system_list_len[8];
         }
+
+        /* Terminate this line if another full word would not fit: */
+
+        if (sum_len + 1 + SystemListLen >= LISTLINE_PREFIX_TOTAL)
+          break;
+
+        /* Avoid some odd numbers of code words per line.  If the current
+           number of bytes printed is even, and just one more would fit,
+           do not print an odd number: */
+
+        else if ((CurrListGran < 4) && (sum_len + 2 * (1 + SystemListLen) >= LISTLINE_PREFIX_TOTAL) && (!(num_printed & 1)))
+          break;
       }
-      while (sum_len + 1 + SystemListLen < LISTLINE_PREFIX_TOTAL);
+      while (True);
 
       /* If first line, pad to max length and append source line */
 

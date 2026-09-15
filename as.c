@@ -2604,6 +2604,49 @@ void as_rebuild_main_inst_tables(void)
 
 /*--- Zeile in Listing zerteilen -------------------------------------------*/
 
+/*!------------------------------------------------------------------------
+ * \fn     as_separate_attribute_from_oppart(void)
+ * \brief  check for attribute suffix on mnemonic
+ * ------------------------------------------------------------------------ */
+
+void as_separate_attribute_from_oppart(void)
+{
+  /* Separate attribute from mnemonic */
+  oppart_leading_dot = False;
+  if (HasAttrs)
+  {
+    char *p_attr_split_pos;
+    Boolean discard_leading_split = False;
+
+    p_attr_split_pos = strmultchr(OpPart.str.p_str, AttrChars);
+
+    /* The dot-prefixed OpPart may itself contain an attribute (.instr.attr).  So reiterate
+       splitting off attribute, but only once ;-) */
+
+    if (p_attr_split_pos == OpPart.str.p_str)
+    {
+      discard_leading_split = True;
+      if (*p_attr_split_pos == '.')
+        oppart_leading_dot = True;
+      p_attr_split_pos = strmultchr(OpPart.str.p_str + 1, AttrChars);
+    }
+
+    if (p_attr_split_pos)
+    {
+      size_t attr_len = strlen(p_attr_split_pos + 1);
+
+      AttrSplit = (*p_attr_split_pos);
+      StrCompCopySub(&AttrPart, &OpPart, p_attr_split_pos + 1 - OpPart.str.p_str, attr_len);
+      StrCompShorten(&OpPart, attr_len + 1);
+    }
+    else
+      AttrSplit = ' ';
+
+    if (discard_leading_split)
+      StrCompCutLeft(&OpPart, 1);
+  }
+}
+
 static void split_arguments(tStrComp *p_args, const char *p_divide_chars)
 {
   const char *p_div_pos, *p_act_div, *p_act_div_pos, *p_run, *p_end;
@@ -2813,41 +2856,7 @@ static void SplitLine(void)
     ArgStr[ArgCnt].Pos = ArgPart.Pos;
   }
 
-  /* Separate attribute from mnemonic */
-
-  oppart_leading_dot = False;
-  if (HasAttrs)
-  {
-    char *p_attr_split_pos;
-    Boolean discard_leading_split = False;
-
-    p_attr_split_pos = strmultchr(OpPart.str.p_str, AttrChars);
-
-    /* The dot-prefixed OpPart may itself contain an attribute (.instr.attr).  So reiterate
-         splitting off attribute, but only once ;-) */
-
-    if (p_attr_split_pos == OpPart.str.p_str)
-    {
-      discard_leading_split = True;
-      if (*p_attr_split_pos == '.')
-        oppart_leading_dot = True;
-      p_attr_split_pos = strmultchr(OpPart.str.p_str + 1, AttrChars);
-    }
-
-    if (p_attr_split_pos)
-    {
-      size_t attr_len = strlen(p_attr_split_pos + 1);
-
-      AttrSplit = (*p_attr_split_pos);
-      StrCompCopySub(&AttrPart, &OpPart, p_attr_split_pos + 1 - OpPart.str.p_str, attr_len);
-      StrCompShorten(&OpPart, attr_len + 1);
-    }
-    else
-      AttrSplit = ' ';
-
-    if (discard_leading_split)
-      StrCompCutLeft(&OpPart, 1);
-  }
+  as_separate_attribute_from_oppart();
 
   if (*p_comment_start)
     StrCompCopySub(&CommPart, &SrcLine, p_comment_start - SrcLine.str.p_str, p_line_end - p_comment_start);
