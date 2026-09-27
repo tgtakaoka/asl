@@ -1745,8 +1745,6 @@ static void make_code_vax(void)
 {
   op_size = eSymbolSizeUnknown;
 
-  /* Pseudo Instructions */
-
   if (!LookupInstTable(InstTable, OpPart.str.p_str))
     WrStrErrorPos(ErrNum_UnknownInstruction, &OpPart);
 }

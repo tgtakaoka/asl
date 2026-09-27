@@ -907,6 +907,8 @@ At the moment, the following switches are defined:
 \item{{\tt list-unknown-values} resp. {\tt no-list-unknown-values}: enables
       or disables displaying question marks for values unknown in the
       first pass.}
+\item{\tty{fred}: Enable integer symbols to have a reduced bit length.  This
+      length is deduced from the number of digits used.}
 \item{\label{radix}\tty{RADIX}: This option changes the default number system
       to a value between 2 and 36, thereby overriding the default of 10.
       The value given by this switch can itself be overridden in the program
@@ -2086,10 +2088,21 @@ string is longer than the used operand size, which is two characters or
 
 The calculation of intermediary results within formula expressions is
 always done with the highest resolution available on the host system.
-For integer numbers, this is 32 or 64 bits.  For floating point numbers,
-the range is approximately +/-$1.8*10^{308}$ (IEEE Double Precision) or
-+/-$1.1*10^{4932}$ (IEEE Extended Precision). A possible test for value
+For integer numbers, this is 32, 64, or 128 bits.  For floating point numbers,
+the range is approximately +/-$1.8*10^{308}$ (IEEE double precision) or
++/-$1.1*10^{4932}$ (x86/M68K extended precision). A possible test for value
 range overflows is done only on the final result.
+
+The internal bit length of integer values can be read from the pre-defined
+symbol \tty{INTWIDTH}, and the largest possible floating point number
+from the pre-defined symbol \tty{FLOATMAX}.
+
+It is optionally possible to attribute integer numbers with a reduced
+length in bits.  This (reduced) length is deduced from the number of
+digits used, when the number is written in binary, octal or hexadecimal.
+Currently, the only use of this feature is the one's complement.  The
+respective operator will only be applied to the reduced number of bits.
+This operation mode may be enabled via the \tty{-fred} command line option.
 
 \subsection{Operators}
 
@@ -3498,7 +3511,7 @@ These processors all share the same CPU core; the different types are
 only needed to include the correct subset of registers in the file
 \tty{REG53X.INC}.
 %%-----------
-\begin{cpulist}
+\begin{cpulist} \\
    SH7000 (SH1) \\
    SH7201 (SH2A \\
    SH7205 (SH2A+FPU64) \\
@@ -3509,7 +3522,7 @@ only needed to include the correct subset of registers in the file
    SH7750 (SH4) \\
    SH7780 (SH4A) \\
 \end{cpulist}
-There have been many variants of CPUs and FPUs with SH cores.  These
+There have been many variants of CPUs and MCUs with SH cores.  These
 targets represent the various generations of cores with associated
 optional function units.  The SH2 core offers a few more instructions that
 close gaps in the SH1's instruction set (delayed conditional and

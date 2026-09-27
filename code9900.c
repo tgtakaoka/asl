@@ -869,15 +869,15 @@ static void DecodeBYTE(Word Code)
       {
         case TempInt:
           if (mFirstPassUnknown(t.Flags))
-            t.Contents.Int &= 0xff;
-          if (!RangeCheck(t.Contents.Int, Int8)) WrStrErrorPos(ErrNum_OverRange, pArg);
+            t.Contents.Int.Value &= 0xff;
+          if (!RangeCheck(t.Contents.Int.Value, Int8)) WrStrErrorPos(ErrNum_OverRange, pArg);
           else if (SetMaxCodeLen(CodeLen + 1))
           {
             WrStrErrorPos(ErrNum_CodeOverflow, pArg);
             OK = False;
           }
           else
-            PutByte(t.Contents.Int);
+            PutByte(t.Contents.Int.Value);
           break;
         case TempString:
           if (SetMaxCodeLen(t.Contents.str.len + CodeLen))

@@ -292,7 +292,7 @@ static Boolean DecodeAdr(const tStrComp *pArg, Boolean MayInc, Byte PCDisp, Byte
 
 static void ChkPage(void)
 {
-  if (((EProgCounter()) & 0xf000) != ((EProgCounter() + CodeLen) & 0xf000))
+  if (((EProgCounter()) & 0xf000) != ((EProgCounter() + CodeLen - 1) & 0xf000))
     WrError(ErrNum_PageCrossing);
 }
 

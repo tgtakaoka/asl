@@ -4184,6 +4184,14 @@ static as_cmd_result_t CMD_HardRanges(Boolean Negate, const char *Arg)
   return e_cmd_ok;
 }
 
+static as_cmd_result_t cmd_fred(Boolean negate, const char *p_arg)
+{
+  UNUSED(p_arg);
+
+  force_restricted_extension_digits = !negate;
+  return e_cmd_ok;
+}
+
 static as_cmd_result_t CMD_OutFile(Boolean Negate, const char *Arg)
 {
   if (Arg[0] == '\0')
@@ -4429,6 +4437,7 @@ static const as_cmd_rec_t ASParams[] =
   { "D"             , CMD_DefSymbol       },
   { "E"             , CMD_ErrorPath       },
   { "g"             , CMD_DebugMode       },
+  { "fred"          , cmd_fred            },
   { "G"             , CMD_CodeOutput      },
   { "gnuerrors"     , CMD_GNUErrors       },
   { "h"             , CMD_HexLowerCase    },
@@ -4722,6 +4731,7 @@ int main(int argc, char **argv)
   CaseSensitive = False;
   ThrowErrors = False;
   HardRanges = True;
+  force_restricted_extension_digits = False;
   NoICEMask = 1 << SegCode;
   GNUErrors = False;
   MaxErrors = 0;

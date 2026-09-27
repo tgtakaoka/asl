@@ -11,6 +11,7 @@
 /*****************************************************************************/
 
 #include <stddef.h>
+#include <string.h>
 #include "datatypes.h"
 #include "striter.h"
 

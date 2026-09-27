@@ -916,6 +916,9 @@ Momentan sind folgende Schalter definiert:
 \item{\label{radix}\tty{RADIX}: Stellt das Default-Zahlensystem auf
       einen Wert zwischen 2 und 36, anstelle von 10.  Dieser Wert kann
       durch die gleichnamige Anweisung im Programm "ubersteuert werden.}
+\item{\tty{fred}: Erlaubt es, f"ur Ganzzahl-Symbole eine reduzierte Bitl"ange
+      vorzugeben.  Diese ergibt sich bei der Definition aus der verwendeten
+      Stellenzahl.}
 \item{\tty{listing}: Gibt vor, ob im Listing des assemblierten Codes alles
       ausgegeben werden soll, oder durch bedingte Assemblierung ausgelassenene
       Teile nicht.  Die erlaubten Werte sind die gleichen wie in \ref{SectListingCmd}
@@ -2149,10 +2152,22 @@ Zeichen bzw. 16 Bit.
 
 Die Berechnung von im Formelausdruck entstehenden Zwischenergebnissen
 erfolgt immer mit der h"ochsten auf dem Host-System verf"ugbaren Wortbreite.
-Bei Ganzzahlen sind dies 32 oder 64 Bit, und bei Gleitkommazahlen
-ca. +/-$1.8*10^{308}$ (IEEE Double Precision) oder ca. +/-$1.1*10^{4932}$
-(IEEE Extended Precision).  Eine eventuelle Pr"ufung auf
+Bei Ganzzahlen sind dies 32, 64 oder 128 Bit, und bei Gleitkommazahlen
+ca. +/-$1.8*10^{308}$ (IEEE double precision) oder ca. +/-$1.1*10^{4932}$
+(x86/M68K extended precision).  Eine eventuelle Pr"ufung auf
 Wertebereichs"uberschreitungen findet erst am Endergebnis statt.
+
+Die interne Bitl"ange von Ganzzahlen kann aus dem vordefinierten Symbol
+\tty{INTWIDTH} ausgelesen werden.  Die gr"o"stm"ogliche Gleitkommazahl
+ist in dem ebenso vordefinierten Symbol \tty{FLOATMAX} hinterlegt.
+
+Optional ist es m"oglich, Ganzzahlen als Attribut eine reduzierte
+Bitbreite zu geben.  Diese ergibt sich bei der Definition als Bin"ar-,
+Oktal- oder Hexadezimal-Konstante aus der verwendeten Zahl von Stellen.  Aktuell
+wird dieses Attribut nur bei der Anwendung des Einerkomplements beachtet.
+Der entsprechende Operator wird dann nur auf die reduzierte Anzahl von
+Bits angewendet.  Diese Betriebsart kann mit dem Kommandzeilen-Schalter
+\tty{-fred} eingeschaltet werden.
 
 \subsection{Operatoren}
 
@@ -3598,9 +3613,9 @@ Diese Prozessoren besitzen alle den gleichen CPU-Kern; Die unterschiedlichen
 Typen dienen lediglich der Einbindung des korrekten Registersatzes
 in der Datei \tty{REG53X.INC}.
 %%-----------
-\begin{cpulist}
+\begin{cpulist} \\
    SH7000 (SH1) \\
-   SH7201 (SH2A \\
+   SH7201 (SH2A) \\
    SH7205 (SH2A+FPU64) \\
    SH7600 (SH2) \\
    SH7615 (SH2+DSP) \\
@@ -3609,7 +3624,7 @@ in der Datei \tty{REG53X.INC}.
    SH7750 (SH4) \\
    SH7780 (SH4A) \\
 \end{cpulist}
-Es gab sehr viele Varianten von CPUs und MPUs mit SH-Kern.  Diese Targets
+Es gab sehr viele Varianten von CPUs und MCUs mit SH-Kern.  Diese Targets
 sind Stellvertreter f"ur die verschiedenen Generationen von Kernen
 und die optionalen Funktionseinheiten.  Der SH2-Kern bietet eine
 Handvoll Befehle mehr, die L"ucken im Befehlssatz des SH1 schlie"sen

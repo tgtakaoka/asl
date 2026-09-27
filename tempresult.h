@@ -44,6 +44,8 @@ typedef int (*compare_reg_fnc_t)(tRegInt value1, tSymbolSize reg_size1, tRegInt 
 
 #define REGSYM_FLAG_ALIAS 0x80
 
+#define INTSYM_NUM_BITS_DEFAULT 0
+
 typedef struct sRegDescr
 {
   dissect_reg_fnc_t Dissect;
@@ -60,7 +62,11 @@ struct sTempResult
   struct sRelocEntry *Relocs;
   union
   {
-    LargeInt Int;
+    struct
+    {
+      LargeInt Value;
+      Byte NumBits;
+    } Int;
     as_float_t Float;
     as_nonz_dynstr_t str;
     tRegDescr RegDescr;

@@ -174,7 +174,7 @@ static void DecodeConstant(Word Index)
     {
       SetListLineVal(&t);
       PushLocHandle(-1);
-      EnterIntSymbol(&ArgStr[1], t.Contents.Int, SegNone, False);
+      EnterIntSymbol(&ArgStr[1], t.Contents.Int.Value, SegNone, False);
       PopLocHandle();
     }
     as_tempres_free(&t);

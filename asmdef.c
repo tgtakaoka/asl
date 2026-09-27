@@ -87,6 +87,7 @@ Boolean CodeOutput;	                     /* Code erzeugen */
 Boolean MacProOutput;                    /* Makroprozessorausgabe schreiben */
 Boolean MacroOutput;                     /* gelesene Makros schreiben */
 Boolean HardRanges;                      /* Bereichsfehler echte Fehler ? */
+Boolean force_restricted_extension_digits;  /* Integer length defined by digits? */
 Boolean label_leading_colon;             /* Labels have colon at beginning instead of end? */
 const char *DivideChars;                 /* Trennzeichen fuer Parameter. Inhalt Read Only! */
 Boolean HasAttrs;                        /* Opcode hat Attribut */

@@ -160,9 +160,9 @@ static void DecodeDC(Word Code)
       {
         case TempInt:
           if (mFirstPassUnknown(t.Flags))
-            t.Contents.Int &= 127;
-          if (ChkRange(t.Contents.Int, -128, 255))
-            PutByte(t.Contents.Int);
+            t.Contents.Int.Value &= 127;
+          if (ChkRange(t.Contents.Int.Value, -128, 255))
+            PutByte(t.Contents.Int.Value);
           break;
         case TempString:
           if (as_chartrans_xlate_nonz_dynstr(CurrTransTable->p_table, &t.Contents.str, pArg))

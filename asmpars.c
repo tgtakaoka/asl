@@ -988,114 +988,122 @@ static Boolean GetSymSection(tStrComp *p_name, LongInt *p_ret, const tStrComp *p
   return IdentifySection(&TmpComp, p_ret);
 }
 
-/*****************************************************************************
- * Function:    ConstIntVal
- * Purpose:     evaluate integer constant
- * Result:      integer value
- *****************************************************************************/
+/*!------------------------------------------------------------------------
+ * \fn     const_int_val(const char *p_expr, LargeInt *p_value, tSymbolFlags *p_flags, Integer *p_num_bits, int *p_outof_range)
+ * \brief  evaluate integer constant
+ * \param  p_expr source argument
+ * \param  p_value parsed integer value
+ * \param  p_flags associated symbol flags (only negative ATM)
+ * \param  p_num_bits returns bit length of integer
+ * \param  p_outof_range returns -1/+1 if out of LargeInt range
+ * \return True if parsing OK
+ * ------------------------------------------------------------------------ */
 
-static LargeInt ConstIntVal(const char *pExpr, IntType Typ, Boolean *pResult, int *p_outof_range)
+static Boolean const_int_val(const char *p_expr, LargeInt *p_value, tSymbolFlags *p_flags, Byte *p_num_bits, int *p_outof_range)
 {
-  LargeInt Wert;
-  Boolean NegFlag = False;
+  Boolean neg_flag = False, first_digit;
   LargeWord acc, acc_max, mul_max;
-  int Digit;
-  tIntCheckCtx Ctx;
-  const tIntFormatList *pIntFormat;
+  tIntCheckCtx ctx;
+  Byte num_digits;
+  const tIntFormatList *p_int_format;
 
   *p_outof_range = 0;
-
-  *pResult = False;
 
   /* sign: */
 
   acc_max = (LargeWord)-1;
-  switch (*pExpr)
+  switch (*p_expr)
   {
     case '-':
-      NegFlag = True;
+      neg_flag = True;
       acc_max = (acc_max >> 1) + 1;
       /* else fall-through */
     case '+':
-      pExpr++;
+      p_expr++;
       break;
   }
 
   /* empty string is interpreted as 0 */
 
-  if (!*pExpr)
+  if (!*p_expr)
   {
-    *pResult = NULLSTRING_EVAL_RESULT;
-    return 0;
+    *p_value = 0;
+    return NULLSTRING_EVAL_RESULT;
   }
 
-  Ctx.pExpr = pExpr;
-  Ctx.ExprLen = strlen(pExpr);
-  Ctx.Base = -1;
+  ctx.pExpr = p_expr;
+  ctx.ExprLen = strlen(p_expr);
+  ctx.Base = -1;
 
-  for (pIntFormat = IntFormatList; pIntFormat->Check; pIntFormat++)
-    if (pIntFormat->Check(&Ctx, pIntFormat->Ch))
+  for (p_int_format = IntFormatList; p_int_format->Check; p_int_format++)
+    if (p_int_format->Check(&ctx, p_int_format->Ch))
     {
-      Ctx.Base = (pIntFormat->Base > 0) ? pIntFormat->Base : RadixBase;
+      ctx.Base = (p_int_format->Base > 0) ? p_int_format->Base : RadixBase;
       break;
     }
-  if (Ctx.Base <= 0)
+  if (ctx.Base <= 0)
     return -1;
-  mul_max = acc_max / Ctx.Base;
+  mul_max = acc_max / ctx.Base;
 
-  /* we may have decremented Ctx.ExprLen, so do not run until string end */
+  /* we may have decremented ctx.ExprLen, so do not run until string end */
 
-  acc = 0;
-  while (Ctx.ExprLen > 0)
+  acc = 0; num_digits = 0; first_digit = True;
+  while (ctx.ExprLen > 0)
   {
-    if (256 == Ctx.Base)
+    int digit;
+
+    if (256 == ctx.Base)
     {
-      Digit = as_chartrans_xlate(CurrTransTable->p_table, ((unsigned)*Ctx.pExpr) & 0xff);
-      if (Digit < 0)
+      digit = as_chartrans_xlate(CurrTransTable->p_table, ((unsigned)*ctx.pExpr) & 0xff);
+      if (digit < 0)
       {
         WrError(ErrNum_UnmappedChar);
-        Digit = 0;
+        digit = 0;
       }
     }
     else
-      Digit = DigitVal(as_toupper(*Ctx.pExpr), Ctx.Base);
-    if (Digit == -1)
-      return -1;
+      digit = DigitVal(as_toupper(*ctx.pExpr), ctx.Base);
+    if (digit == -1)
+    {
+      *p_value = -1;
+      return False;
+    }
     if (acc > mul_max)
     {
-      *pResult = True;
-      *p_outof_range = NegFlag ? -1 : 1;
-      return NegFlag ? -acc_max : acc_max;
+      *p_outof_range = neg_flag ? -1 : 1;
+      *p_value = neg_flag ? -acc_max : acc_max;
+      return True;
     }
-    acc = acc * Ctx.Base;
-    if (acc_max - acc < (unsigned)Digit)
+    acc = acc * ctx.Base;
+    if (acc_max - acc < (unsigned)digit)
     {
-      *pResult = True;
-      *p_outof_range = NegFlag ? -1 : 1;
-      return NegFlag ? -acc_max : acc_max;
+      *p_outof_range = neg_flag ? -1 : 1;
+      *p_value = neg_flag ? -acc_max : acc_max;
+      return True;
     }
-    acc = acc + Digit;
-    Ctx.pExpr++; Ctx.ExprLen--;
+    acc = acc + digit;
+    /* Necessary leading 0 for Intel-style hex consts does not count: */
+    if ((p_int_format->Id == eIntFormatIntHex) && first_digit && (*ctx.pExpr == '0') && as_isalpha(ctx.pExpr[1]))
+      { }
+    else
+      num_digits++;
+    first_digit = False;
+    ctx.pExpr++; ctx.ExprLen--;
   }
 
-  Wert = NegFlag ? -acc : acc;
-
-  /* post-processing, range check */
-
-  *pResult = RangeCheck(Wert, Typ);
-  if (*pResult)
-    return Wert;
-  else if (HardRanges)
+  if (neg_flag)
   {
-    WrError(ErrNum_OverRange);
-    return -1;
+    *p_flags = eSymbolFlag_Negative;
+    *p_num_bits = -1;
+    *p_value = -acc;
   }
   else
   {
-    *pResult = True;
-    WrError(ErrNum_WOverRange);
-    return Wert & IntTypeDefs[(int)Typ].Mask;
+    *p_flags = eSymbolFlag_None;
+    *p_num_bits = force_restricted_extension_digits ? (num_digits * as_log2(ctx.Base)) : 0;
+    *p_value = acc;
   }
+  return True;
 }
 
 /*****************************************************************************
@@ -1113,7 +1121,7 @@ static as_float_t ConstFloatVal(const char *pExpr, Boolean *pResult, int *p_outo
   {
     /* Some strtod() implementations interpret hex constants starting with '0x'.  We
        don't want this here.  Either 0x for hex constants is allowed, then it should
-       have been parsed before by ConstIntVal(), or not, then we don't want the constant
+       have been parsed before by const_int_val(), or not, then we don't want the constant
        be stored as float either. */
 
     if ((strlen(pExpr) >= 2)
@@ -1250,7 +1258,7 @@ static void ConstStringVal(const tStrComp *pExpr, TempResult *pDest, Boolean *pR
       switch (t.Typ)
       {
         case TempInt:
-          TLen = SysString(Str, sizeof(Str), t.Contents.Int, OutRadixBase, 0, False, HexStartCharacter, SplitByteCharacter);
+          TLen = SysString(Str, sizeof(Str), t.Contents.Int.Value, OutRadixBase, 0, !!(t.Flags & eSymbolFlag_Negative), False, HexStartCharacter, SplitByteCharacter);
           pStr = Str;
           break;
         case TempFloat:
@@ -1715,8 +1723,7 @@ void EvalStrExpressionWithCallback(const tStrComp *pExpr, TempResult *pErg, as_e
 
   /* Konstanten ? */
 
-  pErg->Contents.Int = ConstIntVal(CopyComp.str.p_str, (IntType) (IntTypeCnt - 1), &OK, &int_outof_range);
-  if (OK)
+  if (const_int_val(CopyComp.str.p_str, &pErg->Contents.Int.Value, &pErg->Flags, &pErg->Contents.Int.NumBits, &int_outof_range))
   {
     if (int_outof_range)
     {
@@ -1757,7 +1764,7 @@ void EvalStrExpressionWithCallback(const tStrComp *pExpr, TempResult *pErg, as_e
     LEAVE;
   }
 
-  /* Constands given by the target's generator code?  Note
+  /* Constants given by the target's generator code?  Note
      the per-call given callback has higher prio then the 'global'
      one.  This way, we do not need extra code to hand
      register symbols to the callback:  */
@@ -2273,7 +2280,7 @@ LargeInt EvalStrIntExprWithResultAndCallback(const tStrComp *pComp, IntType Type
   switch (t.Typ)
   {
     case TempInt:
-      Result = t.Contents.Int;
+      Result = t.Contents.Int.Value;
       pResult->Flags = t.Flags;
       pResult->AddrSpaceMask = t.AddrSpaceMask;
       pResult->DataSize = t.DataSize;
@@ -2424,7 +2431,7 @@ as_float_t EvalStrFloatExpressionWithResult(const tStrComp *pExpr, tEvalResult *
     case TempNone:
       LEAVE;
     case TempInt:
-      Result = t.Contents.Int;
+      Result = t.Contents.Int.Value;
       pResult->Flags = t.Flags;
       pResult->AddrSpaceMask = t.AddrSpaceMask;
       pResult->DataSize = t.DataSize;
@@ -2691,7 +2698,7 @@ static Boolean SymbolAdder(PTree *PDest, PTree Neu, void *pData)
 #if 0
       if (NewEntry->SymWert.Typ == TempInt)
         fprintf(stderr, "NewEntry 0x%lx Node 0x%lx Node changed %d\n",
-                NewEntry->SymWert.Contents.Int, (*Node)->SymWert.Contents.Int, get_symbol_entry_flag(*Node, changed));
+                NewEntry->SymWert.Contents.Int.Value, (*Node)->SymWert.Contents.Int.Value, get_symbol_entry_flag(*Node, changed));
 #endif
 
       /* If the symbol value was changed after entry (padding of label),
@@ -2703,7 +2710,7 @@ static Boolean SymbolAdder(PTree *PDest, PTree Neu, void *pData)
       else switch (NewEntry->SymWert.Typ)
       {
         case TempInt:
-          value_changed = NewEntry->SymWert.Contents.Int != (get_symbol_entry_flag(*Node, changed) ? (*Node)->unchanged_value : (*Node)->SymWert.Contents.Int);
+          value_changed = NewEntry->SymWert.Contents.Int.Value != (get_symbol_entry_flag(*Node, changed) ? (*Node)->unchanged_value : (*Node)->SymWert.Contents.Int.Value);
           break;
         default:
           value_changed = !!as_tempres_cmp(&NewEntry->SymWert, &(*Node)->SymWert);
@@ -2845,7 +2852,7 @@ void ChangeSymbol(PSymbolEntry pEntry, LargeInt Value)
 {
   if (!get_symbol_entry_flag(pEntry, changed))
   {
-    pEntry->unchanged_value = (pEntry->SymWert.Typ == TempInt) ? pEntry->SymWert.Contents.Int : 0;
+    pEntry->unchanged_value = (pEntry->SymWert.Typ == TempInt) ? pEntry->SymWert.Contents.Int.Value : 0;
     set_symbol_entry_flag(pEntry, changed, True);
   }
   as_tempres_set_int(&pEntry->SymWert, Value);
@@ -2888,13 +2895,14 @@ func_exit:
 }
 
 /*!------------------------------------------------------------------------
- * \fn     EnterIntSymbolWithFlags(const tStrComp *pName, LargeInt Wert, as_addrspace_t addrspace, Boolean MayChange, tSymbolFlags Flags)
+ * \fn     EnterIntSymbolWithFlagsAndWidth(const tStrComp *p_name, LargeInt value, Integer num_bits, as_addrspace_t addrspace, Boolean may_change, tSymbolFlags flags)
  * \brief  add integer symbol to symbol table
- * \param  pName unexpanded name
- * \param  Wert integer value
+ * \param  p_name unexpanded name
+ * \param  value integer value
+ * \param  num_bits bit length of integer
  * \param  addrspace symbol's address space
- * \param  MayChange constant or variable?
- * \param  Flags additional flags
+ * \param  may_change constant or variable?
+ * \param  flags additional flags
  * \return * to newly created entry in tree
  * ------------------------------------------------------------------------ */
 
@@ -2909,31 +2917,32 @@ static Boolean symbol_name_reserved(const char *p_name)
   return False;
 }
 
-PSymbolEntry EnterIntSymbolWithFlags(const tStrComp *pName, LargeInt Wert, as_addrspace_t addrspace, Boolean MayChange, tSymbolFlags Flags)
+PSymbolEntry EnterIntSymbolWithFlagsAndWidth(const tStrComp *p_name, LargeInt value, Integer num_bits, as_addrspace_t addrspace, Boolean may_change, tSymbolFlags flags)
 {
   LongInt DestHandle;
   PSymbolEntry pNeu;
 
-  if (symbol_name_reserved(pName->str.p_str))
+  if (symbol_name_reserved(p_name->str.p_str))
   {
-    WrStrErrorPos(ErrNum_RsvdSymName, pName);
+    WrStrErrorPos(ErrNum_RsvdSymName, p_name);
     return NULL;
   }
 
-  pNeu = CreateSymbolEntry(pName, &DestHandle, Flags);
+  pNeu = CreateSymbolEntry(p_name, &DestHandle, flags);
   if (!pNeu)
     return NULL;
 
-  as_tempres_set_int(&pNeu->SymWert, Wert);
+  as_tempres_set_int(&pNeu->SymWert, value);
+  pNeu->SymWert.Contents.Int.NumBits = num_bits;
   pNeu->SymWert.AddrSpaceMask = (addrspace != SegNone) ? 1 << addrspace : 0;
-  pNeu->SymWert.Flags = Flags;
+  pNeu->SymWert.Flags = flags;
   pNeu->SymWert.DataSize = eSymbolSizeUnknown;
   pNeu->RefList = NULL;
   pNeu->SymWert.Relocs = NULL;
 
   if ((MomLocHandle == -1) || (DestHandle != -2))
   {
-    EnterSymbol(pNeu, MayChange, DestHandle);
+    EnterSymbol(pNeu, may_change, DestHandle);
     if (MakeDebug)
       PrintSymTree(pNeu->Tree.Name);
   }
@@ -3692,7 +3701,7 @@ static void PrintSymbolList_PNode(PTree Tree, void *pData)
     Boolean symbol_used;
 
     if ((pValue->Typ == TempInt) && DissectBit && (pValue->AddrSpaceMask & (1 << SegBData)))
-      DissectBit(pContext->s1.p_str, pContext->s1.capacity, pValue->Contents.Int);
+      DissectBit(pContext->s1.p_str, pContext->s1.capacity, pValue->Contents.Int.Value);
     else
       StrSym(pValue, False, &pContext->s1, ListRadixBase);
 
@@ -3852,7 +3861,7 @@ static void PrNoISection(PTree Tree, void *pData)
   if ((Node->SymWert.AddrSpaceMask & NoICEMask) && (Node->Tree.Attribute == pContext->Handle) && (Node->SymWert.Typ == TempInt))
   {
     String buf;
-    as_snprintf(buf, sizeof(buf), "DEFINE %s 0x%lllx\n", Node->Tree.Name, Node->SymWert.Contents.Int);
+    as_snprintf(buf, sizeof(buf), "DEFINE %s 0x%lllx\n", Node->Tree.Name, Node->SymWert.Contents.Int.Value);
     fputs(buf, pContext->f); ChkIO(ErrNum_FileWriteError);
   }
 }
@@ -4275,7 +4284,7 @@ void CopyDefSymbols(void)
     switch (Lauf->Wert.Typ)
     {
       case TempInt:
-        EnterIntSymbol(&TmpComp, Lauf->Wert.Contents.Int, SegNone, True);
+        EnterIntSymbol(&TmpComp, Lauf->Wert.Contents.Int.Value, SegNone, True);
         break;
       case TempFloat:
         EnterFloatSymbol(&TmpComp, Lauf->Wert.Contents.Float, True);

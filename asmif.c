@@ -372,7 +372,7 @@ static void CodeCASE(Word code)
            switch (t.Typ)
            {
              case TempInt:
-               eq = (t.Contents.Int == FirstIfSave->SaveExpr.Contents.Int);
+               eq = (t.Contents.Int.Value == FirstIfSave->SaveExpr.Contents.Int.Value);
                break;
              case TempFloat:
                eq = (t.Contents.Float == FirstIfSave->SaveExpr.Contents.Float);

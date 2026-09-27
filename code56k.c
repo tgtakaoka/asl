@@ -1107,10 +1107,10 @@ static void DecodeDC(Word Code)
           break;
         ToInt:
         case TempInt:
-          if (mFirstPassUnknown(t.Flags)) t.Contents.Int &= 0xffffff;
-          if (!(OK = RangeCheck(t.Contents.Int, Int24))) WrStrErrorPos(ErrNum_OverRange, pArg);
+          if (mFirstPassUnknown(t.Flags)) t.Contents.Int.Value &= 0xffffff;
+          if (!(OK = RangeCheck(t.Contents.Int.Value, Int24))) WrStrErrorPos(ErrNum_OverRange, pArg);
           else
-            DAsmCode[CodeLen++] = t.Contents.Int & 0xffffff;
+            DAsmCode[CodeLen++] = t.Contents.Int.Value & 0xffffff;
           break;
         case TempFloat:
           WrStrErrorPos(ErrNum_StringOrIntButFloat, pArg);

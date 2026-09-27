@@ -818,17 +818,25 @@ void FloatString(char *pDest, size_t DestSize, as_float_t f)
 void StrSym(const TempResult *t, Boolean WithSystem, as_dynstr_t *p_dest, unsigned Radix)
 {
   LargeInt IntVal;
+  Byte int_num_bits = 0;
 
   if (p_dest->capacity)
     p_dest->p_str[0] = '\0';
   switch (t->Typ)
   {
     case TempInt:
-      IntVal = t->Contents.Int;
+      IntVal = t->Contents.Int.Value;
+      int_num_bits = t->Contents.Int.NumBits;
     IsInt:
     {
+      int digit_bits, digits;
       String Buf;
 
+      if ((t->Flags & eSymbolFlag_Negative) && (IntVal < 0))
+      {
+        as_sdprcatf(p_dest, "-");
+        IntVal = -IntVal;
+      }
       if (WithSystem)
       {
         switch (IntConstMode)
@@ -846,8 +854,10 @@ void StrSym(const TempResult *t, Boolean WithSystem, as_dynstr_t *p_dest, unsign
             break;
         }
       }
-      SysString(Buf, sizeof(Buf), IntVal, Radix,
-                1, (16 == Radix) && (IntConstMode == eIntConstModeIntel),
+      digit_bits = as_log2(Radix);
+      digits = digit_bits ? ((int_num_bits + digit_bits - 1) / digit_bits) : 1;
+      SysString(Buf, sizeof(Buf), IntVal, Radix, False,
+                digits, (16 == Radix) && (IntConstMode == eIntConstModeIntel),
                 HexStartCharacter, SplitByteCharacter);
       as_sdprcatf(p_dest, "%s", Buf);
       if (WithSystem)
@@ -878,6 +888,7 @@ void StrSym(const TempResult *t, Boolean WithSystem, as_dynstr_t *p_dest, unsign
       else
       {
         IntVal = t->Contents.RegDescr.Reg;
+        int_num_bits = INTSYM_NUM_BITS_DEFAULT;
         goto IsInt;
       }
       break;

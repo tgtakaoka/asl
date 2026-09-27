@@ -368,7 +368,7 @@ static Boolean DecodeFloat(const tStrComp *pArg, LongInt *pResult)
 	switch (temp.Typ)
 	{
 	case TempInt:
-		*pResult = temp.Contents.Int;
+		*pResult = temp.Contents.Int.Value;
 		break;
 	case TempFloat:
 		as_float_2_ieee4(temp.Contents.Float, (unsigned char *)pResult, False);

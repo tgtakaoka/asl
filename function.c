@@ -27,15 +27,15 @@ static as_float_t log_max, log2_max, log10_max;
 
 static Boolean FuncSUBSTR(TempResult *pResult, const TempResult *pArgs, unsigned ArgCnt)
 {
-  int cnt = pArgs[0].Contents.str.len - pArgs[1].Contents.Int;
+  int cnt = pArgs[0].Contents.str.len - pArgs[1].Contents.Int.Value;
 
   UNUSED(ArgCnt);
-  if ((pArgs[2].Contents.Int != 0) && (pArgs[2].Contents.Int < cnt))
-    cnt = pArgs[2].Contents.Int;
+  if ((pArgs[2].Contents.Int.Value != 0) && (pArgs[2].Contents.Int.Value < cnt))
+    cnt = pArgs[2].Contents.Int.Value;
   if (cnt < 0)
     cnt = 0;
   as_tempres_set_c_str(pResult, "");
-  as_nonz_dynstr_append_raw(&pResult->Contents.str, pArgs[0].Contents.str.p_str + pArgs[1].Contents.Int, cnt);
+  as_nonz_dynstr_append_raw(&pResult->Contents.str, pArgs[0].Contents.str.p_str + pArgs[1].Contents.Int.Value, cnt);
 
   return True;
 }
@@ -53,7 +53,7 @@ static Boolean FuncCHARFROMSTR(TempResult *pResult, const TempResult *pArgs, uns
 {
   UNUSED(ArgCnt);
 
-  as_tempres_set_int(pResult, ((pArgs[1].Contents.Int >= 0) && ((unsigned)pArgs[1].Contents.Int < pArgs[0].Contents.str.len)) ? pArgs[0].Contents.str.p_str[pArgs[1].Contents.Int] : -1);
+  as_tempres_set_int(pResult, ((pArgs[1].Contents.Int.Value >= 0) && ((unsigned)pArgs[1].Contents.Int.Value < pArgs[0].Contents.str.len)) ? pArgs[0].Contents.str.p_str[pArgs[1].Contents.Int.Value] : -1);
 
   return True;
 }
@@ -80,8 +80,8 @@ static Boolean FuncCODEPAGE_VAL(TempResult *pResult, const TempResult *pArgs, un
   else
     p_table = CurrTransTable;
 
-  if (ChkRange(pArgs[0].Contents.Int, 0, 255))
-    as_tempres_set_int(pResult, as_chartrans_xlate(p_table->p_table, pArgs[0].Contents.Int));
+  if (ChkRange(pArgs[0].Contents.Int.Value, 0, 255))
+    as_tempres_set_int(pResult, as_chartrans_xlate(p_table->p_table, pArgs[0].Contents.Int.Value));
   else
     as_tempres_set_int(pResult, 0);
   return True;
@@ -172,9 +172,9 @@ static Boolean FuncTOUPPER(TempResult *pResult, const TempResult *pArgs, unsigne
 {
   UNUSED(ArgCnt);
 
-  if ((pArgs[0].Contents.Int < 0) || (pArgs[0].Contents.Int > 255)) WrError(ErrNum_OverRange);
+  if ((pArgs[0].Contents.Int.Value < 0) || (pArgs[0].Contents.Int.Value > 255)) WrError(ErrNum_OverRange);
   else
-    as_tempres_set_int(pResult, as_toupper(pArgs[0].Contents.Int));
+    as_tempres_set_int(pResult, as_toupper(pArgs[0].Contents.Int.Value));
 
   return True;
 }
@@ -183,9 +183,9 @@ static Boolean FuncTOLOWER(TempResult *pResult, const TempResult *pArgs, unsigne
 {
   UNUSED(ArgCnt);
 
-  if ((pArgs[0].Contents.Int < 0) || (pArgs[0].Contents.Int > 255)) WrError(ErrNum_OverRange);
+  if ((pArgs[0].Contents.Int.Value < 0) || (pArgs[0].Contents.Int.Value > 255)) WrError(ErrNum_OverRange);
   else
-    as_tempres_set_int(pResult, as_tolower(pArgs[0].Contents.Int));
+    as_tempres_set_int(pResult, as_tolower(pArgs[0].Contents.Int.Value));
 
   return True;
 }
@@ -193,7 +193,7 @@ static Boolean FuncTOLOWER(TempResult *pResult, const TempResult *pArgs, unsigne
 static Boolean FuncBITCNT(TempResult *pResult, const TempResult *pArgs, unsigned ArgCnt)
 {
   int z;
-  LargeInt in = pArgs[0].Contents.Int, out = 0;
+  LargeInt in = pArgs[0].Contents.Int.Value, out = 0;
 
   UNUSED(ArgCnt);
 
@@ -210,7 +210,7 @@ static Boolean FuncBITCNT(TempResult *pResult, const TempResult *pArgs, unsigned
 
 static Boolean FuncFIRSTBIT(TempResult *pResult, const TempResult *pArgs, unsigned ArgCnt)
 {
-  LargeInt in = pArgs[0].Contents.Int;
+  LargeInt in = pArgs[0].Contents.Int.Value;
   int out;
 
   UNUSED(ArgCnt);
@@ -231,7 +231,7 @@ static Boolean FuncFIRSTBIT(TempResult *pResult, const TempResult *pArgs, unsign
 static Boolean FuncLASTBIT(TempResult *pResult, const TempResult *pArgs, unsigned ArgCnt)
 {
   int z, out;
-  LargeInt in = pArgs[0].Contents.Int;
+  LargeInt in = pArgs[0].Contents.Int.Value;
 
   UNUSED(ArgCnt);
 
@@ -254,7 +254,7 @@ static Boolean FuncBITPOS(TempResult *pResult, const TempResult *pArgs, unsigned
   UNUSED(ArgCnt);
 
   pResult->Typ = TempInt;
-  if (!SingleBit(pArgs[0].Contents.Int, &out))
+  if (!SingleBit(pArgs[0].Contents.Int.Value, &out))
   {
     out = -1;
     WrError(ErrNum_NotOneBit);
@@ -271,7 +271,7 @@ static Boolean FuncABS(TempResult *pResult, const TempResult *pArgs, unsigned Ar
   switch (pArgs[0].Typ)
   {
     case TempInt:
-      as_tempres_set_int(pResult, (pArgs[0].Contents.Int  < 0) ? -pArgs[0].Contents.Int : pArgs[0].Contents.Int);
+      as_tempres_set_int(pResult, (pArgs[0].Contents.Int.Value  < 0) ? -pArgs[0].Contents.Int.Value : pArgs[0].Contents.Int.Value);
       break;
     case TempFloat:
       as_tempres_set_float(pResult, as_fabs(pArgs[0].Contents.Float));
@@ -290,7 +290,7 @@ static Boolean FuncSGN(TempResult *pResult, const TempResult *pArgs, unsigned Ar
   switch (pArgs[0].Typ)
   {
     case TempInt:
-      as_tempres_set_int(pResult, (pArgs[0].Contents.Int < 0) ? -1 : ((pArgs[0].Contents.Int > 0) ? 1 : 0));
+      as_tempres_set_int(pResult, (pArgs[0].Contents.Int.Value < 0) ? -1 : ((pArgs[0].Contents.Int.Value > 0) ? 1 : 0));
       break;
     case TempFloat:
       as_tempres_set_int(pResult, (pArgs[0].Contents.Float < 0) ? -1 : ((pArgs[0].Contents.Float > 0) ? 1 : 0));

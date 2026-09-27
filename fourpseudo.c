@@ -68,7 +68,7 @@ void DecodeDATA(IntType CodeIntType, IntType DataIntType)
     {
       EvalStrExpression(pArg, &t);
       if ((t.Typ == TempInt) && mFirstPassUnknown(t.Flags))
-        t.Contents.Int &= UnknownMask;
+        t.Contents.Int.Value &= UnknownMask;
 
       switch (t.Typ)
       {
@@ -155,17 +155,17 @@ void DecodeDATA(IntType CodeIntType, IntType DataIntType)
         }
         case TempInt:
         ToInt:
-          if (!mSymbolQuestionable(t.Flags) && !RangeCheck(t.Contents.Int, ValIntType))
+          if (!mSymbolQuestionable(t.Flags) && !RangeCheck(t.Contents.Int.Value, ValIntType))
           {
             WrStrErrorPos(ErrNum_OverRange, pArg);
             ValOK = False;
           }
           else if (ValMask <= 0xff)
-            BAsmCode[CodeLen++] = t.Contents.Int & ValMask;
+            BAsmCode[CodeLen++] = t.Contents.Int.Value & ValMask;
           else if (ValMask <= 0xfffful)
-            WAsmCode[CodeLen++] = t.Contents.Int & ValMask;
+            WAsmCode[CodeLen++] = t.Contents.Int.Value & ValMask;
           else
-            DAsmCode[CodeLen++] = t.Contents.Int & ValMask;
+            DAsmCode[CodeLen++] = t.Contents.Int.Value & ValMask;
           break;
         default:
           ValOK = False;

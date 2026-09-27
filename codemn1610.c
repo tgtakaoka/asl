@@ -1403,23 +1403,23 @@ static void DecodeDC(Word Index)
 		forallargs(pArg, OK)
 		{
 			EvalStrExpression(pArg, &t);
-			if (mFirstPassUnknown(t.Flags) && t.Typ == TempInt) t.Contents.Int &= 65535;
+			if (mFirstPassUnknown(t.Flags) && t.Typ == TempInt) t.Contents.Int.Value &= 65535;
 			switch (t.Typ)
 			{
 			case TempInt:
 				if (Packing)
 				{
-					if (ChkRange(t.Contents.Int, -128, 255))
+					if (ChkRange(t.Contents.Int.Value, -128, 255))
 					{
-						PutByte(t.Contents.Int, &LowerByte);
+						PutByte(t.Contents.Int.Value, &LowerByte);
 					}
 				}
 				else
 				{
 				ToInt:
-					if (ChkRange(t.Contents.Int, -32768, 65535))
+					if (ChkRange(t.Contents.Int.Value, -32768, 65535))
 					{
-						PutWord(t.Contents.Int, &LowerByte);
+						PutWord(t.Contents.Int.Value, &LowerByte);
 					}
 				}
 				break;

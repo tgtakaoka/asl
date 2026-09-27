@@ -205,7 +205,7 @@ extern LargeWord *SegLimits;
 extern LongInt ValidSegs;
 extern Boolean ENDOccured;
 extern Boolean Retracted;
-extern Boolean ListToStdout,ListToNull;
+extern Boolean ListToStdout, ListToNull;
 
 extern void (*pASSUMEOverride)(void);
 
@@ -251,6 +251,7 @@ extern Boolean CodeOutput;
 extern Boolean MacProOutput;
 extern Boolean MacroOutput;
 extern Boolean HardRanges;
+extern Boolean force_restricted_extension_digits;
 extern Boolean label_leading_colon;
 extern const char *DivideChars;
 extern Boolean HasAttrs;
