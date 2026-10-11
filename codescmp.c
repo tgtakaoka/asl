@@ -239,12 +239,7 @@ static Boolean DecodeAdr(const tStrComp *pArg, Boolean MayInc, Byte PCDisp, Byte
     switch (DecodeReg(&Left, &BAsmCode[1], NULL, eSymbolSize8Bit, False))
     {
       case eIsReg:
-        /* 0x80 -> use E register only applies if pointer register is not P0(PC): */
-        if (*Arg == REG_PC)
-        {
-          WrStrErrorPos(ErrNum_InvAddrMode, &Left);
-          return False;
-        }
+        /* E is the only 8 bit register known to DecodeReg() */
         break;
       case eRegAbort:
         return False;
@@ -254,8 +249,8 @@ static Boolean DecodeAdr(const tStrComp *pArg, Boolean MayInc, Byte PCDisp, Byte
         BAsmCode[1] = EvalStrIntExpressionWithResult(&Left, SInt8, &result);
         if (!result.OK)
           return False;
-        /* Depending on pointer register, valid range is -128...+127 or -127...+127: */
-        if ((*Arg != REG_PC) && (BAsmCode[1] == 0x80) && !mFirstPassUnknownOrQuestionable(result.Flags))
+        /* valid range is -127...+127: */
+        if ((BAsmCode[1] == 0x80) && !mFirstPassUnknownOrQuestionable(result.Flags))
           WrStrErrorPos(ErrNum_MeansE, &Left);
       }
     }
@@ -275,11 +270,10 @@ static Boolean DecodeAdr(const tStrComp *pArg, Boolean MayInc, Byte PCDisp, Byte
 
     if (!ChkSamePage(Target, PCVal, 12, Flags));
 
-    /* Since the pointer register is P0(PC) in this case, a displacement of 0x80
-       (-128) does not signify usage of E register, and can be used at
-       this place: */
+    /* Since a displacement of 0x80 (-128) signifies usage of E register,
+       it cannot be used at this place: */
 
-    else if ((Disp > 0x7f) && (Disp < 0xf80)) WrError(ErrNum_DistTooBig);
+    else if ((Disp > 0x7f) && (Disp < 0xf81)) WrError(ErrNum_DistTooBig);
     else
     {
       BAsmCode[1] = Disp & 0xff;

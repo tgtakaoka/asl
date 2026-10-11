@@ -191,7 +191,7 @@ static void ProcessFile(const char *FileName, LongWord Offset)
   Word *WBuffer = (Word *) Buffer;
   LongWord ErgStart, byte_erg_start,
            ErgStop = 0xfffffffful, byte_erg_stop,
-           target_word_intel_offset = 0, byte_intel_offset = 0, MaxAdr;
+           byte_intel_offset = 0, MaxAdr;
   LongInt NextPos;
   LongWord ValidSegs;
   Word ErgLen = 0, ChkSum, RecCnt, Gran, intel_segment;
@@ -355,13 +355,12 @@ static void ProcessFile(const char *FileName, LongWord Offset)
             break;
           case eHexFormatIntel:
             FormatOccured |= eIntelOccured;
-            byte_intel_offset = target_word_intel_offset = 0;
+            byte_intel_offset = 0;
             break;
           case eHexFormatIntel16:
             FormatOccured |= eIntelOccured;
             byte_intel_offset = record_byte_offset(ErgStart, 0, Gran);
             byte_intel_offset -= byte_intel_offset & 0x0f;
-            target_word_intel_offset = record_target_word_length(byte_intel_offset, Gran);
             intel_segment = LoWord(byte_intel_offset >> 4);
             ChkSum = 2 + Lo(intel_segment) + Hi(intel_segment) + 2;
             chkio_fprintf(TargFile, TargName, ":02000002%04X%02X\n", intel_segment, Lo(0x100 - ChkSum));
@@ -372,7 +371,6 @@ static void ProcessFile(const char *FileName, LongWord Offset)
             FormatOccured |= eIntelOccured;
             byte_intel_offset = record_byte_offset(ErgStart, 0, Gran);
             byte_intel_offset -= byte_intel_offset & 0xffff;
-            target_word_intel_offset = record_target_word_length(byte_intel_offset, Gran);
             write_intel_bank_record = True;
             if (MaxIntel < 2)
               MaxIntel = 2;
@@ -625,7 +623,6 @@ static void ProcessFile(const char *FileName, LongWord Offset)
           if ((ActFormat == eHexFormatIntel32) && write_intel_bank_record)
           {
             byte_intel_offset += 0x10000;
-            target_word_intel_offset = record_target_word_length(byte_intel_offset, Gran);
           }
         }
 

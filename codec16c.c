@@ -590,8 +590,6 @@ static adr_mode_t decode_adr(const tStrComp *p_arg, adr_vals_t *p_vals, tSymbolS
     }
   }
 
-  WrStrErrorPos(ErrNum_InvAddrMode, p_arg);
-
 check:
   return p_vals->mode;
 }

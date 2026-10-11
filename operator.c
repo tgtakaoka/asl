@@ -66,6 +66,35 @@
         } \
         while (0)
 
+#define PromoteNegativeLInt() \
+        do \
+        { \
+          if ((pLVal->Flags & eSymbolFlag_Negative) \
+           && (pErg->Typ == TempInt) \
+           && (pErg->Contents.Int.Value < 0)) \
+            pErg->Flags |= eSymbolFlag_Negative; \
+        } \
+        while (0)
+
+static Byte max_numbits(Byte l_bits, Byte r_bits)
+{
+  if ((l_bits == INTSYM_NUM_BITS_DEFAULT) || (r_bits == INTSYM_NUM_BITS_DEFAULT))
+    return INTSYM_NUM_BITS_DEFAULT;
+  return max(l_bits, r_bits);
+}
+
+static Byte min_numbits(Byte l_bits, Byte r_bits)
+{
+  if ((l_bits != INTSYM_NUM_BITS_DEFAULT) && (r_bits != INTSYM_NUM_BITS_DEFAULT))
+    return min(l_bits, r_bits);
+  else if (l_bits != INTSYM_NUM_BITS_DEFAULT)
+    return l_bits;
+  else if (r_bits != INTSYM_NUM_BITS_DEFAULT)
+    return r_bits;
+  else
+    return INTSYM_NUM_BITS_DEFAULT;
+}
+
 /*!------------------------------------------------------------------------
  * \fn     reg_cmp(const TempResult *p_val1, const TempResult *p_val2)
  * \brief  compare two register symbols
@@ -108,6 +137,8 @@ int reg_cmp(const TempResult *p_val1, const TempResult *p_val2)
     return 0;
 }
 
+#define MASK(nbits) ((((LargeWord)1) << (nbits)) - 1)
+
 static Boolean OneComplOp(TempResult *pErg, TempResult *pLVal, TempResult *pRVal)
 {
   UNUSED(pLVal);
@@ -115,10 +146,46 @@ static Boolean OneComplOp(TempResult *pErg, TempResult *pLVal, TempResult *pRVal
     return False;
 
   as_tempres_set_int(pErg, ~(pRVal->Contents.Int.Value));
-  if (pRVal->Contents.Int.NumBits != INTSYM_NUM_BITS_DEFAULT)
-    pErg->Contents.Int.Value &= (((LargeWord)1) << (pErg->Contents.Int.NumBits = pRVal->Contents.Int.NumBits)) - 1;
+  if (force_restricted_extension_digits && (pRVal->Contents.Int.NumBits != INTSYM_NUM_BITS_DEFAULT))
+  {
+    pErg->Contents.Int.NumBits = pRVal->Contents.Int.NumBits;
+    pErg->Contents.Int.Value &= MASK(pRVal->Contents.Int.NumBits);
+  }
   PromoteRValFlags();
   return True;
+}
+
+static void shift_left_core(TempResult *p_dest, const TempResult *p_src, LargeWord shift)
+{
+  as_tempres_set_int(p_dest, p_src->Contents.Int.Value << shift);
+  if (force_restricted_extension_digits && (p_src->Contents.Int.NumBits != INTSYM_NUM_BITS_DEFAULT))
+  {
+    LargeWord new_num_bits = p_src->Contents.Int.NumBits + shift;
+    if (new_num_bits < (sizeof(LargeWord) * 8))
+      p_dest->Contents.Int.NumBits = new_num_bits;
+  }
+}
+
+static void shift_right_core(TempResult *p_dest, const TempResult *p_src, LargeWord shift)
+{
+  as_tempres_set_int(p_dest, p_src->Contents.Int.Value >> shift);
+  if (shift < (int)(sizeof(LargeWord) * 8))
+  {
+    LargeWord Mask = MASK((sizeof(LargeWord) * 8) - shift);
+
+    /* For right shift of negative number, enforce arithmetic shift. Otherwise,
+       explicitly mask out implicit arithmetic shift from compiler: */
+    if ((p_src->Contents.Int.Value < 0) && (p_src->Flags & eSymbolFlag_Negative))
+      p_dest->Contents.Int.Value |= ~Mask;
+    else
+      p_dest->Contents.Int.Value &= Mask;
+  }
+  if (force_restricted_extension_digits && (p_src->Contents.Int.NumBits != INTSYM_NUM_BITS_DEFAULT))
+  {
+    LargeInt new_num_bits = (LargeInt)p_src->Contents.Int.NumBits + shift;
+    if (new_num_bits > 0)
+     p_dest->Contents.Int.NumBits = new_num_bits;
+  }
 }
 
 static Boolean ShLeftOp(TempResult *pErg, TempResult *pLVal, TempResult *pRVal)
@@ -126,8 +193,12 @@ static Boolean ShLeftOp(TempResult *pErg, TempResult *pLVal, TempResult *pRVal)
   if (!pLVal || !pRVal)
     return False;
 
-  as_tempres_set_int(pErg, pLVal->Contents.Int.Value << pRVal->Contents.Int.Value);
+  if (pRVal->Contents.Int.Value < 0)
+    shift_right_core(pErg, pLVal, -pRVal->Contents.Int.Value);
+  else
+    shift_left_core(pErg, pLVal, pRVal->Contents.Int.Value);
   PromoteLRValFlags();
+  PromoteNegativeLInt();
   return True;
 }
 
@@ -136,8 +207,12 @@ static Boolean ShRightOp(TempResult *pErg, TempResult *pLVal, TempResult *pRVal)
   if (!pLVal || !pRVal)
     return False;
 
-  as_tempres_set_int(pErg, pLVal->Contents.Int.Value >> pRVal->Contents.Int.Value);
+  if (pRVal->Contents.Int.Value < 0)
+    shift_left_core(pErg, pLVal, -pRVal->Contents.Int.Value);
+  else
+    shift_right_core(pErg, pLVal, pRVal->Contents.Int.Value);
   PromoteLRValFlags();
+  PromoteNegativeLInt();
   return True;
 }
 
@@ -170,6 +245,8 @@ static Boolean BinAndOp(TempResult *pErg, TempResult *pLVal, TempResult *pRVal)
     return False;
 
   as_tempres_set_int(pErg, pLVal->Contents.Int.Value & pRVal->Contents.Int.Value);
+  if (force_restricted_extension_digits)
+    pErg->Contents.Int.NumBits = min_numbits(pLVal->Contents.Int.NumBits, pRVal->Contents.Int.NumBits);
   PromoteLRValFlags();
   return True;
 }
@@ -180,6 +257,8 @@ static Boolean BinOrOp(TempResult *pErg, TempResult *pLVal, TempResult *pRVal)
     return False;
 
   as_tempres_set_int(pErg, pLVal->Contents.Int.Value | pRVal->Contents.Int.Value);
+  if (force_restricted_extension_digits)
+    pErg->Contents.Int.NumBits = max_numbits(pLVal->Contents.Int.NumBits, pRVal->Contents.Int.NumBits);
   PromoteLRValFlags();
   return True;
 }
@@ -190,6 +269,12 @@ static Boolean BinXorOp(TempResult *pErg, TempResult *pLVal, TempResult *pRVal)
     return False;
 
   as_tempres_set_int(pErg, pLVal->Contents.Int.Value ^ pRVal->Contents.Int.Value);
+  if (force_restricted_extension_digits)
+  {
+    pErg->Contents.Int.NumBits = max_numbits(pLVal->Contents.Int.NumBits, pRVal->Contents.Int.NumBits);
+    if (pErg->Contents.Int.NumBits)
+      pErg->Contents.Int.Value &= MASK(pErg->Contents.Int.NumBits);
+  }
   PromoteLRValFlags();
   return True;
 }

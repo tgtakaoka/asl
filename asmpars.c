@@ -1085,6 +1085,10 @@ static Boolean const_int_val(const char *p_expr, LargeInt *p_value, tSymbolFlags
     /* Necessary leading 0 for Intel-style hex consts does not count: */
     if ((p_int_format->Id == eIntFormatIntHex) && first_digit && (*ctx.pExpr == '0') && as_isalpha(ctx.pExpr[1]))
       { }
+    else if ((p_int_format->Id == eIntFormatCOct) && first_digit && (*ctx.pExpr == '0'))
+      { }
+    else if ((p_int_format->Id == eIntFormatNatHex) && first_digit && (*ctx.pExpr == '0'))
+      { }
     else
       num_digits++;
     first_digit = False;
@@ -1094,13 +1098,13 @@ static Boolean const_int_val(const char *p_expr, LargeInt *p_value, tSymbolFlags
   if (neg_flag)
   {
     *p_flags = eSymbolFlag_Negative;
-    *p_num_bits = -1;
+    *p_num_bits = INTSYM_NUM_BITS_DEFAULT;
     *p_value = -acc;
   }
   else
   {
     *p_flags = eSymbolFlag_None;
-    *p_num_bits = force_restricted_extension_digits ? (num_digits * as_log2(ctx.Base)) : 0;
+    *p_num_bits = force_restricted_extension_digits ? (num_digits * as_log2(ctx.Base)) : INTSYM_NUM_BITS_DEFAULT;
     *p_value = acc;
   }
   return True;
