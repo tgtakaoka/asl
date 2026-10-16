@@ -190,16 +190,17 @@ static void DissectReg_SCMP(char *p_dest, size_t dest_size, tRegInt value, tSymb
 }
 
 /*!------------------------------------------------------------------------
- * \fn     DecodeAdr(const tStrComp *pArg, Boolean MayInc, Byte PCDisp, Byte *Arg)
+ * \fn     DecodeAdr(const tStrComp *pArg, Boolean MayInc, Byte PCDisp, Byte *Arg, Boolean data_ref)
  * \brief  decode address expression
  * \param  pArg source argument
  * \param  MayInc allow auto-increment?
  * \param  PCDisp additional offset to take into account for PC-relative addressing
  * \param  Arg returns m|ptr for opcode byte
+ * \param  data_ref instruction accessing data? 
  * \return True if success
  * ------------------------------------------------------------------------ */
 
-static Boolean DecodeAdr(const tStrComp *pArg, Boolean MayInc, Byte PCDisp, Byte *Arg)
+static Boolean DecodeAdr(const tStrComp *pArg, Boolean MayInc, Byte PCDisp, Byte *Arg, Boolean data_ref)
 {
   Word Target;
   Boolean OK;
@@ -239,7 +240,12 @@ static Boolean DecodeAdr(const tStrComp *pArg, Boolean MayInc, Byte PCDisp, Byte
     switch (DecodeReg(&Left, &BAsmCode[1], NULL, eSymbolSize8Bit, False))
     {
       case eIsReg:
-        /* E is the only 8 bit register known to DecodeReg() */
+        /* 0x80 -> use E register does not apply if pointer register is P0(PC) and instruction is a jump: */
+        if ((*Arg == REG_PC) && !data_ref)
+        {
+          WrStrErrorPos(ErrNum_InvAddrMode, &Left);
+          return False;
+        }
         break;
       case eRegAbort:
         return False;
@@ -247,10 +253,16 @@ static Boolean DecodeAdr(const tStrComp *pArg, Boolean MayInc, Byte PCDisp, Byte
       {
         tEvalResult result;
         BAsmCode[1] = EvalStrIntExpressionWithResult(&Left, SInt8, &result);
+
         if (!result.OK)
           return False;
-        /* valid range is -127...+127: */
-        if ((BAsmCode[1] == 0x80) && !mFirstPassUnknownOrQuestionable(result.Flags))
+
+        /* If P0(PC) and no data ref, valid range is -128...+127
+           Otherwise, valid range is -127...+127: */
+
+        if (!mFirstPassUnknownOrQuestionable(result.Flags)
+         && (BAsmCode[1] == 0x80)
+         && ((*Arg != REG_PC) || data_ref))
           WrStrErrorPos(ErrNum_MeansE, &Left);
       }
     }
@@ -270,10 +282,10 @@ static Boolean DecodeAdr(const tStrComp *pArg, Boolean MayInc, Byte PCDisp, Byte
 
     if (!ChkSamePage(Target, PCVal, 12, Flags));
 
-    /* Since a displacement of 0x80 (-128) signifies usage of E register,
-       it cannot be used at this place: */
+    /* Since a displacement of 0x80 (-128) signifies usage of E register
+       for data accesses, it cannot be used at this place: */
 
-    else if ((Disp > 0x7f) && (Disp < 0xf81)) WrError(ErrNum_DistTooBig);
+    else if ((Disp > 0x7f) && (Disp < (data_ref ? 0xf81 : 0xf80))) WrError(ErrNum_DistTooBig);
     else
     {
       BAsmCode[1] = Disp & 0xff;
@@ -327,7 +339,7 @@ static void DecodeRegOrder(Word Index)
 static void DecodeMem(Word Index)
 {
   if (ChkArgCnt(1, 1))
-  if (DecodeAdr(&ArgStr[1], True, 0, BAsmCode + 0))
+  if (DecodeAdr(&ArgStr[1], True, 0, BAsmCode + 0, True))
   {
     BAsmCode[0] |= Index; CodeLen = 2; ChkPage();
   }
@@ -336,7 +348,7 @@ static void DecodeMem(Word Index)
 static void DecodeJmp(Word Index)
 {
   if (ChkArgCnt(1, 1))
-  if (DecodeAdr(&ArgStr[1], False, 1, BAsmCode + 0))
+  if (DecodeAdr(&ArgStr[1], False, 1, BAsmCode + 0, False))
   {
     BAsmCode[0] |= Index; CodeLen = 2; ChkPage();
   }
@@ -383,7 +395,7 @@ static void decode_js(Word Index)
 static void DecodeLD(Word Index)
 {
   if (ChkArgCnt(1, 1))
-  if (DecodeAdr(&ArgStr[1], False, 0, BAsmCode + 0))
+  if (DecodeAdr(&ArgStr[1], False, 0, BAsmCode + 0, True))
   {
     BAsmCode[0] |= Index; CodeLen = 2; ChkPage();
   }

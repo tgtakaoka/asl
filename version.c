@@ -9,13 +9,19 @@
 /*****************************************************************************/
 
 #include "version.h"
+#include "stdinc.h"
 
 const char *Version = STR(AS_VERSION_MAJOR) "." STR(AS_VERSION_MINOR) " Beta [Bld " STR(AS_VERSION_BUILD) "]";
 const char *DebVersion = STR(AS_VERSION_MAJOR) "." STR(AS_VERSION_MINOR) "bld" STR(AS_VERSION_BUILD) "-1";
-LongInt VerNo = (AS_VERSION_MAJOR * 4096)
-              | ((AS_VERSION_MINOR / 10) * 256)
-              | ((AS_VERSION_MINOR % 10) * 16)
-              | 15;
+LongWord version_number =
+       (AS_VERSION_MAJOR * 4096)
+       | ((AS_VERSION_MINOR / 10) * 256)
+       | ((AS_VERSION_MINOR % 10) * 16)
+       | min(AS_VERSION_BUILD, 15);
+LongWord full_version_number =
+        ((((LongWord)AS_VERSION_MAJOR) << 24)
+       | (((LongWord)AS_VERSION_MINOR) << 16)
+       | ((LongWord)AS_VERSION_BUILD));
 
 const char *InfoMessCopyright = "(C) 1992,2026 Alfred Arnold";
 

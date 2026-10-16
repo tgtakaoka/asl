@@ -57,6 +57,9 @@
 
 # define ARCHSYSNAME "windows-msvc"
 
+# undef AS_HAS_LONGLONG
+# define AS_HAS_LONGLONG 1
+
 # define AS_FOPEN_MODES_DOS
 # define AS_PATHSYNTAX_DOS
 # define AS_8_IS_CHAR
@@ -895,7 +898,13 @@ typedef __int128_t as_int128_t;
 # define AS_16_IS_SHORT
 # define AS_32_IS_INT
 # define AS_64_IS_LONGLONG
-# define AS_IEEEFLOAT_8_DOUBLE
+/* For TinyC on Win32, long double is defined, but is same as double (8 bytes),
+   similar to MSVC: */
+# if AS_HAS_LONGDOUBLE && !defined(__TINYC__)
+#  define AS_IEEEFLOAT_10_12_LONG_DOUBLE
+# else
+#  define AS_IEEEFLOAT_8_DOUBLE
+# endif
 # define AS_W32_NLS
 #endif /* _WIN32 */
 
@@ -1034,7 +1043,9 @@ typedef __int128_t as_int128_t;
 # define AS_16_IS_SHORT
 # define AS_32_IS_INT
 # define AS_64_IS_LONGLONG
-# if AS_HAS_LONGDOUBLE
+/* For TinyC on Win32, long double is defined, but is same as double (8 bytes),
+   similar to MSVC: */
+# if AS_HAS_LONGDOUBLE && !defined(__TINYC__)
 #  define AS_IEEEFLOAT_10_16_LONG_DOUBLE
 # else
 #  define AS_IEEEFLOAT_8_DOUBLE

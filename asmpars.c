@@ -1052,6 +1052,8 @@ static Boolean const_int_val(const char *p_expr, LargeInt *p_value, tSymbolFlags
   {
     int digit;
 
+    /* Deduce value of current digit: */
+
     if (256 == ctx.Base)
     {
       digit = as_chartrans_xlate(CurrTransTable->p_table, ((unsigned)*ctx.pExpr) & 0xff);
@@ -1063,23 +1065,39 @@ static Boolean const_int_val(const char *p_expr, LargeInt *p_value, tSymbolFlags
     }
     else
       digit = DigitVal(as_toupper(*ctx.pExpr), ctx.Base);
+
+    /* If invalid character, also clear overrange flag.  We may
+       have a floating point constant, e.g. with a dot: */
+
     if (digit == -1)
     {
       *p_value = -1;
+      *p_outof_range = 0;
       return False;
     }
-    if (acc > mul_max)
+
+    /* If overrange occured, continue running over the string,
+       to check for non-integer characters (see above): */
+
+    else if (*p_outof_range)
     {
-      *p_outof_range = neg_flag ? -1 : 1;
-      *p_value = neg_flag ? -acc_max : acc_max;
-      return True;
     }
-    acc = acc * ctx.Base;
-    if (acc_max - acc < (unsigned)digit)
+
+    /* Otherwise, accumulate: */
+
+    else
     {
-      *p_outof_range = neg_flag ? -1 : 1;
-      *p_value = neg_flag ? -acc_max : acc_max;
-      return True;
+      if (acc > mul_max)
+      {
+        *p_outof_range = neg_flag ? -1 : 1;
+        *p_value = neg_flag ? -acc_max : acc_max;
+      }
+      acc = acc * ctx.Base;
+      if (acc_max - acc < (unsigned)digit)
+      {
+        *p_outof_range = neg_flag ? -1 : 1;
+        *p_value = neg_flag ? -acc_max : acc_max;
+      }
     }
     acc = acc + digit;
     /* Necessary leading 0 for Intel-style hex consts does not count: */

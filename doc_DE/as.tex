@@ -51,7 +51,7 @@
 
 \vspace{1cm}\par
 
-{\large Stand September 2026}
+{\large Stand Oktober 2026}
 \end{raggedright}
 
 \clearpage
@@ -1616,8 +1616,15 @@ Name             & Bedeutung \\
 \tty{INTWIDTH}         & Bitbreite interne Integer-Arithmetik \\
 \tty{HAS64}            & interne Integer-Arithmetik verwendet mindestens 64 Bit \\
 \tty{FLOATMAX}         & gr"o"ste darstellbare Gleitkommazahl \\
-\tty{VERSION}          & Version von \asname{} in BCD-Kodierung, \\
-                       & z.B. 1331 hex f"ur Version 1.33p1 \\
+\tty{VERSION}          & Version von \asname{} in der Form {\em 0xMmmb}, \\
+                       & wobei {\em M}=Major-Version, \\
+                       & {\em mm}=Minor-Version in BCD-Kodierung, \\
+                       & und {\em b}=Build-Nummer oder 0xff, \\
+                       & falls Build-Nummer gr"o"ser als 15. \\
+\tty{ASL\_VERSION}     & Version von \asname{} in der Form {\em 0xMMmmbbbb}, \\
+                       & wobei {\em MM}=Major-Version, \\
+                       & {\em mm}=Minor-Version, \\
+                       & und {\em bbbb}=Build-Nummer. \\
 \tty{ARCHITECTURE}     & Zielplattform, f"ur die \asname{} "ubersetzt wurde, \\
                        & in der Form Prozessor-Hersteller-Betriebssystem \\
 \tty{DATE}             & Datum und \\

@@ -14,7 +14,7 @@
 
 #define AS_VERSION_MAJOR 1
 #define AS_VERSION_MINOR 42
-#define AS_VERSION_BUILD 314
+#define AS_VERSION_BUILD 315
 
 /* The standard C stringification magic: */
 
@@ -22,7 +22,7 @@
 #define STR(x)          STR_STRING(x)
 
 extern const char *Version;
-extern LongInt VerNo;
+extern LongWord version_number, full_version_number;
 
 extern const char *InfoMessCopyright;
 

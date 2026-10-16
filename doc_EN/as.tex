@@ -69,7 +69,7 @@
 
 \vspace{1cm}\par
 
-{\large Edition September 2026}
+{\large Edition October 2026}
 \end{raggedright}
 
 \clearpage
@@ -1574,8 +1574,15 @@ CONSTPI       & Pi (3.1415.....) \\
 INTWIDTH      & bit width of internal integer arithmetic \\
 HAS64         & internal integer arithmetic uses at leat 64 bitt \\
 FLOATMAX      & largest representable floating point number \\
-VERSION       & version of \asname{} in BCD-coding, \\
-              & e.g. 1331 hex for version 1.33p1 \\
+VERSION       & version of \asname{} in in format {\em 0xMmmb}, \\
+              & with {\em M}=major version, \\
+              & {\em mm}=minor version in BCD coding, \\
+              & and {\em b}=build number or 0xf, \\
+              & if build number is larger than 15. \\
+ASL\_VERSION  & version of \asname{} in in format {\em 0xMMmmbbbb}, \\
+              & with {\em MM}=major version, \\
+              & {\em mm}=minor version, \\
+              & and {\em bbbb}=build number. \\
 ARCHITECTURE  & target platform \asname{} was compiled for, in \\
               & the style processor-manufacturer-operating \\
               & system \\

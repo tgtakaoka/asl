@@ -77,6 +77,8 @@ unsigned GetSymbolSizeBytes(tSymbolSize Size)
 
 Boolean is_symbol_size_float(tSymbolSize size)
 {
+  Boolean ret;
+
   switch (size)
   {
     case eSymbolSize8Bit:
@@ -88,7 +90,7 @@ Boolean is_symbol_size_float(tSymbolSize size)
     case eSymbolSize64Bit:
     case eSymbolSizeFloatDec96Bit:
     case eSymbolSize128Bit:
-      return False;
+      ret = False; break;
     case eSymbolSizeFloat16Bit:
     case eSymbolSizeFloat32Bit:
     case eSymbolSizeFloat48Bit:
@@ -97,8 +99,10 @@ Boolean is_symbol_size_float(tSymbolSize size)
     case eSymbolSizeFloat64Bit_G:
     case eSymbolSizeFloat96Bit:
     case eSymbolSizeFloat128Bit:
-      return True;
+      ret = True; break;
     default:
+      ret = False;
       as_abort("is_symbol_size_float: unknown symbol size\n");
   }
+  return ret;
 }

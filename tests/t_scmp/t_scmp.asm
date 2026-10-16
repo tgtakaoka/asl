@@ -92,11 +92,23 @@ vari:	dad	-30(p2)		; EA E2
 
 	ld	$-126		; C0 81
 	expect	1330
-	ld	$-127
-	endexpect
+	ld	$-127		; would result in a displacement
+	endexpect		; of -128, which indicates usage of E register
 
 	expect	1330		; would result in a displacement
 	ld	$-128		; of -129, which is out of range
+	endexpect
+
+	; If P0 is used for a *jump instruction*,
+        ; displacement 0x80 does not refer to E register.
+	; The SC/MP is one of the weirdest architectures
+	; I have seen.  Thankgood it was not that
+	; successful...
+
+	jmp	-128(p0)	; 90 80
+	jz	$-126		; 98 80
+	expect	440
+	jmp	-128(p2)	; 92 80
 	endexpect
 
 ;-----------------------------------------------------

@@ -103,6 +103,7 @@ extern char SrcSuffix[],IncSuffix[],PrgSuffix[],LstSuffix[],
 #define DateName         "DATE"       /* Datum & Zeit */
 #define TimeName         "TIME"
 #define VerName          "VERSION"    /* speichert Versionsnummer */
+#define FullVersionName  "ASL_VERSION"
 #define CaseSensName     "CASESENSITIVE" /* zeigt Gross/Kleinunterscheidung an */
 #define IntWidthName     "INTWIDTH"   /* bit width of internal integer aritmetic */
 #define Has64Name        "HAS64"         /* arbeitet Parser mit 64-Bit-Integers ? */

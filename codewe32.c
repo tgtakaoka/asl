@@ -981,15 +981,24 @@ static void append_opcode(Word op_code)
 
 static LongWord encode_f_size(tSymbolSize op_size)
 {
+  LongWord ret;
+
   switch (op_size)
   {
-    case eSymbolSizeFloat32Bit: return 0;
-    case eSymbolSizeFloat64Bit: return 1;
-    case eSymbolSizeFloat96Bit: return 2;
-    case eSymbolSize32Bit: return 0;
-    case eSymbolSizeFloatDec96Bit: return 2;
-    default: as_abort("encode_f_size: unhandled symbol size\n");
+    case eSymbolSizeFloat32Bit:
+      ret = 0; break;
+    case eSymbolSizeFloat64Bit:
+      ret = 1; break;
+    case eSymbolSizeFloat96Bit:
+      ret = 2; break;
+    case eSymbolSize32Bit:
+      ret = 0; break;
+    case eSymbolSizeFloatDec96Bit:
+      ret = 2; break;
+    default:
+      ret = 0; as_abort("encode_f_size: unhandled symbol size\n");
   }
+  return ret;
 }
 
 #if DISSECT_MAU_COMMAND

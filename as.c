@@ -3076,7 +3076,8 @@ static void AssembleFile_InitPass(void)
 #endif
     EnterFloatSymbol(&TmpComp, AS_FLOAT_MAX, True);
 
-  strmaxcpy(TmpCompStr, VerName, sizeof(TmpCompStr)); EnterIntSymbol(&TmpComp, VerNo, SegNone, True);
+  strmaxcpy(TmpCompStr, VerName, sizeof(TmpCompStr)); EnterIntSymbol(&TmpComp, version_number, SegNone, True);
+  strmaxcpy(TmpCompStr, FullVersionName, sizeof(TmpCompStr)); EnterIntSymbol(&TmpComp, full_version_number, SegNone, True);
   as_snprintf(ArchVal, sizeof(ArchVal), "%s-%s", ARCHPRNAME, ARCHSYSNAME);
   strmaxcpy(TmpCompStr, ArchName, sizeof(TmpCompStr)); EnterStringSymbol(&TmpComp, ArchVal, True);
   strmaxcpy(TmpCompStr, IntWidthName, sizeof(TmpCompStr)); EnterIntSymbol(&TmpComp, LARGEBITS, SegNone, True);
